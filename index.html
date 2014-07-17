@@ -5,7 +5,7 @@
 body {font-family:Arial; font-size:small; color:white;}
 table {position: relative; z-index: 100;}
 canvas {position: absolute; top: 10px; left: 10px; border: 1px solid #424242;}
-td.move {width: 17px; border: 1px solid #424242; text-align:center; position: relative;}
+td.move {width: 17px; height: 22px; border: 1px solid #424242; text-align:center; position: relative;}
 img.mirror {transform:scale(-1, 1); -webkit-transform:scale(-1, 1);}
 img.overlay {position: absolute; top: 0px; left: 0px;}
 td.button {width: 50px; height: 50px; position: relative; text-align: center;}
@@ -527,31 +527,31 @@ function animateTurn (flightplan, phase) {
 <td class="move">4</td>
 <td class="move"></td>
 <td class="move"></td>
-<td class="move"><img src="straightW.png"><img id="straight4" src="blank.png" class="overlayM" width=17 height=19 onClick="setDial('straight', 'white', 4);"></td>
+<td class="move"><img src="straightW.png"><img id="straight4" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('straight', 'white', 4);"></td>
 <td class="move"></td>
 <td class="move"></td>
 </tr>
 <tr>
 <td class="move">3</td>
-<td class="move"><img src="turnW.png"><img id="turn3l" src="blank.png" class="overlayM" width=17 height=19 onClick="setDial('turn', 'white', 3, -1);"></td>
-<td class="move"><img src="bankW.png"><img id="bank3l" src="blank.png" class="overlayM" width=17 height=19 onClick="setDial('bank', 'white', 3, -1);"></td>
-<td class="move"><img src="straightG.png"><img id="straight3" src="blank.png" class="overlayM" width=17 height=19 onClick="setDial('straight', 'green', 3);"></td>
-<td class="move"><img src="bankW.png" class="mirror"><img id="bank3r" src="blank.png" class="overlayM" width=17 height=19 onClick="setDial('bank', 'white', 3, 1);"></td>
-<td class="move"><img src="turnW.png" class="mirror"><img id="turn3r" src="blank.png" class="overlayM" width=17 height=19 onClick="setDial('turn', 'white', 3, 1);"></td>
+<td class="move"><img src="turnW.png"><img id="turn3l" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('turn', 'white', 3, -1);"></td>
+<td class="move"><img src="bankW.png"><img id="bank3l" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('bank', 'white', 3, -1);"></td>
+<td class="move"><img src="straightG.png"><img id="straight3" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('straight', 'green', 3);"></td>
+<td class="move"><img src="bankW.png" class="mirror"><img id="bank3r" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('bank', 'white', 3, 1);"></td>
+<td class="move"><img src="turnW.png" class="mirror"><img id="turn3r" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('turn', 'white', 3, 1);"></td>
 </tr>
 <tr>
 <td class="move">2</td>
-<td class="move"><img src="turnW.png"><img id="turn2l" src="blank.png" class="overlayM" width=17 height=19 onClick="setDial('turn', 'white', 2, -1);"></td>
-<td class="move"><img src="bankG.png"><img id="bank2l" src="blank.png" class="overlayM" width=17 height=19 onClick="setDial('bank', 'green', 2, -1);"></td>
-<td class="move"><img src="straightG.png"><img id="straight2" src="blank.png" class="overlayM" width=17 height=19 onClick="setDial('straight', 'green', 2);"></td>
-<td class="move"><img src="bankG.png" class="mirror"><img id="bank2r" src="blank.png" class="overlayM" width=17 height=19 onClick="setDial('bank', 'green', 2, 1);"></td>
-<td class="move"><img src="turnW.png" class="mirror"><img id="turn2r" src="blank.png" class="overlayM" width=17 height=19 onClick="setDial('turn', 'white', 2, 1);"></td>
+<td class="move"><img src="turnW.png"><img id="turn2l" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('turn', 'white', 2, -1);"></td>
+<td class="move"><img src="bankG.png"><img id="bank2l" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('bank', 'green', 2, -1);"></td>
+<td class="move"><img src="straightG.png"><img id="straight2" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('straight', 'green', 2);"></td>
+<td class="move"><img src="bankG.png" class="mirror"><img id="bank2r" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('bank', 'green', 2, 1);"></td>
+<td class="move"><img src="turnW.png" class="mirror"><img id="turn2r" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('turn', 'white', 2, 1);"></td>
 </tr>
 <tr>
 <td class="move">1</td>
-<td class="move"><img src="turnW.png"><img id="turn1l" src="blank.png" class="overlayM" width=17 height=19 onClick="setDial('turn', 'white', 1, -1);"></td>
-<td class="move" colspan=3>ALL<img src="blank.png" id="all" class="overlayM" width=55 height=19 onClick="setDial('all');"></td>
-<td class="move"><img src="turnW.png" class="mirror"><img id="turn1r" src="blank.png" class="overlayM" width=17 height=19 onClick="setDial('turn', 'white', 1, 1);"></td>
+<td class="move"><img src="turnW.png"><img id="turn1l" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('turn', 'white', 1, -1);"></td>
+<td class="move" colspan=3>ALL<img src="blank.png" id="all" class="overlayM" width=55 height=20 onClick="setDial('all');"></td>
+<td class="move"><img src="turnW.png" class="mirror"><img id="turn1r" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('turn', 'white', 1, 1);"></td>
 </tr>
 <tr>
 <td colspan=2></td>
