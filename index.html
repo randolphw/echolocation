@@ -9,6 +9,7 @@ td.move {width: 17px; height: 22px; border: 1px solid #424242; text-align:center
 img.mirror {transform:scale(-1, 1); -webkit-transform:scale(-1, 1);}
 img.overlay {position: absolute; top: 0px; left: 0px;}
 td.button {width: 50px; height: 50px; position: relative; text-align: center;}
+img.overlayC {position: absolute; top: 0px; left: 0px; opacity: 0;}
 img.overlayM {position: absolute; top: 0px; left: 0px; opacity: 0;}
 </style>
 <script type="text/javascript">
@@ -25,22 +26,23 @@ phantom.height = phantom.width + phantom.protrusions + phantom.nubs + 1;
 var rBank = [0, 85, 132, 183];
 var rTurn = [0, 37, 62, 89];
 
-var echo = new Image();
-echo.src = "echo.png";
-echo.onload = function() {initialize();};
+var echo = new Object();
+echo.img = new Image();
+echo.img.src = "echo.png";
+echo.img.onload = function() {initialize();};
 
 var timer = [0, 0, 0, 0, 0, 0];
 
-var decloak = [
+echo.decloak = [
 ["bank", "blue", 2, -1],
 ["bank", "blue", 2, 1],
-["bankroll", "blue", 2, -1, 1, -1],
 ["bankroll", "blue", 2, -1, 1, 1],
-["bankroll", "blue", 2, -1, -1, -1],
 ["bankroll", "blue", 2, -1, -1, 1],
 ["bankroll", "blue", 2, 1, 1, -1],
-["bankroll", "blue", 2, 1, 1, 1],
 ["bankroll", "blue", 2, 1, -1, -1],
+["bankroll", "blue", 2, -1, 1, -1],
+["bankroll", "blue", 2, -1, -1, -1],
+["bankroll", "blue", 2, 1, 1, 1],
 ["bankroll", "blue", 2, 1, -1, 1]
 ];
 
@@ -61,6 +63,7 @@ phantom.dial = [
 ];
 
 var dial = phantom.dial;
+var decloak = echo.decloak;
 
 looping = false;
 var stars = false;
@@ -90,6 +93,27 @@ function reset() {
 	};
 };
 
+function setDecloak(index) {
+	var overlays = document.getElementsByClassName("overlayC");
+	if (index == "all") {
+		for (var i = 0; i < overlays.length; i++) {
+			document.getElementsByClassName("overlayC")[i].style.opacity = 0;
+			decloak = echo.decloak;
+		};
+	} else {
+		id = "decloak" + index;
+		for (var i = 0; i < overlays.length; i++) {
+			document.getElementsByClassName("overlayC")[i].style.opacity = 0.7;
+		};
+		document.getElementById(id).style.opacity = 0;
+		if (index > 1) {
+			decloak = [echo.decloak[index], echo.decloak[index + 1]];
+		} else {
+			decloak = [echo.decloak[index]];
+		};
+	};
+};
+
 function setDial(heading, color, distance, direction) {
 	var overlays = document.getElementsByClassName("overlayM");
 	if (heading == "all") {
@@ -109,7 +133,6 @@ function setDial(heading, color, distance, direction) {
 		};
 		for (var i = 0; i < overlays.length; i++) {
 			document.getElementsByClassName("overlayM")[i].style.opacity = 0.7;
-			dial = phantom.dial;
 		};
 		document.getElementById(id).style.opacity = 0;
 		dial = [[heading, color, distance, direction]];
@@ -252,7 +275,7 @@ function timer_reset() {
 
 function drawPhantom (z, x, y, alpha) {
 	ctx[z].globalAlpha = alpha;
-	ctx[z].drawImage(echo, x - phantom.width / 2, y - phantom.protrusions, phantom.width, phantom.height);
+	ctx[z].drawImage(echo.img, x - phantom.width / 2, y - phantom.protrusions, phantom.width, phantom.height);
 };
 
 function oBank (z, distance, direction) {
@@ -517,7 +540,34 @@ function animateTurn (flightplan, phase) {
 </td>
 </tr>
 <tr>
-<td height=50></td>
+<td height=20></td>
+</tr>
+<tr>
+<td></td>
+<td style="vertical-align: top;">
+<table cellpadding=0>
+<tr>
+<td width=23></td>
+<td class="move"></td>
+<td class="move"><img src="bankC.png"><img id="decloak0" src="blank.png" class="overlayC" width=20 height=20 onClick="setDecloak(0);"></td>
+<td class="move"><img src="bankC.png" class="mirror"><img id="decloak1" src="blank.png" class="overlayC" width=20 height=20 onClick="setDecloak(1);"></td>
+</tr>
+<tr>
+<td></td>
+<td class="move"><img src="bankC.png" style="transform: rotate(90deg) scale(1, -1); -webkit-transform: rotate(90deg) scale(1, -1);"><img id="decloak2" src="blank.png" class="overlayC" width=20 height=20 onClick="setDecloak(2);"></td>
+<td class="move" colspan=2 rowspan=2><img src="cloak.png"><img id="decloakA" src="blank.png" class="overlayC" width=44 height=44 onClick="setDecloak('all');"></td>
+<td class="move"><img src="bankC.png" style="transform: rotate(90deg); -webkit-transform: rotate(90deg);"><img id="decloak4" src="blank.png" class="overlayC" width=20 height=20 onClick="setDecloak(4);"></td>
+</tr>
+<tr>
+<td></td>
+<td class="move"><img src="bankC.png" style="transform: rotate(-90deg); -webkit-transform: rotate(-90deg);"><img id="decloak6" src="blank.png" class="overlayC" width=20 height=20 onClick="setDecloak(6);"></td>
+<td class="move"><img src="bankC.png" style="transform: rotate(-90deg) scale(1, -1); -webkit-transform: rotate(-90deg) scale(1, -1);"><img id="decloak8" src="blank.png" class="overlayC" width=20 height=20 onClick="setDecloak(8);"></td>
+</tr>
+</table>
+</td>
+</tr>
+<tr>
+<td height=10></td>
 </tr>
 <tr>
 <td></td>
