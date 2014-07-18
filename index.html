@@ -47,11 +47,11 @@ phantom.dial = [
 ["straight", "green", 2],
 ["bank", "green", 2, 1],
 ["turn", "white", 2, 1],
-["bank", "white", 3, -1],
 ["turn", "white", 3, -1],
+["bank", "white", 3, -1],
 ["straight", "green", 3],
-["turn", "white", 3, 1],
 ["bank", "white", 3, 1],
+["turn", "white", 3, 1],
 ["straight", "white", 4]
 ];
 
@@ -74,6 +74,8 @@ echo.decloak = [
 ];
 
 var ship = new Object();
+var decloak;
+var dial;
 
 looping = false;
 var stars = false;
@@ -112,11 +114,13 @@ function select (model, pilot) {
 		ship.decloak = model.decloak;
 		decloakGrid(0);
 	};
+	decloak = undefined;
+	dial = undefined;
 	setDecloak("all");
 	setDial("all");
 };
 
-function reset() {
+function reset () {
 	for (var i =  1; i < ctx.length; i++) {
 		ctx[i].setTransform(1, 0, 0, 1, 0, 0);
 		ctx[i].clearRect(0, 0, 800, 600);
@@ -124,49 +128,51 @@ function reset() {
 	};
 };
 
-function setDecloak(index, index2) {
+function setDecloak (index, index2) {
 	var overlays = document.getElementsByClassName("overlayC");
+	var all = (decloak != undefined && ship.decloak.length == decloak.length);
 	if (index == "all") {
 		for (var i = 0; i < overlays.length; i++) {
-			document.getElementsByClassName("overlayC")[i].style.opacity = 0;
-			decloak = ship.decloak;
+			document.getElementsByClassName("overlayC")[i].style.opacity = (all) ? 0.7 : 0;
+			decloak = (all) ? [] : ship.decloak.slice(0);
 		};
 	} else {
+		var on = decloak.indexOf(ship.decloak[index]);
 		id = "decloak" + index;
-		for (var i = 0; i < overlays.length; i++) {
-			document.getElementsByClassName("overlayC")[i].style.opacity = 0.7;
-		};
-		document.getElementById(id).style.opacity = 0;
-		if (index2 != undefined) {
-			decloak = [ship.decloak[index], ship.decloak[index2]];
+		document.getElementById(id).style.opacity = (on == -1) ? 0 : 0.7;
+		if (on == -1) {
+			decloak.push(ship.decloak[index]);
 		} else {
-			decloak = [ship.decloak[index]];
+			decloak.splice(on, 1);
+		};
+		if (index2 != undefined) {
+			on = decloak.indexOf(ship.decloak[index2]);
+			if (on == -1) {
+				decloak.push(ship.decloak[index2]);
+			} else {
+				decloak.splice(on, 1);
+			};
 		};
 	};
 };
 
-function setDial(heading, color, distance, direction) {
+function setDial (index) {
 	var overlays = document.getElementsByClassName("overlayM");
-	if (heading == "all") {
+	var all = (dial != undefined && ship.dial.length == dial.length);
+	if (index == "all") {
 		for (var i = 0; i < overlays.length; i++) {
-			document.getElementsByClassName("overlayM")[i].style.opacity = 0;
-			dial = ship.dial;
+			document.getElementsByClassName("overlayM")[i].style.opacity = (all) ? 0.7 : 0;
+			dial = (all) ? [] : ship.dial.slice(0);
 		};
 	} else {
-		id = heading + distance;
-		switch (direction) {
-			case -1:
-				id += "l";
-				break;
-			case 1:
-				id += "r";
-				break;
+		var on = dial.indexOf(ship.dial[index]);
+		id = "dial" + index;
+		document.getElementById(id).style.opacity = (on == -1) ? 0 : 0.7;
+		if (on == -1) {
+			dial.push(ship.dial[index]);
+		} else {
+			dial.splice(on, 1);
 		};
-		for (var i = 0; i < overlays.length; i++) {
-			document.getElementsByClassName("overlayM")[i].style.opacity = 0.7;
-		};
-		document.getElementById(id).style.opacity = 0;
-		dial = [[heading, color, distance, direction]];
 	};
 };
 
@@ -197,7 +203,7 @@ function barrel_roll () {
 	};
 };
 
-function starfield(state) {
+function starfield (state) {
 	if (state) {
 		ctx[0].fillStyle = "white";
 		for (var i = 0; i < 42; i++) {
@@ -221,7 +227,7 @@ function starfield(state) {
 	};
 };
 
-function gridfield() {
+function gridfield () {
 	gctx.clearRect(0, 0, 800, 600);
 	var z = Number(gridlayer.style.zIndex);
 	if (z < 5) {
@@ -292,7 +298,7 @@ function step () {
 	drawPhantom(2, 0, 0, 1 - timer[0] / 400 - timer[1] / 400);
 };
 
-function timer_reset() {
+function timer_reset () {
 	if (timer[2] >= 100 && timer[3] >= 100 && timer[2 + barrel_rolls * 2] >= 100 && timer[3 + barrel_rolls * 2] >= 100 && looping) {
 		timer[0] = -5;
 		timer[1] = 0;
@@ -575,7 +581,7 @@ function animateTurn (flightplan, phase) {
 	};
 };
 
-function decloakGrid(version) {
+function decloakGrid (version) {
 	var tDecloak = document.getElementById("tDecloak");
 	while (tDecloak.rows.length > 0) {
 		tDecloak.deleteRow(0);
@@ -683,31 +689,31 @@ function decloakGrid(version) {
 <td class="move">4</td>
 <td></td>
 <td></td>
-<td class="move"><img src="straightW.png"><img id="straight4" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('straight', 'white', 4);"></td>
+<td class="move"><img src="straightW.png"><img id="dial12" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(12);"></td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td class="move">3</td>
-<td class="move"><img src="turnW.png"><img id="turn3l" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('turn', 'white', 3, -1);"></td>
-<td class="move"><img src="bankW.png"><img id="bank3l" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('bank', 'white', 3, -1);"></td>
-<td class="move"><img src="straightG.png"><img id="straight3" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('straight', 'green', 3);"></td>
-<td class="move"><img src="bankW.png" class="mirror"><img id="bank3r" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('bank', 'white', 3, 1);"></td>
-<td class="move"><img src="turnW.png" class="mirror"><img id="turn3r" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('turn', 'white', 3, 1);"></td>
+<td class="move"><img src="turnW.png"><img id="dial7" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(7);"></td>
+<td class="move"><img src="bankW.png"><img id="dial8" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(8);"></td>
+<td class="move"><img src="straightG.png"><img id="dial9" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(9);"></td>
+<td class="move"><img src="bankW.png" class="mirror"><img id="dial10" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(10);"></td>
+<td class="move"><img src="turnW.png" class="mirror"><img id="dial11" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(11);"></td>
 </tr>
 <tr>
 <td class="move">2</td>
-<td class="move"><img src="turnW.png"><img id="turn2l" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('turn', 'white', 2, -1);"></td>
-<td class="move"><img src="bankG.png"><img id="bank2l" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('bank', 'green', 2, -1);"></td>
-<td class="move"><img src="straightG.png"><img id="straight2" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('straight', 'green', 2);"></td>
-<td class="move"><img src="bankG.png" class="mirror"><img id="bank2r" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('bank', 'green', 2, 1);"></td>
-<td class="move"><img src="turnW.png" class="mirror"><img id="turn2r" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('turn', 'white', 2, 1);"></td>
+<td class="move"><img src="turnW.png"><img id="dial2" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(2);"></td>
+<td class="move"><img src="bankG.png"><img id="dial3" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(3);"></td>
+<td class="move"><img src="straightG.png"><img id="dial4" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(4);"></td>
+<td class="move"><img src="bankG.png" class="mirror"><img id="dial5" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(5);"></td>
+<td class="move"><img src="turnW.png" class="mirror"><img id="dial6" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(6);"></td>
 </tr>
 <tr>
 <td class="move">1</td>
-<td class="move"><img src="turnW.png"><img id="turn1l" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('turn', 'white', 1, -1);"></td>
+<td class="move"><img src="turnW.png"><img id="dial0" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(0);"></td>
 <td class="move" colspan=3>ALL<img src="blank.png" id="all" class="overlayM" width=55 height=20 onClick="setDial('all');"></td>
-<td class="move"><img src="turnW.png" class="mirror"><img id="turn1r" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial('turn', 'white', 1, 1);"></td>
+<td class="move"><img src="turnW.png" class="mirror"><img id="dial1" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(1);"></td>
 </tr>
 <tr>
 <td colspan=2></td>
