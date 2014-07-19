@@ -94,7 +94,7 @@ function initialize () {
 	layer0 = document.getElementById("layer0");
 	layer0.style.zIndex = 0;
 	layer1 = document.getElementById("layer1");
-	layer1.style.zIndex = 1;
+	layer1.style.zIndex = 3;
 	layer2 = document.getElementById("layer2");
 	layer2.style.zIndex = 4;
 	layer3 = document.getElementById("layer3");
@@ -342,18 +342,24 @@ function step () {
 	if (timer[4] >= 100 && timer[5] < 100 && barrel_rolls == 1) {
 		timer[5] += 2
 	};
+	if (timer[3] >= 100 && timer[6] < 100 && boosts == 1) {
+		timer[6] += 5
+	};
+	if (timer[6] >= 100 && timer[7] < 100 && boosts == 1) {
+		timer[7] += 2
+	};
 	for (var i = 0; i < decloak.length; i++) {
 		animate(decloak[i], 0);
 	};
-	if (timer[2] >= 100 && timer[3] >= 100 && timer[2 + barrel_rolls * 2] >= 100 && timer[3 + barrel_rolls * 2] >= 100 && looping) {
+	if (looping && timer[2] >= 100 && timer[3] >= 100 && timer[2 + barrel_rolls * 2] >= 100 && timer[3 + barrel_rolls * 2] >= 100 && timer[2 + boosts * 4] >= 100 && timer[3 + boosts * 4] >= 100) {
 		setTimeout(function(){timer_reset();}, 3000);
 	};
 	drawPhantom(3, 0, 0, 1 - timer[0] / 400 - timer[1] / 400);
 };
 
 function timer_reset () {
-	if (timer[2] >= 100 && timer[3] >= 100 && timer[2 + barrel_rolls * 2] >= 100 && timer[3 + barrel_rolls * 2] >= 100 && looping) {
-		timer = [-5, 0, -5, 0, 0, 0];
+	if (looping && timer[2] >= 100 && timer[3] >= 100 && timer[2 + barrel_rolls * 2] >= 100 && timer[3 + barrel_rolls * 2] >= 100 && timer[2 + boosts * 4] >= 100 && timer[3 + boosts * 4] >= 100) {
+		timer = [-5, 0, -5, 0, 0, 0, 0, 0];
 		barrel_roll_timer = [0, 0];
 		boost_timer = [0, 0];
 	};
@@ -462,6 +468,18 @@ function animateBank (flightplan, phase) {
 		animateRoll(["roll", "purple", 1, -1, -1], 4);
 		animateRoll(["roll", "purple", 1, 1, 1], 4);
 		animateRoll(["roll", "purple", 1, 1, -1], 4);
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].restore();
+		};
+	};
+	if (phase == 2 && timer[phase + 1] >= 100) {
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].save();
+			oBank(j, distance, direction);
+		};
+		animateBank(["bank", "purple", 1, -1], 6);
+		animateStraight(["straight", "purple", 1], 6);
+		animateBank(["bank", "purple", 1, 1], 6);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -597,6 +615,18 @@ function animateStraight (flightplan, phase) {
 			ctx[j].restore();
 		};
 	};
+	if (phase == 2 && timer[phase + 1] >= 100) {
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].save();
+			oStraight(j, distance);
+		};
+		animateBank(["bank", "purple", 1, -1], 6);
+		animateStraight(["straight", "purple", 1], 6);
+		animateBank(["bank", "purple", 1, 1], 6);
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].restore();
+		};
+	};
 };
 
 function animateTurn (flightplan, phase) {
@@ -627,6 +657,18 @@ function animateTurn (flightplan, phase) {
 		animateRoll(["roll", "purple", 1, -1, -1], 4);
 		animateRoll(["roll", "purple", 1, 1, 1], 4);
 		animateRoll(["roll", "purple", 1, 1, -1], 4);
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].restore();
+		};
+	};
+	if (phase == 2 && timer[phase + 1] >= 100) {
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].save();
+			oTurn(j, distance, direction);
+		};
+		animateBank(["bank", "purple", 1, -1], 6);
+		animateStraight(["straight", "purple", 1], 6);
+		animateBank(["bank", "purple", 1, 1], 6);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -778,12 +820,12 @@ function decloakGrid (version) {
 <table cellpadding=0>
 <tr>
 <td class="options">
-<img src="boostG.png">
-<img id="button_boost" src="blank.png" class="overlay" width=38 height=30 onClick="" style="opacity: 1">
-</td>
-<td class="options">
 <img src="rollG.png">
 <img id="button_barrel" src="blank.png" class="overlay" width=38 height=30 onClick="barrel_roll();" style="opacity: 0.5">
+</td>
+<td class="options">
+<img src="boostG.png">
+<img id="button_boost" src="blank.png" class="overlay" width=38 height=30 onClick="boost();" style="opacity: 0.5">
 </td>
 <td class="options">
 <img src="fireR.png" class="overlay" style="z-index: -1">
