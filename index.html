@@ -2,18 +2,21 @@
 <head>
 <title>echolocation</title>
 <style type="text/css">
+@font-face {font-family: Aurebesh; src: url(aurebesh.ttf);}
 body {font-family: Arial; font-size: small; color: white;}
 table {position: relative; z-index: 100;}
 canvas {position: absolute; top: 10px; left: 10px; border: 1px solid #424242;}
+td.number {width: 17px; height: 22px; border: 1px solid #424242; text-align:center; position: relative; background-color: black; font-family: Aurebesh; font-size: 12px;}
 td.move {width: 17px; height: 22px; border: 1px solid #424242; text-align:center; position: relative; background-color: black;}
 td.decloak {width: 20px; height: 22px; border: 1px solid #424242; text-align:center; position: relative; background-color: black;}
 img.mirror {transform:scale(-1, 1); -webkit-transform:scale(-1, 1);}
 img.overlay {position: absolute; top: 0px; left: 0px;}
-td.button {width: 50px; height: 50px; position: relative; text-align: center;}
+td.button {width: 50px; height: 50px; position: relative; text-align: center; font-family: Aurebesh; font-size: 26px;}
 td.options {width: 38px; height: 30px; position: relative; border: 1px solid #424242; text-align: center;}
 img.overlayC {position: absolute; top: 0px; left: 0px; opacity: 0;}
 img.overlayM {position: absolute; top: 0px; left: 0px; opacity: 0;}
 a.select {color: gray;}
+a.lock {position: absolute; top: 0px; left: 0px; font-size: 10px; color: gray;}
 </style>
 <script type="text/javascript">
 <!--
@@ -33,6 +36,8 @@ phantom.protrusions = 17;
 phantom.nubs = 1;
 phantom.height = phantom.width + phantom.protrusions + phantom.nubs;
 phantom.pilots = [echo];
+phantom.actions = ["roll"];
+phantom.slots = ["crew", "system"];
 phantom.decloak = [
 ["straight", "blue", 2],
 ["roll", "blue", 2, -1, 1],
@@ -61,6 +66,7 @@ echo.id = "echo";
 echo.img = new Image();
 echo.img.src = "echo.png";
 echo.img.onload = function() {initialize();};
+echo.slots = ["elite", "crew", "system"];
 echo.decloak = [
 ["bank", "blue", 2, -1],
 ["bank", "blue", 2, 1],
@@ -116,11 +122,17 @@ function select (model, pilot) {
 		document.getElementById("select_" + pilot.id).style.color = "white";
 		ship.decloak = pilot.decloak;
 		decloakGrid(1);
+		document.getElementById("lock_sensors").innerHTML = (pilot.slots.indexOf("system") == -1) ? "&#x1F512;" : "";
+		document.getElementById("lock_PTL").innerHTML = (pilot.slots.indexOf("elite") == -1) ? "&#x1F512;" : "";
 	} else {
 		document.getElementById("select_" + model.id).style.color = "white";
 		ship.decloak = model.decloak;
 		decloakGrid(0);
+		document.getElementById("lock_sensors").innerHTML = (model.slots.indexOf("system") == -1) ? "&#x1F512;" : "";
+		document.getElementById("lock_PTL").innerHTML = (model.slots.indexOf("elite") == -1) ? "&#x1F512;" : "";
 	};
+	document.getElementById("lock_roll").innerHTML = (model.actions.indexOf("roll") == -1 && document.getElementById("lock_PTL").innerHTML == "&#x1F512;") ? "&#x1F512;" : "";
+	document.getElementById("lock_boost").innerHTML = (model.actions.indexOf("boost") == -1) ? "M" : "";
 	decloak = undefined;
 	dial = undefined;
 	setDecloak("all");
@@ -761,6 +773,12 @@ function decloakGrid (version) {
 <td class="button"><img src="stars.png" class="overlay"><img id="button_star" src="blank.png" class="overlay" style="opacity: 0.5;" width=50 height=50 onClick="starfield(stars);"></td>
 <td class="button"><img src="loop.png" class="overlay"><img id="button_loop" src="blank.png" class="overlay" style="opacity: 0.5;" width=50 height=50 onClick="loop();"></td>
 </tr>
+<tr>
+<td class="button"><img src="attackR.png" class="overlay" style="z-index: -1">
+<a id="fire_range"></a>
+<img id="button_fire" src="blank.png" class="overlay" width=50 height=50 onClick="fire();" style="opacity: 0.5">
+</td>
+</tr>
 </table>
 </td>
 </tr>
@@ -780,7 +798,7 @@ function decloakGrid (version) {
 <td style="vertical-align:top">
 <table cellpadding=0>
 <tr>
-<td class="move">4</td>
+<td class="number">4</td>
 <td></td>
 <td></td>
 <td class="move"><img src="straightW.png"><img id="dial12" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(12);"></td>
@@ -788,7 +806,7 @@ function decloakGrid (version) {
 <td></td>
 </tr>
 <tr>
-<td class="move">3</td>
+<td class="number">3</td>
 <td class="move"><img src="turnW.png"><img id="dial7" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(7);"></td>
 <td class="move"><img src="bankW.png"><img id="dial8" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(8);"></td>
 <td class="move"><img src="straightG.png"><img id="dial9" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(9);"></td>
@@ -796,7 +814,7 @@ function decloakGrid (version) {
 <td class="move"><img src="turnW.png" class="mirror"><img id="dial11" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(11);"></td>
 </tr>
 <tr>
-<td class="move">2</td>
+<td class="number">2</td>
 <td class="move"><img src="turnW.png"><img id="dial2" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(2);"></td>
 <td class="move"><img src="bankG.png"><img id="dial3" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(3);"></td>
 <td class="move"><img src="straightG.png"><img id="dial4" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(4);"></td>
@@ -804,7 +822,7 @@ function decloakGrid (version) {
 <td class="move"><img src="turnW.png" class="mirror"><img id="dial6" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(6);"></td>
 </tr>
 <tr>
-<td class="move">1</td>
+<td class="number">1</td>
 <td class="move"><img src="turnW.png"><img id="dial0" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(0);"></td>
 <td class="move" colspan=3>ALL<img src="blank.png" id="all" class="overlayM" width=55 height=20 onClick="setDial('all');"></td>
 <td class="move"><img src="turnW.png" class="mirror"><img id="dial1" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(1);"></td>
@@ -822,15 +840,24 @@ function decloakGrid (version) {
 <td class="options">
 <img src="rollG.png">
 <img id="button_barrel" src="blank.png" class="overlay" width=38 height=30 onClick="barrel_roll();" style="opacity: 0.5">
+<a id="lock_roll" class="lock"></a>
 </td>
 <td class="options">
 <img src="boostG.png">
 <img id="button_boost" src="blank.png" class="overlay" width=38 height=30 onClick="boost();" style="opacity: 0.5">
+<a id="lock_boost" class="lock"></a>
+</td>
+</tr>
+<tr hidden>
+<td class="options">
+<img src="systemW.png">
+<img id="button_sensors" src="blank.png" class="overlay" width=38 height=30 onClick="" style="opacity: 0.5">
+<a id="lock_sensors" class="lock"></a>
 </td>
 <td class="options">
-<img src="fireR.png" class="overlay" style="z-index: -1">
-<a id="fire_range">&nbsp;</a>
-<img id="button_fire" src="blank.png" class="overlay" width=38 height=30 onClick="fire();" style="opacity: 0.5">
+<img src="ptl.png">
+<img id="button_PTL" src="blank.png" class="overlay" width=38 height=30 onClick="" style="opacity: 0.5">
+<a id="lock_PTL" class="lock"></a>
 </td>
 </tr>
 </table>
