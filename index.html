@@ -10,6 +10,7 @@ td.decloak {width: 20px; height: 22px; border: 1px solid #424242; text-align:cen
 img.mirror {transform:scale(-1, 1); -webkit-transform:scale(-1, 1);}
 img.overlay {position: absolute; top: 0px; left: 0px;}
 td.button {width: 50px; height: 50px; position: relative; text-align: center;}
+td.options {width: 38px; height: 30px; position: relative; border: 1px solid #424242; text-align: center;}
 img.overlayC {position: absolute; top: 0px; left: 0px; opacity: 0;}
 img.overlayM {position: absolute; top: 0px; left: 0px; opacity: 0;}
 a.select {color: gray;}
@@ -19,10 +20,10 @@ a.select {color: gray;}
 
 var pi = Math.PI;
 
-var rBank = [0, 85, 132, 183];
-var rTurn = [0, 37, 62, 89];
+var rBank = [0, 80, 130, 180];
+var rTurn = [0, 35, 63, 90];
 
-var timer = [0, 0, 0, 0, 0, 0];
+var timer = [0, 0, 0, 0, 0, 0, 0, 0];
 
 var phantom = new Object();
 phantom.faction = "empire";
@@ -30,7 +31,7 @@ phantom.id = "phantom";
 phantom.width = 40;
 phantom.protrusions = 17;
 phantom.nubs = 1;
-phantom.height = phantom.width + phantom.protrusions + phantom.nubs + 1;
+phantom.height = phantom.width + phantom.protrusions + phantom.nubs;
 phantom.pilots = [echo];
 phantom.decloak = [
 ["straight", "blue", 2],
@@ -74,25 +75,31 @@ echo.decloak = [
 ];
 
 var ship = new Object();
+
 var decloak;
 var dial;
-
-looping = false;
+var looping = false;
 var stars = false;
+
+var firingarcs = 0;
 var barrel_rolls = 0;
 var barrel_roll_timer = [0, 0];
+var boosts = 0;
+var boost_timer = [0, 0];
 
 function initialize () {
 	select(phantom, echo);
-	layer0 = document.getElementById("layer0");
-	layer0.style.zIndex = 0;
 	gridlayer = document.getElementById("gridlayer");
 	gridlayer.style.zIndex = -1;
+	layer0 = document.getElementById("layer0");
+	layer0.style.zIndex = 0;
 	layer1 = document.getElementById("layer1");
-	layer1.style.zIndex = 2;
+	layer1.style.zIndex = 1;
 	layer2 = document.getElementById("layer2");
 	layer2.style.zIndex = 4;
-	ctx = [layer0.getContext("2d"), layer1.getContext("2d"), layer2.getContext("2d")];
+	layer3 = document.getElementById("layer3");
+	layer3.style.zIndex = 7;
+	ctx = [layer0.getContext("2d"), layer1.getContext("2d"), layer2.getContext("2d"), layer3.getContext("2d")];
 	gctx = gridlayer.getContext("2d")
 	starfield(stars);
 	setInterval(function(){step()}, 35);
@@ -190,16 +197,32 @@ function loop () {
 function barrel_roll () {
 	if (barrel_rolls == 1) {
 		barrel_rolls = 0;
-		document.getElementById("button_barrel").src = "roll_red.png";
+		document.getElementById("button_barrel").style.opacity = 0.5;
 		barrel_roll_timer[0] = timer[4];
-		timer[4] = 0;
 		barrel_roll_timer[1] = timer[5];
+		timer[4] = 0;
 		timer[5] = 0;
 	} else {
 		barrel_rolls = 1;
-		document.getElementById("button_barrel").src = "roll_green.png";
+		document.getElementById("button_barrel").style.opacity = 0;
 		timer[4] = barrel_roll_timer[0];
 		timer[5] = barrel_roll_timer[1];
+	};
+};
+
+function boost () {
+	if (boosts == 1) {
+		boosts = 0;
+		document.getElementById("button_boost").style.opacity = 0.5;
+		boost_timer[0] = timer[6];
+		boost_timer[1] = timer[7];
+		timer[6] = 0;
+		timer[7] = 0;
+	} else {
+		boosts = 1;
+		document.getElementById("button_boost").style.opacity = 0;
+		timer[6] = boost_timer[0];
+		timer[7] = boost_timer[1];
 	};
 };
 
@@ -230,9 +253,10 @@ function starfield (state) {
 function gridfield () {
 	gctx.clearRect(0, 0, 800, 600);
 	var z = Number(gridlayer.style.zIndex);
-	if (z < 5) {
-		gridlayer.style.zIndex = z + 2;
+	if (z < 8) {
+		gridlayer.style.zIndex = z + 3;
 		gctx.globalAlpha = 0.1;
+		gctx.beginPath();
 		gctx.fillStyle = "#FF3300";
 		gctx.fillRect(0, 0, 800, 600);
 		gctx.globalAlpha = 1;
@@ -244,20 +268,20 @@ function gridfield () {
 			gctx.lineTo(i, 600);
 			gctx.stroke();
 		};
-		for (var i = 31; i < 600; i += 41) {
+		for (var i = 40; i < 600; i += 40) {
 			gctx.beginPath();
 			gctx.moveTo(0, i);
 			gctx.lineTo(800, i);
 			gctx.stroke();
 		};
 		switch (Number(gridlayer.style.zIndex)) {
-			case 1:
+			case 2:
 				document.getElementById("grid_level").innerHTML = "1";
 				break;
-			case 3:
+			case 5:
 				document.getElementById("grid_level").innerHTML = "2";
 				break;
-			case 5:
+			case 8:
 				document.getElementById("grid_level").innerHTML = "3";
 				break;
 		};
@@ -267,6 +291,35 @@ function gridfield () {
 		document.getElementById("grid_level").innerHTML = "";
 		document.getElementById("button_grid").style.opacity = 0.5;
 	};
+};
+
+function fire () {
+	firingarcs++;
+	if (firingarcs > 3) {
+		firingarcs = 0;
+		document.getElementById("button_fire").style.opacity = 0.5;
+		document.getElementById("fire_range").innerHTML = "";
+	} else {
+		document.getElementById("button_fire").style.opacity = 0;
+		document.getElementById("fire_range").innerHTML = firingarcs;
+	};
+};
+
+function drawFiringArcs (x, y) {
+	ctx[2].globalAlpha = 1;
+	ctx[2].fillStyle = "orange";
+	ctx[2].strokeStyle = "orange";
+	ctx[2].beginPath();
+	ctx[2].rect(x - 17, y - 100 * firingarcs, 34, 100 * firingarcs);
+	ctx[2].fill();
+	ctx[2].beginPath();
+	ctx[2].lineWidth = 100 * firingarcs;
+	ctx[2].arc (x - 16, y, 50 * firingarcs, 1.5 * pi, (1.5 - 2/9) * pi, true);
+	ctx[2].stroke();
+	ctx[2].beginPath();
+	ctx[2].lineWidth = 100 * firingarcs;
+	ctx[2].arc (x + 16, y, 50 * firingarcs, 1.5 * pi, (1.5 + 2/9) * pi, false);
+	ctx[2].stroke();
 };
 
 function step () {
@@ -295,59 +348,58 @@ function step () {
 	if (timer[2] >= 100 && timer[3] >= 100 && timer[2 + barrel_rolls * 2] >= 100 && timer[3 + barrel_rolls * 2] >= 100 && looping) {
 		setTimeout(function(){timer_reset();}, 3000);
 	};
-	drawPhantom(2, 0, 0, 1 - timer[0] / 400 - timer[1] / 400);
+	drawPhantom(3, 0, 0, 1 - timer[0] / 400 - timer[1] / 400);
 };
 
 function timer_reset () {
 	if (timer[2] >= 100 && timer[3] >= 100 && timer[2 + barrel_rolls * 2] >= 100 && timer[3 + barrel_rolls * 2] >= 100 && looping) {
-		timer[0] = -5;
-		timer[1] = 0;
-		timer[2] = -5;
-		timer[3] = 0;
-		timer[4] = 0;
-		timer[5] = 0;
+		timer = [-5, 0, -5, 0, 0, 0];
 		barrel_roll_timer = [0, 0];
+		boost_timer = [0, 0];
 	};
 };
 
 function drawPhantom (z, x, y, alpha) {
 	ctx[z].globalAlpha = alpha;
 	ctx[z].drawImage(echo.img, x - phantom.width / 2, y - phantom.protrusions, phantom.width, phantom.height);
+	if (firingarcs && timer[3] == 100 && alpha == 1) {
+		drawFiringArcs(x, y);
+	};
 };
 
 function oBank (z, distance, direction) {
 	var radius = rBank[distance];
 	ctx[z].translate(direction * radius, 0);
 	ctx[z].rotate(direction * 0.25 * pi);
-	ctx[z].translate(direction * -radius, -phantom.width - 1);
+	ctx[z].translate(direction * -radius, -phantom.width);
 };
 
 function oBankroll (z, distance, direction, start, end, bank) {
 	var radius = rBank[distance];
-	ctx[z].translate(direction * phantom.width / 2, phantom.width / 2 - start * phantom.width / 4 + (0.5 - start * 0.5));
+	ctx[z].translate(direction * phantom.width / 2, phantom.width / 2 - start * phantom.width / 4);
 	ctx[z].rotate(direction * 0.5 * pi);
 	ctx[z].translate(bank * radius, 0);
 	ctx[z].rotate(bank * 0.25 * pi);
 	ctx[z].translate(bank * -radius, 0);
 	ctx[z].rotate(direction * -0.5 * pi);
-	ctx[z].translate(direction * phantom.width / 2, -phantom.width / 2 - 0.5 + end * (-phantom.width / 4 - 0.5));
+	ctx[z].translate(direction * phantom.width / 2, -phantom.width / 2 + end * -phantom.width / 4);
 };
 
 function oRoll (z, distance, direction, start) {
-	ctx[z].translate(direction * phantom.width / 2, phantom.width / 2 - start * phantom.width / 4 + (0.5 - start * 0.5));
+	ctx[z].translate(direction * phantom.width / 2, phantom.width / 2 - start * phantom.width / 4);
 	ctx[z].translate(direction * distance * phantom.width, 0);
-	ctx[z].translate(direction * phantom.width / 2, -phantom.width / 2 - 0.5 + start * (-phantom.width / 4 - 0.5));
+	ctx[z].translate(direction * phantom.width / 2, -phantom.width / 2 + start * -phantom.width / 4);
 };
 
 function oStraight (z, distance) {
-	ctx[z].translate(0, (distance + 1) * (-phantom.width - 1));
+	ctx[z].translate(0, (distance + 1) * -phantom.width);
 };
 
 function oTurn (z, distance, direction) {
 	var radius = rTurn[distance];
 	ctx[z].translate(direction * radius, 0);
 	ctx[z].rotate(direction * 0.5 * pi);
-	ctx[z].translate(direction * -radius, -phantom.width - 1);
+	ctx[z].translate(direction * -radius, -phantom.width);
 };
 
 function animate (flightplan, phase) {
@@ -385,7 +437,7 @@ function animateBank (flightplan, phase) {
 	ctx[1].strokeStyle = flightplan[1];
 	ctx[1].lineWidth = phantom.width / 2;
 	ctx[1].stroke();
-	drawPhantom (2, direction * -radius, timer[phase] / 100 * -(phantom.width + 1), (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
+	drawPhantom (3, direction * -radius, timer[phase] / 100 * -phantom.width, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
@@ -424,7 +476,7 @@ function animateBankroll (flightplan, phase) {
 	var radius = rBank[distance];
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].save();
-		ctx[j].translate(direction * phantom.width / 2, phantom.width / 2 - start * phantom.width / 4 + (0.5 - start * 0.5));
+		ctx[j].translate(direction * phantom.width / 2, phantom.width / 2 - start * phantom.width / 4);
 		ctx[j].rotate(direction * 0.5 * pi);
 		ctx[j].translate(bank * radius, 0);
 		ctx[j].rotate(timer[phase + 1] * bank * 0.0025 * pi);
@@ -437,10 +489,10 @@ function animateBankroll (flightplan, phase) {
 	ctx[1].stroke();
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].rotate(direction * -0.5 * pi);
-		ctx[j].translate(direction * phantom.width / 2, -(phantom.width * 3 / 4) - 1);
+		ctx[j].translate(direction * phantom.width / 2, -phantom.width * 3 / 4);
 	};
-	drawPhantom (2, (1 - timer[phase] / 100) * direction * -phantom.width, (1 - timer[phase] / 100 * (0.5 + 0.5 * start)) * (phantom.width / 2 + 1) + (-0.5 + 0.5 * start) * (phantom.width / 2 + 1) - direction * bank * radius, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
-	drawPhantom (2, (1 - timer[phase] / 100) * direction * -phantom.width, (1 + timer[phase] / 100 * (0.5 - 0.5 * start)) * (phantom.width / 2 + 1) + (-0.5 + 0.5 * start) * (phantom.width / 2 + 1) - direction * bank * radius, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
+	drawPhantom(3, (1 - timer[phase] / 100) * direction * -phantom.width, (1 - timer[phase] / 100 * (0.5 + 0.5 * start)) * phantom.width / 2 + (-0.5 + 0.5 * start) * phantom.width / 2 - direction * bank * radius, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
+	drawPhantom(3, (1 - timer[phase] / 100) * direction * -phantom.width, (1 + timer[phase] / 100 * (0.5 - 0.5 * start)) * phantom.width / 2 + (-0.5 + 0.5 * start) * phantom.width / 2 - direction * bank * radius, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
@@ -472,7 +524,7 @@ function animateRoll (flightplan, phase) {
 	var start = flightplan[4];
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].save();
-		ctx[j].translate(direction * phantom.width / 2, phantom.width / 2 - start * phantom.width / 4 + (0.5 - start * 0.5));
+		ctx[j].translate(direction * phantom.width / 2, phantom.width / 2 - start * phantom.width / 4);
 		ctx[j].rotate(direction * 0.5 * pi);
 	};
 	ctx[1].globalAlpha = (1 - 0.5 * ((phase == 0) ? (timer[3] / 100) : 0)) * 0.5 * timer[phase + 1] / 100;
@@ -484,9 +536,9 @@ function animateRoll (flightplan, phase) {
 	ctx[1].stroke();
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].rotate(direction * -0.5 * pi);
-		ctx[j].translate(direction * phantom.width / 2, -(phantom.width * 3 / 4) - 1);
+		ctx[j].translate(direction * phantom.width / 2, -phantom.width * 3 / 4);
 	};
-	drawPhantom (2, (1 - timer[phase] / 100) * distance * direction * -phantom.width + timer[phase + 1] / 100 * distance * direction * phantom.width, (1 - timer[phase] / 100) * start * (phantom.width / 2 + 1) + (1 - start) * (phantom.width / 4 + 0.5), (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
+	drawPhantom(3, (1 - timer[phase] / 100) * distance * direction * -phantom.width + timer[phase + 1] / 100 * distance * direction * phantom.width, (1 - timer[phase] / 100) * start * phantom.width / 2 + (1 - start) * phantom.width / 4, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
@@ -512,11 +564,11 @@ function animateStraight (flightplan, phase) {
 	ctx[1].globalAlpha = (1 - 0.5 * ((phase == 0) ? (timer[3] / 100) : 0)) * 0.5 * timer[phase + 1] / 100;
 	ctx[1].beginPath();
 	ctx[1].moveTo(0, 0);
-	ctx[1].lineTo(0, timer[phase + 1] / 100 * distance * -(phantom.width + 1));
+	ctx[1].lineTo(0, timer[phase + 1] / 100 * distance * -phantom.width);
 	ctx[1].strokeStyle = flightplan[1];
 	ctx[1].lineWidth = phantom.width / 2;
 	ctx[1].stroke();
-	drawPhantom (2, 0, timer[phase] / 100 * -(phantom.width + 1) + timer[phase + 1] / 100 * distance * -(phantom.width + 1), (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
+	drawPhantom(3, 0, timer[phase] / 100 * -phantom.width + timer[phase + 1] / 100 * distance * -phantom.width, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
@@ -562,7 +614,7 @@ function animateTurn (flightplan, phase) {
 	ctx[1].strokeStyle = flightplan[1];
 	ctx[1].lineWidth = phantom.width / 2;
 	ctx[1].stroke();
-	drawPhantom (2, direction * -radius, timer[phase] / 100 * -(phantom.width + 1), (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
+	drawPhantom(3, direction * -radius, timer[phase] / 100 * -phantom.width, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
@@ -657,9 +709,9 @@ function decloakGrid (version) {
 
 <table cellpadding=0 cellspacing=0>
 <tr>
-<td width=810 rowspan=7></td>
+<td width=810 rowspan=9></td>
 <td style="vertical-align:top">
-<table cellpadding=0>
+<table cellpadding=0 width=158>
 <tr>
 <td class="button"><img src="grid.png" class="overlay" style="z-index: -1">
 <a id="grid_level"></a>
@@ -715,9 +767,29 @@ function decloakGrid (version) {
 <td class="move" colspan=3>ALL<img src="blank.png" id="all" class="overlayM" width=55 height=20 onClick="setDial('all');"></td>
 <td class="move"><img src="turnW.png" class="mirror"><img id="dial1" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(1);"></td>
 </tr>
+</table>
+</td>
+</tr>
 <tr>
-<td colspan=2></td>
-<td class="move" colspan=3><img id="button_barrel" src="roll_red.png" onClick="barrel_roll();"></td>
+<td height=10></td>
+</tr>
+<tr>
+<td>
+<table cellpadding=0>
+<tr>
+<td class="options">
+<img src="boostG.png">
+<img id="button_boost" src="blank.png" class="overlay" width=38 height=30 onClick="" style="opacity: 1">
+</td>
+<td class="options">
+<img src="rollG.png">
+<img id="button_barrel" src="blank.png" class="overlay" width=38 height=30 onClick="barrel_roll();" style="opacity: 0.5">
+</td>
+<td class="options">
+<img src="fireR.png" class="overlay" style="z-index: -1">
+<a id="fire_range">&nbsp;</a>
+<img id="button_fire" src="blank.png" class="overlay" width=38 height=30 onClick="fire();" style="opacity: 0.5">
+</td>
 </tr>
 </table>
 </td>
@@ -742,6 +814,7 @@ function decloakGrid (version) {
 <canvas id="layer0" width="800" height="600"></canvas>
 <canvas id="gridlayer" width="800" height="600"></canvas>
 <canvas id="layer1" width="800" height="600"></canvas>
-<canvas id="layer2" width="800" height="600"></canvas>
+<canvas id="layer2" width="800" height="600" style="opacity: 0.5;"></canvas>
+<canvas id="layer3" width="800" height="600"></canvas>
 </body>
 </html>
