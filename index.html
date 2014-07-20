@@ -13,6 +13,7 @@ img.mirror {transform:scale(-1, 1); -webkit-transform:scale(-1, 1);}
 img.overlay {position: absolute; top: 0px; left: 0px;}
 td.button {width: 50px; height: 50px; position: relative; text-align: center; font-family: Aurebesh; font-size: 26px;}
 td.options {width: 38px; height: 30px; position: relative; border: 1px solid #424242; text-align: center;}
+td.filter {position: relative;}
 img.overlayC {position: absolute; top: 0px; left: 0px; opacity: 0;}
 img.overlayM {position: absolute; top: 0px; left: 0px; opacity: 0;}
 a.select {color: gray;}
@@ -87,6 +88,9 @@ var timer = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 var barrel_roll_timer = [0, 0];
 var boost_timer = [0, 0];
 var bbPTL_timer = [0, 0];
+
+var fRoll = [false, false, false, false];
+var fBoost = [false, false, false];
 
 function initialize () {
 	select(phantom, echo);
@@ -206,6 +210,24 @@ function loop () {
 	};
 };
 
+function switchFilter (type) {
+	document.getElementById("boostFilters").hidden = (type == "boost") ? false : true;
+	document.getElementById("rollFiltersA").hidden = (type == "roll") ? false : true;
+	document.getElementById("rollFiltersB").hidden = (type == "roll") ? false : true;
+};
+
+function setFilter (type, index) {
+	var buttonID = "button_" + type + "Filter" + index;
+	var target = document.getElementById(buttonID);
+	var state = target.style.opacity;
+	if (type == "roll") {
+		fRoll[index] = (target.style.opacity > 0) ? false : true;
+	} else {
+		fBoost[index] = (target.style.opacity > 0) ? false : true;
+	};
+	target.style.opacity = (target.style.opacity > 0) ? 0 : 0.5;
+};
+
 function barrel_roll () {
 	var boost = (document.getElementById("button_boost").style.opacity > 0) ? false : true;
 	var target = document.getElementById("button_barrel");
@@ -215,6 +237,9 @@ function barrel_roll () {
 		barrel_roll_timer = [timer[4], timer[5]];
 		timer[4] = 0;
 		timer[5] = 0;
+		if (!boost) {
+			document.getElementById("filterGrid").hidden = true;
+		};
 		bbPTL();
 	} else {
 		target.style.opacity = 0;
@@ -223,6 +248,12 @@ function barrel_roll () {
 		if (boost) {
 			document.getElementById("button_bbPTL").style.opacity = 0.5;
 		};
+		document.getElementById("filterGrid").hidden = false;
+		fRoll = [false, false, false, false];
+		document.getElementById("button_rollFilter0").style.opacity = 0;
+		document.getElementById("button_rollFilter1").style.opacity = 0;
+		document.getElementById("button_rollFilter2").style.opacity = 0;
+		document.getElementById("button_rollFilter3").style.opacity = 0;
 	};
 };
 
@@ -235,6 +266,9 @@ function boost () {
 		boost_timer = [timer[6], timer[7]];
 		timer[6] = 0;
 		timer[7] = 0;
+		if (!barrel_roll) {
+			document.getElementById("filterGrid").hidden = true;
+		};
 		bbPTL();
 	} else {
 		target.style.opacity = 0;
@@ -243,6 +277,11 @@ function boost () {
 		if (barrel_roll) {
 			document.getElementById("button_bbPTL").style.opacity = 0.5;
 		};
+		document.getElementById("filterGrid").hidden = false;
+		fBoost = [false, false, false];
+		document.getElementById("button_boostFilter0").style.opacity = 0;
+		document.getElementById("button_boostFilter1").style.opacity = 0;
+		document.getElementById("button_boostFilter2").style.opacity = 0;
 	};
 };
 
@@ -553,10 +592,18 @@ function animateBank (flightplan, phase) {
 			ctx[j].save();
 			oBank(j, distance, direction);
 		};
-		animateRoll(["roll", "purple", 1, -1, 1], 4);
-		animateRoll(["roll", "purple", 1, -1, -1], 4);
-		animateRoll(["roll", "purple", 1, 1, 1], 4);
-		animateRoll(["roll", "purple", 1, 1, -1], 4);
+		if (!fRoll[0]) {
+			animateRoll(["roll", "purple", 1, -1, 1], 4);
+		};
+		if (!fRoll[2]) {
+			animateRoll(["roll", "purple", 1, -1, -1], 4);
+		};
+		if (!fRoll[1]) {
+			animateRoll(["roll", "purple", 1, 1, 1], 4);
+		};
+		if (!fRoll[3]) {
+			animateRoll(["roll", "purple", 1, 1, -1], 4);
+		};
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -566,9 +613,15 @@ function animateBank (flightplan, phase) {
 			ctx[j].save();
 			oBank(j, distance, direction);
 		};
-		animateBank(["bank", "purple", 1, -1], 6);
-		animateStraight(["straight", "purple", 1], 6);
-		animateBank(["bank", "purple", 1, 1], 6);
+		if (!fBoost[0]) {
+			animateBank(["bank", "purple", 1, -1], 6);
+		};
+		if (!fBoost[1]) {
+			animateStraight(["straight", "purple", 1], 6);
+		};
+		if (!fBoost[2]) {
+			animateBank(["bank", "purple", 1, 1], 6);
+		};
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -721,10 +774,18 @@ function animateStraight (flightplan, phase) {
 			ctx[j].save();
 			oStraight(j, distance);
 		};
-		animateRoll(["roll", "purple", 1, -1, 1], 4);
-		animateRoll(["roll", "purple", 1, -1, -1], 4);
-		animateRoll(["roll", "purple", 1, 1, 1], 4);
-		animateRoll(["roll", "purple", 1, 1, -1], 4);
+		if (!fRoll[0]) {
+			animateRoll(["roll", "purple", 1, -1, 1], 4);
+		};
+		if (!fRoll[2]) {
+			animateRoll(["roll", "purple", 1, -1, -1], 4);
+		};
+		if (!fRoll[1]) {
+			animateRoll(["roll", "purple", 1, 1, 1], 4);
+		};
+		if (!fRoll[3]) {
+			animateRoll(["roll", "purple", 1, 1, -1], 4);
+		};
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -734,9 +795,15 @@ function animateStraight (flightplan, phase) {
 			ctx[j].save();
 			oStraight(j, distance);
 		};
-		animateBank(["bank", "purple", 1, -1], 6);
-		animateStraight(["straight", "purple", 1], 6);
-		animateBank(["bank", "purple", 1, 1], 6);
+		if (!fBoost[0]) {
+			animateBank(["bank", "purple", 1, -1], 6);
+		};
+		if (!fBoost[1]) {
+			animateStraight(["straight", "purple", 1], 6);
+		};
+		if (!fBoost[2]) {
+			animateBank(["bank", "purple", 1, 1], 6);
+		};
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -780,10 +847,18 @@ function animateTurn (flightplan, phase) {
 			ctx[j].save();
 			oTurn(j, distance, direction);
 		};
-		animateRoll(["roll", "purple", 1, -1, 1], 4);
-		animateRoll(["roll", "purple", 1, -1, -1], 4);
-		animateRoll(["roll", "purple", 1, 1, 1], 4);
-		animateRoll(["roll", "purple", 1, 1, -1], 4);
+		if (!fRoll[0]) {
+			animateRoll(["roll", "purple", 1, -1, 1], 4);
+		};
+		if (!fRoll[2]) {
+			animateRoll(["roll", "purple", 1, -1, -1], 4);
+		};
+		if (!fRoll[1]) {
+			animateRoll(["roll", "purple", 1, 1, 1], 4);
+		};
+		if (!fRoll[3]) {
+			animateRoll(["roll", "purple", 1, 1, -1], 4);
+		};
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -793,9 +868,15 @@ function animateTurn (flightplan, phase) {
 			ctx[j].save();
 			oTurn(j, distance, direction);
 		};
-		animateBank(["bank", "purple", 1, -1], 6);
-		animateStraight(["straight", "purple", 1], 6);
-		animateBank(["bank", "purple", 1, 1], 6);
+		if (!fBoost[0]) {
+			animateBank(["bank", "purple", 1, -1], 6);
+		};
+		if (!fBoost[1]) {
+			animateStraight(["straight", "purple", 1], 6);
+		};
+		if (!fBoost[2]) {
+			animateBank(["bank", "purple", 1, 1], 6);
+		};
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -955,18 +1036,38 @@ function decloakGrid (version) {
 <td class="options">
 <img src="rollG.png">
 <a id="lock_roll" class="lock"></a>
-<img id="button_barrel" src="blank.png" class="overlay" width=38 height=30 onClick="barrel_roll();" style="opacity: 0.5">
+<img id="button_barrel" src="blank.png" class="overlay" width=38 height=30 onClick="barrel_roll();" onMouseOver="switchFilter('roll');" style="opacity: 0.5">
 </td>
-<td class="options">
-<img src="boostG.png">
-<a id="lock_boost" class="lock"></a>
-<img id="button_boost" src="blank.png" class="overlay" width=38 height=30 onClick="boost();" style="opacity: 0.5">
 </td>
 <td class="options">
 <img src="bbPTL.png">
 <a id="lock_bbPTL" class="lock"></a>
 <img id="button_bbPTL" src="blank.png" class="overlay" width=38 height=30 onClick="bbPTL();" style="opacity: 1">
 </td>
+<td class="options">
+<img src="boostG.png">
+<a id="lock_boost" class="lock"></a>
+<img id="button_boost" src="blank.png" class="overlay" width=38 height=30 onClick="boost();" onMouseOver="switchFilter('boost');" style="opacity: 0.5">
+<tr id="filterGrid" hidden>
+<td class="options" colspan=3 style="height: 48px;">
+<table cellpadding=0 align=center>
+<tr id="boostFilters" hidden>
+<td class="filter"><img src="bankW.png"><img id="button_boostFilter0" src="blank.png" class="overlay" width=17 height=19 onClick="setFilter('boost', 0);" style="opacity: 0"></td>
+<td class="filter"><img src="straightW.png"><img id="button_boostFilter1" src="blank.png" class="overlay" width=17 height=19 onClick="setFilter('boost', 1);" style="opacity: 0"></td>
+<td class="filter"><img src="bankW.png" class="mirror"><img id="button_boostFilter2" src="blank.png" class="overlay" width=17 height=19 onClick="setFilter('boost', 2);" style="opacity: 0"></td>
+</tr>
+<tr id="rollFiltersA" hidden>
+<td class="filter"><img src="straightW.png" style="transform: rotate(-90deg); -webkit-transform: rotate(-90deg);"><img id="button_rollFilter0" src="blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 0);" style="opacity: 0"></td>
+<td rowspan=2 width=17></td>
+<td class="filter"><img src="straightW.png" style="transform: rotate(90deg); -webkit-transform: rotate(90deg);"><img id="button_rollFilter1" src="blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 1);" style="opacity: 0"></td>
+</tr>
+<tr id="rollFiltersB" hidden>
+<td class="filter"><img src="straightW.png" style="transform: rotate(-90deg); -webkit-transform: rotate(-90deg);"><img id="button_rollFilter2" src="blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 2);" style="opacity: 0"></td>
+<td class="filter"><img src="straightW.png" style="transform: rotate(90deg); -webkit-transform: rotate(90deg);"><img id="button_rollFilter3" src="blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 3);" style="opacity: 0"></td>
+</tr>
+</table>
+</td>
+</tr>
 </tr>
 <tr hidden>
 <td class="options">
