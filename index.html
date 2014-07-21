@@ -594,18 +594,19 @@ function drawFiringArcs (x, y) {
 	};
 	ctx[2].globalAlpha = 1;
 	ctx[2].fillStyle = "orange";
-	ctx[2].strokeStyle = "orange";
 	ctx[2].beginPath();
 	ctx[2].rect(x - 17, y - 100 * arcrange, 34, 100 * arcrange);
 	ctx[2].fill();
 	ctx[2].beginPath();
-	ctx[2].lineWidth = 100 * arcrange;
-	ctx[2].arc (x - 16, y, 50 * arcrange, 1.5 * pi, (1.5 - 2/9) * pi, true);
-	ctx[2].stroke();
+	ctx[2].moveTo(x - 16, y);
+	ctx[2].arc (x - 16, y, 100 * arcrange, 1.5 * pi, 23/18 * pi, true);
+	ctx[2].closePath();
+	ctx[2].fill();
 	ctx[2].beginPath();
-	ctx[2].lineWidth = 100 * arcrange;
-	ctx[2].arc (x + 16, y, 50 * arcrange, 1.5 * pi, (1.5 + 2/9) * pi, false);
-	ctx[2].stroke();
+	ctx[2].moveTo(x + 16, y);
+	ctx[2].arc (x + 16, y, 100 * arcrange, 1.5 * pi, 31/18 * pi, false);
+	ctx[2].closePath();
+	ctx[2].fill();
 };
 
 function step () {
