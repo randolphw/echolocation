@@ -6,18 +6,26 @@
 body {font-family: Arial; font-size: small; color: white;}
 table {position: relative; z-index: 100;}
 canvas {position: absolute; top: 10px; left: 10px; border: 1px solid #424242;}
-td.number {width: 17px; height: 22px; border: 1px solid #424242; text-align:center; position: relative; background-color: black; font-family: Aurebesh; font-size: 12px;}
-td.move {width: 17px; height: 22px; border: 1px solid #424242; text-align:center; position: relative; background-color: black;}
-td.decloak {width: 20px; height: 22px; border: 1px solid #424242; text-align:center; position: relative; background-color: black;}
-img.mirror {transform:scale(-1, 1); -webkit-transform:scale(-1, 1);}
+td {position: relative;}
+td.button {background-color: black; border: 1px solid #424242; text-align: center;}
+td.move {width: 20px; height: 22px; font-family: Aurebesh; font-size: 12px;}
+td.actions {width: 38px; height: 30px;}
+img.mirror {transform: scale(-1, 1); -webkit-transform: scale(-1, 1);}
+img.rotateL {transform: rotate(-90deg); -webkit-transform: rotate(-90deg);}
+img.rotateR {transform: rotate(90deg); -webkit-transform: rotate(90deg);}
+img.mirrorL {transform: scale(-1, 1) rotate(90deg); -webkit-transform: scale(-1, 1) rotate(90deg);}
+img.mirrorR {transform: scale(-1, 1) rotate(-90deg); -webkit-transform: scale(-1, 1) rotate(-90deg);}
 img.overlay {position: absolute; top: 0px; left: 0px;}
-td.button {width: 50px; height: 50px; position: relative; text-align: center; font-family: Aurebesh; font-size: 26px;}
-td.options {width: 38px; height: 30px; position: relative; border: 1px solid #424242; text-align: center;}
-td.filter {position: relative;}
-img.overlayC {position: absolute; top: 0px; left: 0px; opacity: 0;}
-img.overlayM {position: absolute; top: 0px; left: 0px; opacity: 0;}
-a.select {color: gray;}
+img.decloak {width: 20px; height: 20px;}
+img.maneuver {width: 20px; height: 20px;}
+a {position: relative;}
 a.lock {position: absolute; top: 0px; left: 0px; font-size: 10px;}
+.option {width: 50px; height: 50px; text-align: center; font-family: Aurebesh; font-size: 26px;}
+.model {left: 15px;}
+.pilot {left: 35px;}
+
+a.select {color: gray;}
+
 </style>
 <script type="text/javascript">
 <!--
@@ -27,10 +35,33 @@ var pi = Math.PI;
 var rBank = [0, 80, 130, 180];
 var rTurn = [0, 35, 63, 90];
 
+var smallbase = 40;
+var largebase = 80;
+
+var echo = new Object();
+echo.id = "echo";
+echo.img = new Image();
+echo.img.src = "echo.png";
+echo.img.onload = function() {initialize();};
+echo.slots = ["elite", "crew", "system"];
+echo.decloak = [
+["bank", "blue", 2, -1],
+["bank", "blue", 2, 1],
+["bankroll", "blue", 2, -1, 1, 1],
+["bankroll", "blue", 2, -1, -1, 1],
+["bankroll", "blue", 2, 1, 1, -1],
+["bankroll", "blue", 2, 1, -1, -1],
+["bankroll", "blue", 2, -1, 1, -1],
+["bankroll", "blue", 2, -1, -1, -1],
+["bankroll", "blue", 2, 1, 1, 1],
+["bankroll", "blue", 2, 1, -1, 1]
+];
+
 var phantom = new Object();
 phantom.faction = "empire";
 phantom.id = "phantom";
-phantom.width = 40;
+phantom.img = echo.img;
+phantom.width = smallbase;
 phantom.protrusions = 17;
 phantom.nubs = 1;
 phantom.height = phantom.width + phantom.protrusions + phantom.nubs;
@@ -60,23 +91,91 @@ phantom.dial = [
 ["straight", "white", 4]
 ];
 
-var echo = new Object();
-echo.id = "echo";
-echo.img = new Image();
-echo.img.src = "echo.png";
-echo.img.onload = function() {initialize();};
-echo.slots = ["elite", "crew", "system"];
-echo.decloak = [
-["bank", "blue", 2, -1],
-["bank", "blue", 2, 1],
-["bankroll", "blue", 2, -1, 1, 1],
-["bankroll", "blue", 2, -1, -1, 1],
-["bankroll", "blue", 2, 1, 1, -1],
-["bankroll", "blue", 2, 1, -1, -1],
-["bankroll", "blue", 2, -1, 1, -1],
-["bankroll", "blue", 2, -1, -1, -1],
-["bankroll", "blue", 2, 1, 1, 1],
-["bankroll", "blue", 2, 1, -1, 1]
+var interceptor = new Object();
+interceptor.faction = "empire";
+interceptor.id = "interceptor";
+interceptor.img = new Image();
+interceptor.img.src = "interceptor.png";
+interceptor.width = smallbase;
+interceptor.protrusions = 13;
+interceptor.height = 54;
+interceptor.pilots = [];
+interceptor.actions = ["roll", "boost"];
+interceptor.slots = [];
+interceptor.decloak = [];
+interceptor.dial = [
+["turn", "white", 1, -1],
+["turn", "white", 1, 1],
+["turn", "green", 2, -1],
+["bank", "green", 2, -1],
+["straight", "green", 2],
+["bank", "green", 2, 1],
+["turn", "green", 2, 1],
+["turn", "white", 3, -1],
+["bank", "white", 3, -1],
+["straight", "green", 3],
+["bank", "white", 3, 1],
+["turn", "white", 3, 1],
+["straight", "green", 4],
+["straight", "white", 5]
+];
+
+var xwing = new Object();
+xwing.faction = "rebel";
+xwing.id = "xwing";
+xwing.img = new Image();
+xwing.img.src = "xwing.png";
+xwing.width = smallbase;
+xwing.protrusions = 11;
+xwing.height = 52;
+xwing.pilots = [];
+xwing.actions = [];
+xwing.slots = ["astromech"];
+xwing.decloak = [];
+xwing.dial = [
+["bank", "green", 1, -1],
+["straight", "green", 1],
+["bank", "green", 1, 1],
+["turn", "white", 2, -1],
+["bank", "white", 2, -1],
+["straight", "green", 2],
+["bank", "white", 2, 1],
+["turn", "white", 2, 1],
+["turn", "white", 3, -1],
+["bank", "white", 3, -1],
+["straight", "white", 3],
+["bank", "white", 3, 1],
+["turn", "white", 3, 1],
+["straight", "white", 4]
+];
+
+var bwing = new Object();
+bwing.faction = "rebel";
+bwing.id = "bwing";
+bwing.img = new Image();
+bwing.img.src = "bwing.png";
+bwing.width = smallbase;
+bwing.protrusions = 0;
+bwing.height = 41;
+bwing.pilots = [];
+bwing.actions = ["roll"];
+bwing.slots = ["system"];
+bwing.decloak = [];
+bwing.dial = [
+["turn", "red", 1, -1],
+["bank", "green", 1, -1],
+["straight", "green", 1],
+["bank", "green", 1, 1],
+["turn", "red", 1, 1],
+["turn", "white", 2, -1],
+["bank", "white", 2, -1],
+["straight", "green", 2],
+["bank", "white", 2, 1],
+["turn", "white", 2, 1],
+["bank", "red", 3, -1],
+["straight", "white", 3],
+["bank", "red", 3, 1],
+["straight", "red", 4]
 ];
 
 var ship = new Object();
@@ -85,9 +184,12 @@ var decloak;
 var dial;
 
 var timer = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+var queued = false;
 var barrel_roll_timer = [0, 0];
 var boost_timer = [0, 0];
 var bbPTL_timer = [0, 0];
+
+var remnant = 0.3;
 
 var fRoll = [false, false, false, false];
 var fBoost = [false, false, false];
@@ -116,26 +218,107 @@ function select (model, pilot) {
 		document.getElementsByClassName("select")[i].style.color = "gray";
 	};
 	document.getElementById("select_" + model.faction).style.color = "white";
+	var faction = document.getElementsByClassName(model.faction);
+	var enemy = document.getElementsByClassName((model.faction == "empire") ? "rebel" : "empire");
+	for (var i = 0; i < enemy.length; i++) {
+		enemy[i].hidden = true;
+	};
+	for (var i = 0; i < faction.length; i++) {
+		if (faction[i].className.search("pilot") != -1){
+			faction[i].hidden = (faction[i].className.search(model.id) == -1) ? true : false;
+		} else {
+			faction[i].hidden = false;
+		};
+	};
 	ship.dial = model.dial;
+	var elite = false;
 	if (pilot != undefined) {
 		document.getElementById("select_" + pilot.id).style.color = "white";
 		ship.decloak = pilot.decloak;
-		decloakGrid(1);
 		document.getElementById("lock_sensors").innerHTML = (pilot.slots.indexOf("system") == -1) ? "&#x1F512;" : "";
-		document.getElementById("lock_bbPTL").innerHTML = (pilot.slots.indexOf("elite") == -1) ? "&#x1F512;" : "";
+		elite = (pilot.slots.indexOf("elite") == -1) ? false : true;
+		document.getElementById("lock_bbPTL").innerHTML = (elite) ? "" : "&#x1F512;";
 	} else {
 		document.getElementById("select_" + model.id).style.color = "white";
 		ship.decloak = model.decloak;
-		decloakGrid(0);
 		document.getElementById("lock_sensors").innerHTML = (model.slots.indexOf("system") == -1) ? "&#x1F512;" : "";
-		document.getElementById("lock_bbPTL").innerHTML = (model.slots.indexOf("elite") == -1) ? "&#x1F512;" : "";
+		elite = (model.slots.indexOf("elite") == -1) ? false : true;
+		document.getElementById("lock_bbPTL").innerHTML = (elite) ?  "" : "&#x1F512;";
 	};
-	document.getElementById("lock_roll").innerHTML = (model.actions.indexOf("roll") == -1 && document.getElementById("lock_bbPTL").innerHTML == "&#x1F512;") ? "&#x1F512;" : "";
+	decloakTable(ship.decloak.length);
+	maneuverTable(ship.dial);
+	ship.img = model.img;
+	ship.width = model.width;
+	ship.protrusions = model.protrusions;
+	ship.height = model.height;
+	document.getElementById("lock_roll").innerHTML = (model.actions.indexOf("roll") == -1 && !elite) ? "&#x1F512;" : "";
 	document.getElementById("lock_boost").innerHTML = (model.actions.indexOf("boost") == -1) ? "M" : "";
 	decloak = undefined;
 	dial = undefined;
 	setDecloak("all");
 	setDial("all");
+	timer_reset(true);
+};
+
+function decloakTable (paths) {
+	var decloakP = document.getElementsByClassName("decloakP");
+	var decloakE = document.getElementsByClassName("decloakE");
+	if (paths == 0) {
+		tDecloak.hidden = true;
+	} else {
+		tDecloak.hidden = false;
+		for (var i = 0; i < decloakE.length; i++) {
+			decloakE[i].hidden = (paths == 10) ? false : true;
+		};
+		for (var i = 0; i < decloakP.length; i++) {
+			decloakP[i].hidden = (paths == 5) ? false : true;
+		};
+	};
+};
+
+function maneuverTable (dial) {
+	var range = [];
+	for (var i = 1; i < 6; i++) {
+		range[i] = [0, 0, 0];
+		for (var j = 0; j < dial.length; j++) {
+			if (dial[j][2] == i) {
+				switch (dial[j][0]) {
+					case "turn":
+						range[i][0] = dial[j][1];
+						break;
+					case "bank":
+						range[i][1] = dial[j][1];
+						break;
+					case "straight":
+						range[i][2] = dial[j][1];
+						break;
+				}; 
+			};
+		};
+		document.getElementById("mTurn" + i + "l").style.opacity = (range[i][0] == 0) ? 0 : 1;
+		document.getElementById("mTurn" + i + "r").style.opacity = (range[i][0] == 0) ? 0 : 1;
+		if (range[i][0] != 0) {
+			document.getElementById("aTurn" + i + "l").src = "turn" + range[i][0].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("aTurn" + i + "r").src = "turn" + range[i][0].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("bTurn" + i + "l").onclick = function(){setDial(this.id)};
+			document.getElementById("bTurn" + i + "r").onclick = function(){setDial(this.id)};
+		};
+		document.getElementById("mBank" + i + "l").style.opacity = (range[i][1] == 0) ? 0 : 1;
+		document.getElementById("mBank" + i + "r").style.opacity = (range[i][1] == 0) ? 0 : 1;
+		if (range[i][1] != 0) {
+			document.getElementById("aBank" + i + "l").src = "bank" + range[i][1].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("aBank" + i + "r").src = "bank" + range[i][1].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("bBank" + i + "l").onclick = function(){setDial(this.id)};
+			document.getElementById("bBank" + i + "r").onclick = function(){setDial(this.id)};
+		};
+		document.getElementById("mStraight" + i).style.opacity = (range[i][2] == 0) ? 0 : 1;
+		if (range[i][2] != 0) {
+			document.getElementById("aStraight" + i).src = "straight" + range[i][2].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("bStraight" + i).onclick = function(){setDial(this.id)};
+		};
+	};
+	document.getElementById("mRow5").style.opacity = (range[5].join("") == "000") ? 0 : 1;
+	
 };
 
 function reset () {
@@ -146,17 +329,17 @@ function reset () {
 	};
 };
 
-function setDecloak (index, index2) {
-	var overlays = document.getElementsByClassName("overlayC");
+function setDecloak (pattern, index, index2) {
+	var overlays = document.getElementsByClassName("decloak");
 	var all = (decloak != undefined && ship.decloak.length == decloak.length);
-	if (index == "all") {
+	if (pattern == "all") {
 		for (var i = 0; i < overlays.length; i++) {
-			document.getElementsByClassName("overlayC")[i].style.opacity = (all) ? 0.7 : 0;
+			document.getElementsByClassName("decloak")[i].style.opacity = (all) ? 0.7 : 0;
 			decloak = (all) ? [] : ship.decloak.slice(0);
 		};
 	} else {
 		var on = decloak.indexOf(ship.decloak[index]);
-		id = "decloak" + index;
+		id = "decloak" + index + pattern;
 		document.getElementById(id).style.opacity = (on == -1) ? 0 : 0.7;
 		if (on == -1) {
 			decloak.push(ship.decloak[index]);
@@ -174,18 +357,33 @@ function setDecloak (index, index2) {
 	};
 };
 
-function setDial (index) {
-	var overlays = document.getElementsByClassName("overlayM");
+function setDial (buttonID) {
+	var overlays = document.getElementsByClassName("maneuver");
 	var all = (dial != undefined && ship.dial.length == dial.length);
-	if (index == "all") {
+	if (buttonID == "all") {
 		for (var i = 0; i < overlays.length; i++) {
-			document.getElementsByClassName("overlayM")[i].style.opacity = (all) ? 0.7 : 0;
+			document.getElementsByClassName("maneuver")[i].style.opacity = (all) ? 0.7 : 0;
 			dial = (all) ? [] : ship.dial.slice(0);
 		};
 	} else {
+		var direction = buttonID.substr(-1);
+		if (isFinite(direction)) {
+			var movement = "straight";
+			var distance = direction;
+			var direction = undefined;
+		} else {
+			var movement = buttonID.substr(1, 4).toLowerCase();
+			var distance = buttonID.substr(-2, 1);
+			direction = (direction == "l") ? -1 : 1;
+		};
+		var index;
+		for (var i = 0; i < ship.dial.length; i++) {
+			if (ship.dial[i][0] == movement && ship.dial[i][2] == distance && (direction == undefined || ship.dial[i][3] == direction)) {
+				index = i;
+			};
+		};
 		var on = dial.indexOf(ship.dial[index]);
-		id = "dial" + index;
-		document.getElementById(id).style.opacity = (on == -1) ? 0 : 0.7;
+		document.getElementById(buttonID).style.opacity = (on == -1) ? 0 : 0.7;
 		if (on == -1) {
 			dial.push(ship.dial[index]);
 		} else {
@@ -195,7 +393,7 @@ function setDial (index) {
 };
 
 function loop () {
-	var target = document.getElementById("button_loop");
+	var target = document.getElementById("option_loop");
 	var state = target.style.opacity;
 	if (state == 0) {
 		target.style.opacity = 0.5;
@@ -309,7 +507,7 @@ function bbPTL () {
 };
 
 function starfield () {
-	var state = document.getElementById("button_star").style.opacity;
+	var state = document.getElementById("option_starfield").style.opacity;
 	if (state > 0) {
 		ctx[0].fillStyle = "white";
 		for (var i = 0; i < 42; i++) {
@@ -324,10 +522,10 @@ function starfield () {
 				ctx[0].fill();
 			};
 		};
-		document.getElementById("button_star").style.opacity = 0;
+		document.getElementById("option_starfield").style.opacity = 0;
 	} else {
 		ctx[0].clearRect(0, 0, 800, 600);
-		document.getElementById("button_star").style.opacity = 0.5;
+		document.getElementById("option_starfield").style.opacity = 0.5;
 	};
 };
 
@@ -366,11 +564,11 @@ function gridfield () {
 				document.getElementById("grid_level").innerHTML = "3";
 				break;
 		};
-		document.getElementById("button_grid").style.opacity = 0;
+		document.getElementById("option_grid").style.opacity = 0;
 	} else {
 		gridlayer.style.zIndex = -1;
 		document.getElementById("grid_level").innerHTML = "";
-		document.getElementById("button_grid").style.opacity = 0.5;
+		document.getElementById("option_grid").style.opacity = 0.5;
 	};
 };
 
@@ -381,10 +579,10 @@ function fire () {
 	};
 	arcrange++;
 	if (arcrange > 3) {
-		document.getElementById("button_fire").style.opacity = 0.5;
+		document.getElementById("option_fire").style.opacity = 0.5;
 		document.getElementById("fire_range").innerHTML = "";
 	} else {
-		document.getElementById("button_fire").style.opacity = 0;
+		document.getElementById("option_fire").style.opacity = 0;
 		document.getElementById("fire_range").innerHTML = arcrange;
 	};
 };
@@ -415,17 +613,18 @@ function step () {
 	var barrel_rolls = (document.getElementById("button_barrel").style.opacity > 0) ? false : true;
 	var boosts = (document.getElementById("button_boost").style.opacity > 0) ? false : true;
 	var bbPTL = (document.getElementById("button_bbPTL").style.opacity > 0) ? false : true;
-	var looping = (document.getElementById("button_loop").style.opacity > 0) ? false : true;
+	var looping = (document.getElementById("option_loop").style.opacity > 0) ? false : true;
+	var cloaking = (decloak.length > 0) ? true : false;
 // decloak separation timer
-	if (timer[0] < 100) {
+	if (timer[0] < 100 && cloaking) {
 		timer[0] += 5;
 	};
 // decloak movement timer
-	if (timer[0] >= 100 && timer[1] < 100) {
+	if (timer[0] >= 100 && timer[1] < 100 && cloaking) {
 		timer[1] += 2
 	};
 // maneuver separation timer
-	if (timer[1] >= 100 && timer[2] < 100) {
+	if ((timer[1] >= 100 || !cloaking) && timer[2] < 100) {
 		timer[2] += 5;
 	};
 // maneuver movement timer
@@ -456,27 +655,35 @@ function step () {
 	if (timer[8] >= 100 && timer[9] < 100 && barrel_rolls && boosts && bbPTL) {
 		timer[9] += 2
 	};
+if (decloak.length > 0) {
 	for (var i = 0; i < decloak.length; i++) {
 		animate(decloak[i], 0);
 	};
-	if (looping && timer[3] >= 100) {
+} else {
+	for (var i = 0; i < dial.length; i++) {
+		animate(dial[i], 2);
+	};
+};
+	if (looping && timer[3] >= 100 && !queued) {
 		if (!barrel_rolls || timer[5] >= 100) {
 			if (!boosts || timer[7] >= 100) {
 				if (!bbPTL || timer[9] >= 100) {
 					setTimeout(function(){timer_reset();}, 3000);
+					queued = true;
 				};
 			};
 		};
 	};
-	drawPhantom(3, 0, 0, 1 - timer[0] / 400 - timer[1] / 400);
+	drawShip(3, 0, 0, 0.99 - timer[0] / 400 - timer[1] / 400);
 };
 
-function timer_reset () {
-	var looping = (document.getElementById("button_loop").style.opacity > 0) ? false : true;
+function timer_reset (override) {
+	queued = false;
+	var looping = (document.getElementById("option_loop").style.opacity > 0) ? false : true;
 	var barrel_rolls = (document.getElementById("button_barrel").style.opacity > 0) ? false : true;
 	var boosts = (document.getElementById("button_boost").style.opacity > 0) ? false : true;
 	var bbPTL = (document.getElementById("button_bbPTL").style.opacity > 0) ? false : true;
-	if (looping && timer[3] >= 100) {
+	if ((looping || override) && timer[3] >= 100) {
 		if (!barrel_rolls || timer[5] >= 100) {
 			if (!boosts || timer[7] >= 100) {
 				if (!bbPTL || timer[9] >= 100) {
@@ -492,10 +699,10 @@ function timer_reset () {
 	};
 };
 
-function drawPhantom (z, x, y, alpha) {
+function drawShip (z, x, y, alpha) {
 	var arcrange = document.getElementById("fire_range").innerHTML;
 	ctx[z].globalAlpha = alpha;
-	ctx[z].drawImage(echo.img, x - phantom.width / 2, y - phantom.protrusions, phantom.width, phantom.height);
+	ctx[z].drawImage(ship.img, x - ship.width / 2, y - ship.protrusions, ship.width, ship.height);
 	if (arcrange != "" && timer[3] == 100 && alpha == 1) {
 		drawFiringArcs(x, y);
 	};
@@ -505,35 +712,35 @@ function oBank (z, distance, direction) {
 	var radius = rBank[distance];
 	ctx[z].translate(direction * radius, 0);
 	ctx[z].rotate(direction * 0.25 * pi);
-	ctx[z].translate(direction * -radius, -phantom.width);
+	ctx[z].translate(direction * -radius, -ship.width);
 };
 
 function oBankroll (z, distance, direction, start, end, bank) {
 	var radius = rBank[distance];
-	ctx[z].translate(direction * phantom.width / 2, phantom.width / 2 - start * phantom.width / 4);
+	ctx[z].translate(direction * ship.width / 2, ship.width / 2 - start * ship.width / 4);
 	ctx[z].rotate(direction * 0.5 * pi);
 	ctx[z].translate(bank * radius, 0);
 	ctx[z].rotate(bank * 0.25 * pi);
 	ctx[z].translate(bank * -radius, 0);
 	ctx[z].rotate(direction * -0.5 * pi);
-	ctx[z].translate(direction * phantom.width / 2, -phantom.width / 2 + end * -phantom.width / 4);
+	ctx[z].translate(direction * ship.width / 2, -ship.width / 2 + end * -ship.width / 4);
 };
 
 function oRoll (z, distance, direction, start) {
-	ctx[z].translate(direction * phantom.width / 2, phantom.width / 2 - start * phantom.width / 4);
-	ctx[z].translate(direction * distance * phantom.width, 0);
-	ctx[z].translate(direction * phantom.width / 2, -phantom.width / 2 + start * -phantom.width / 4);
+	ctx[z].translate(direction * ship.width / 2, ship.width / 2 - start * ship.width / 4);
+	ctx[z].translate(direction * distance * ship.width, 0);
+	ctx[z].translate(direction * ship.width / 2, -ship.width / 2 + start * -ship.width / 4);
 };
 
 function oStraight (z, distance) {
-	ctx[z].translate(0, (distance + 1) * -phantom.width);
+	ctx[z].translate(0, (distance + 1) * -ship.width);
 };
 
 function oTurn (z, distance, direction) {
 	var radius = rTurn[distance];
 	ctx[z].translate(direction * radius, 0);
 	ctx[z].rotate(direction * 0.5 * pi);
-	ctx[z].translate(direction * -radius, -phantom.width);
+	ctx[z].translate(direction * -radius, -ship.width);
 };
 
 function animate (flightplan, phase) {
@@ -556,6 +763,33 @@ function animate (flightplan, phase) {
 	};
 };
 
+function animateBarrelRolls (color, phase) {
+		if (!fRoll[0]) {
+			animateRoll(["roll", color, 1, -1, 1], phase);
+		};
+		if (!fRoll[2]) {
+			animateRoll(["roll", color, 1, -1, -1], phase);
+		};
+		if (!fRoll[1]) {
+			animateRoll(["roll", color, 1, 1, 1], phase);
+		};
+		if (!fRoll[3]) {
+			animateRoll(["roll", color, 1, 1, -1], phase);
+		};
+};
+
+function animateBoosts (color, phase) {
+		if (!fBoost[0]) {
+			animateBank(["bank", color, 1, -1], phase);
+		};
+		if (!fBoost[1]) {
+			animateStraight(["straight", color, 1], phase);
+		};
+		if (!fBoost[2]) {
+			animateBank(["bank", color, 1, 1], phase);
+		};
+};
+
 function animateBank (flightplan, phase) {
 	var distance = flightplan[2];
 	var direction = flightplan[3];
@@ -569,9 +803,23 @@ function animateBank (flightplan, phase) {
 	ctx[1].beginPath();
 	ctx[1].arc (0, 0, radius, (0.5 + direction * 0.5) * pi, (0.5 + direction * 0.5  + direction * timer[phase + 1] * -0.0025) * pi, (direction == 1) ? true : false);
 	ctx[1].strokeStyle = flightplan[1];
-	ctx[1].lineWidth = phantom.width / 2;
+	ctx[1].lineWidth = smallbase / 2;
 	ctx[1].stroke();
-	drawPhantom (3, direction * -radius, timer[phase] / 100 * -phantom.width, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
+	switch (phase) {
+		case 2:
+			var phasemod = Math.max(timer[phase + 3], timer[phase + 5]) / 100;
+			break;
+		case 4:
+			var phasemod = timer[phase + 5] / 100;
+			break;
+		case 6:
+			var phasemod = timer[phase + 3] / 100;
+			break;
+		default:
+			var phasemod = 0;
+			break;
+	};
+	drawShip(3, direction * -radius, timer[phase] / 100 * -ship.width, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
@@ -592,18 +840,7 @@ function animateBank (flightplan, phase) {
 			ctx[j].save();
 			oBank(j, distance, direction);
 		};
-		if (!fRoll[0]) {
-			animateRoll(["roll", "purple", 1, -1, 1], 4);
-		};
-		if (!fRoll[2]) {
-			animateRoll(["roll", "purple", 1, -1, -1], 4);
-		};
-		if (!fRoll[1]) {
-			animateRoll(["roll", "purple", 1, 1, 1], 4);
-		};
-		if (!fRoll[3]) {
-			animateRoll(["roll", "purple", 1, 1, -1], 4);
-		};
+		animateBarrelRolls("purple", 4);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -613,15 +850,7 @@ function animateBank (flightplan, phase) {
 			ctx[j].save();
 			oBank(j, distance, direction);
 		};
-		if (!fBoost[0]) {
-			animateBank(["bank", "purple", 1, -1], 6);
-		};
-		if (!fBoost[1]) {
-			animateStraight(["straight", "purple", 1], 6);
-		};
-		if (!fBoost[2]) {
-			animateBank(["bank", "purple", 1, 1], 6);
-		};
+		animateBoosts("purple", 6);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -649,7 +878,7 @@ function animateBankroll (flightplan, phase) {
 	var radius = rBank[distance];
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].save();
-		ctx[j].translate(direction * phantom.width / 2, phantom.width / 2 - start * phantom.width / 4);
+		ctx[j].translate(direction * ship.width / 2, ship.width / 2 - start * ship.width / 4);
 		ctx[j].rotate(direction * 0.5 * pi);
 		ctx[j].translate(bank * radius, 0);
 		ctx[j].rotate(timer[phase + 1] * bank * 0.0025 * pi);
@@ -658,14 +887,28 @@ function animateBankroll (flightplan, phase) {
 	ctx[1].beginPath();
 	ctx[1].arc (0, 0, radius, (0.5 + bank * 0.5) * pi, (0.5 + bank * 0.5  + bank * timer[phase + 1] * -0.0025) * pi, (bank == 1) ? true : false);
 	ctx[1].strokeStyle = flightplan[1];
-	ctx[1].lineWidth = phantom.width / 2;
+	ctx[1].lineWidth = smallbase / 2;
 	ctx[1].stroke();
+	switch (phase) {
+		case 2:
+			var phasemod = Math.max(timer[phase + 3], timer[phase + 5]) / 100;
+			break;
+		case 4:
+			var phasemod = timer[phase + 5] / 100;
+			break;
+		case 6:
+			var phasemod = timer[phase + 3] / 100;
+			break;
+		default:
+			var phasemod = 0;
+			break;
+	};
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].rotate(direction * -0.5 * pi);
-		ctx[j].translate(direction * phantom.width / 2, -phantom.width * 3 / 4);
+		ctx[j].translate(direction * ship.width / 2, -ship.width * 3 / 4);
 	};
-	drawPhantom(3, (1 - timer[phase] / 100) * direction * -phantom.width, (1 - timer[phase] / 100 * (0.5 + 0.5 * start)) * phantom.width / 2 + (-0.5 + 0.5 * start) * phantom.width / 2 - direction * bank * radius, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
-	drawPhantom(3, (1 - timer[phase] / 100) * direction * -phantom.width, (1 + timer[phase] / 100 * (0.5 - 0.5 * start)) * phantom.width / 2 + (-0.5 + 0.5 * start) * phantom.width / 2 - direction * bank * radius, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
+	drawShip(3, (1 - timer[phase] / 100) * direction * -ship.width, (1 - timer[phase] / 100 * (0.5 + 0.5 * start)) * ship.width / 2 + (-0.5 + 0.5 * start) * ship.width / 2 - direction * bank * radius, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
+	drawShip(3, (1 - timer[phase] / 100) * direction * -ship.width, (1 + timer[phase] / 100 * (0.5 - 0.5 * start)) * ship.width / 2 + (-0.5 + 0.5 * start) * ship.width / 2 - direction * bank * radius, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
@@ -697,21 +940,35 @@ function animateRoll (flightplan, phase) {
 	var start = flightplan[4];
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].save();
-		ctx[j].translate(direction * phantom.width / 2, phantom.width / 2 - start * phantom.width / 4);
+		ctx[j].translate(direction * ship.width / 2, ship.width / 2 - start * ship.width / 4);
 		ctx[j].rotate(direction * 0.5 * pi);
 	};
 	ctx[1].globalAlpha = (1 - 0.5 * ((phase == 0) ? (timer[3] / 100) : 0)) * 0.5 * timer[phase + 1] / 100;
 	ctx[1].beginPath();
 	ctx[1].moveTo(0, 0);
-	ctx[1].lineTo(0, timer[phase + 1] / 100 * distance * -(phantom.width + 1));
+	ctx[1].lineTo(0, timer[phase + 1] / 100 * distance * -(ship.width + 1));
 	ctx[1].strokeStyle = flightplan[1];
-	ctx[1].lineWidth = phantom.width / 2;
+	ctx[1].lineWidth = smallbase / 2;
 	ctx[1].stroke();
+	switch (phase) {
+		case 2:
+			var phasemod = Math.max(timer[phase + 3], timer[phase + 5]) / 100;
+			break;
+		case 4:
+			var phasemod = timer[phase + 5] / 100;
+			break;
+		case 6:
+			var phasemod = timer[phase + 3] / 100;
+			break;
+		default:
+			var phasemod = 0;
+			break;
+	};
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].rotate(direction * -0.5 * pi);
-		ctx[j].translate(direction * phantom.width / 2, -phantom.width * 3 / 4);
+		ctx[j].translate(direction * ship.width / 2, -ship.width * 3 / 4);
 	};
-	drawPhantom(3, (1 - timer[phase] / 100) * distance * direction * -phantom.width + timer[phase + 1] / 100 * distance * direction * phantom.width, (1 - timer[phase] / 100) * start * phantom.width / 2 + (1 - start) * phantom.width / 4, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
+	drawShip(3, (1 - timer[phase] / 100) * distance * direction * -ship.width + timer[phase + 1] / 100 * distance * direction * ship.width, (1 - timer[phase] / 100) * start * ship.width / 2 + (1 - start) * ship.width / 4, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
@@ -749,11 +1006,25 @@ function animateStraight (flightplan, phase) {
 	ctx[1].globalAlpha = (1 - 0.5 * ((phase == 0) ? (timer[3] / 100) : 0)) * 0.5 * timer[phase + 1] / 100;
 	ctx[1].beginPath();
 	ctx[1].moveTo(0, 0);
-	ctx[1].lineTo(0, timer[phase + 1] / 100 * distance * -phantom.width);
+	ctx[1].lineTo(0, timer[phase + 1] / 100 * distance * -ship.width);
 	ctx[1].strokeStyle = flightplan[1];
-	ctx[1].lineWidth = phantom.width / 2;
+	ctx[1].lineWidth = smallbase / 2;
 	ctx[1].stroke();
-	drawPhantom(3, 0, timer[phase] / 100 * -phantom.width + timer[phase + 1] / 100 * distance * -phantom.width, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
+	switch (phase) {
+		case 2:
+			var phasemod = Math.max(timer[phase + 3], timer[phase + 5]) / 100;
+			break;
+		case 4:
+			var phasemod = timer[phase + 5] / 100;
+			break;
+		case 6:
+			var phasemod = timer[phase + 3] / 100;
+			break;
+		default:
+			var phasemod = 0;
+			break;
+	};
+	drawShip(3, 0, timer[phase] / 100 * -ship.width + timer[phase + 1] / 100 * distance * -ship.width, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
@@ -774,18 +1045,7 @@ function animateStraight (flightplan, phase) {
 			ctx[j].save();
 			oStraight(j, distance);
 		};
-		if (!fRoll[0]) {
-			animateRoll(["roll", "purple", 1, -1, 1], 4);
-		};
-		if (!fRoll[2]) {
-			animateRoll(["roll", "purple", 1, -1, -1], 4);
-		};
-		if (!fRoll[1]) {
-			animateRoll(["roll", "purple", 1, 1, 1], 4);
-		};
-		if (!fRoll[3]) {
-			animateRoll(["roll", "purple", 1, 1, -1], 4);
-		};
+		animateBarrelRolls("purple", 4);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -795,15 +1055,7 @@ function animateStraight (flightplan, phase) {
 			ctx[j].save();
 			oStraight(j, distance);
 		};
-		if (!fBoost[0]) {
-			animateBank(["bank", "purple", 1, -1], 6);
-		};
-		if (!fBoost[1]) {
-			animateStraight(["straight", "purple", 1], 6);
-		};
-		if (!fBoost[2]) {
-			animateBank(["bank", "purple", 1, 1], 6);
-		};
+		animateBoosts("purple", 6);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -836,9 +1088,23 @@ function animateTurn (flightplan, phase) {
 	ctx[1].beginPath();
 	ctx[1].arc (0, 0, radius, (0.5 + direction * 0.5) * pi, (0.5 + direction * 0.5  + direction * timer[phase + 1] * -0.005) * pi, (direction == 1) ? true : false);
 	ctx[1].strokeStyle = flightplan[1];
-	ctx[1].lineWidth = phantom.width / 2;
+	ctx[1].lineWidth = smallbase / 2;
 	ctx[1].stroke();
-	drawPhantom(3, direction * -radius, timer[phase] / 100 * -phantom.width, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100));
+	switch (phase) {
+		case 2:
+			var phasemod = Math.max(timer[phase + 3], timer[phase + 5]) / 100;
+			break;
+		case 4:
+			var phasemod = timer[phase + 5] / 100;
+			break;
+		case 6:
+			var phasemod = timer[phase + 3] / 100;
+			break;
+		default:
+			var phasemod = 0;
+			break;
+	};
+	drawShip(3, direction * -radius, timer[phase] / 100 * -ship.width, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
@@ -847,18 +1113,7 @@ function animateTurn (flightplan, phase) {
 			ctx[j].save();
 			oTurn(j, distance, direction);
 		};
-		if (!fRoll[0]) {
-			animateRoll(["roll", "purple", 1, -1, 1], 4);
-		};
-		if (!fRoll[2]) {
-			animateRoll(["roll", "purple", 1, -1, -1], 4);
-		};
-		if (!fRoll[1]) {
-			animateRoll(["roll", "purple", 1, 1, 1], 4);
-		};
-		if (!fRoll[3]) {
-			animateRoll(["roll", "purple", 1, 1, -1], 4);
-		};
+		animateBarrelRolls("purple", 4);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -868,88 +1123,10 @@ function animateTurn (flightplan, phase) {
 			ctx[j].save();
 			oTurn(j, distance, direction);
 		};
-		if (!fBoost[0]) {
-			animateBank(["bank", "purple", 1, -1], 6);
-		};
-		if (!fBoost[1]) {
-			animateStraight(["straight", "purple", 1], 6);
-		};
-		if (!fBoost[2]) {
-			animateBank(["bank", "purple", 1, 1], 6);
-		};
+		animateBoosts("purple", 6);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
-	};
-};
-
-function decloakGrid (version) {
-	var tDecloak = document.getElementById("tDecloak");
-	while (tDecloak.rows.length > 0) {
-		tDecloak.deleteRow(0);
-	};
-	var newRow = tDecloak.insertRow(tDecloak.rows.length);
-	var newCell = newRow.insertCell(newRow.cells.length);
-	newCell.width = 23;
-	newCell = newRow.insertCell(newRow.cells.length);
-	if (version == 1) {
-		newCell = newRow.insertCell(newRow.cells.length);
-		newCell.className = "decloak";
-		newCell.innerHTML = '<img src="bankC.png"><img id="decloak0" src="blank.png" class="overlayC" width=20 height=20 onClick="setDecloak(0);">';
-		newCell = newRow.insertCell(newRow.cells.length);
-		newCell.className = "decloak";
-		newCell.innerHTML = '<img src="bankC.png" class="mirror"><img id="decloak1" src="blank.png" class="overlayC" width=20 height=20 onClick="setDecloak(1);">';
-	} else {
-		newCell = newRow.insertCell(newRow.cells.length);
-		newCell.width = 10;
-		newCell = newRow.insertCell(newRow.cells.length);
-		newCell.className = "decloak";
-		newCell.innerHTML = '<img src="straightC.png"><img id="decloak0" src="blank.png" class="overlayC" width=20 height=20 onClick="setDecloak(0);">';
-		newCell.width = 21;
-		newCell = newRow.insertCell(newRow.cells.length);
-		newCell.width = 10;
-	};
-	newRow = tDecloak.insertRow(tDecloak.rows.length);
-	newCell = newRow.insertCell(newRow.cells.length);
-	newCell.height = 20;
-	newCell = newRow.insertCell(newRow.cells.length);
-	newCell.className = "decloak";
-	if (version == 1) {
-		newCell.innerHTML = '<img src="bankC.png" style="transform: rotate(90deg) scale(1, -1); -webkit-transform: rotate(90deg) scale(1, -1);"><img id="decloak2" src="blank.png" class="overlayC" width=20 height=20 onClick="setDecloak(2, 3);">';
-	} else {
-		newCell.innerHTML = '<img src="straightC.png" style="transform: rotate(-90deg); -webkit-transform: rotate(-90deg);"><img id="decloak1" src="blank.png" class="overlayC" width=20 height=20 onClick="setDecloak(1);">';
-	};
-	newCell = newRow.insertCell(newRow.cells.length);
-	newCell.className = "decloak";
-	if (version == 1) {
-		newCell.colSpan = 2;
-	} else {
-		newCell.colSpan = 3;
-	};
-	newCell.rowSpan = 2;
-	newCell.innerHTML = '<img src="cloak.png"><img id="decloakA" src="blank.png" class="overlayC" width=44 height=44 onClick="setDecloak(\'all\');">';
-	newCell = newRow.insertCell(newRow.cells.length);
-	newCell.className = "decloak";
-	if (version == 1) {
-		newCell.innerHTML = '<img src="bankC.png" style="transform: rotate(90deg); -webkit-transform: rotate(90deg);"><img id="decloak4" src="blank.png" class="overlayC" width=20 height=20 onClick="setDecloak(4, 5);">';
-	} else {
-		newCell.innerHTML = '<img src="straightC.png" style="transform: rotate(90deg); -webkit-transform: rotate(90deg);"><img id="decloak2" src="blank.png" class="overlayC" width=20 height=20 onClick="setDecloak(2);">';
-	};
-	newRow = tDecloak.insertRow(tDecloak.rows.length);
-	newCell = newRow.insertCell(newRow.cells.length);
-	newCell = newRow.insertCell(newRow.cells.length);
-	newCell.className = "decloak";
-	if (version == 1) {
-		newCell.innerHTML = '<img src="bankC.png" style="transform: rotate(-90deg); -webkit-transform: rotate(-90deg);"><img id="decloak6" src="blank.png" class="overlayC" width=20 height=20 onClick="setDecloak(6, 7);">';
-	} else {
-		newCell.innerHTML = '<img src="straightC.png" style="transform: rotate(-90deg); -webkit-transform: rotate(-90deg);"><img id="decloak3" src="blank.png" class="overlayC" width=20 height=20 onClick="setDecloak(3);">';
-	};
-	newCell = newRow.insertCell(newRow.cells.length);
-	newCell.className = "decloak";
-	if (version == 1) {
-		newCell.innerHTML = '<img src="bankC.png" style="transform: rotate(-90deg) scale(1, -1); -webkit-transform: rotate(-90deg) scale(1, -1);"><img id="decloak8" src="blank.png" class="overlayC" width=20 height=20 onClick="setDecloak(8, 9);">';
-	} else {
-		newCell.innerHTML = '<img src="straightC.png" style="transform: rotate(90deg); -webkit-transform: rotate(90deg);"><img id="decloak4" src="blank.png" class="overlayC" width=20 height=20 onClick="setDecloak(4);">';
 	};
 };
 -->
@@ -963,16 +1140,18 @@ function decloakGrid (version) {
 <td style="vertical-align:top">
 <table cellpadding=0 width=158>
 <tr>
-<td class="button"><img src="grid.png" class="overlay" style="z-index: -1">
+<td class="option"><img src="grid.png" class="overlay" style="z-index: -1">
 <a id="grid_level"></a>
-<img id="button_grid" src="blank.png" class="overlay" style="opacity: 0.5;" width=50 height=50 onClick="gridfield();"></td>
-<td class="button"><img src="stars.png" class="overlay"><img id="button_star" src="blank.png" class="overlay" style="opacity: 0.5;" width=50 height=50 onClick="starfield();"></td>
-<td class="button"><img src="loop.png" class="overlay"><img id="button_loop" src="blank.png" class="overlay" style="opacity: 0.5;" width=50 height=50 onClick="loop();"></td>
+<img id="option_grid" src="blank.png" class="overlay option" style="opacity: 0.5;" onClick="gridfield();"></td>
+<td class="option"><img src="stars.png" class="overlay">
+<img id="option_starfield" src="blank.png" class="overlay option" style="opacity: 0.5;" onClick="starfield();"></td>
+<td class="option"><img src="loop.png" class="overlay">
+<img id="option_loop" src="blank.png" class="overlay option" style="opacity: 0.5;" onClick="loop();"></td>
 </tr>
 <tr>
-<td class="button"><img src="attackR.png" class="overlay" style="z-index: -1">
+<td class="option"><img src="attackR.png" class="overlay" style="z-index: -1">
 <a id="fire_range"></a>
-<img id="button_fire" src="blank.png" class="overlay" width=50 height=50 onClick="fire();" style="opacity: 0.5">
+<img id="option_fire" src="blank.png" class="overlay option" onClick="fire();" style="opacity: 0.5">
 </td>
 </tr>
 </table>
@@ -984,6 +1163,32 @@ function decloakGrid (version) {
 <tr>
 <td style="vertical-align: top;" height=75>
 <table cellpadding=0 id="tDecloak">
+<tr class="decloakE">
+<td width=22></td>
+<td></td>
+<td class="button move"><img src="bankC.png"><img id="decloak0e" src="blank.png" class="overlay decloak" onClick="setDecloak('e', 0);"></td>
+<td class="button move"><img src="bankC.png" class="mirror"><img id="decloak1e" src="blank.png" class="overlay decloak" onClick="setDecloak('e', 1);"></td>
+</tr>
+<tr class="decloakP" hidden>
+<td width=22></td>
+<td></td>
+<td class="button move" colspan=2><img src="straightC.png"><img id="decloak0p" src="blank.png" class="overlay decloak" style="width: 44px;" onClick="setDecloak('p', 0);"></td>
+</tr>
+<tr>
+<td></td>
+<td class="button move decloakE"><img src="bankC.png" class="mirrorL"><img id="decloak2e" src="blank.png" class="overlay decloak" onClick="setDecloak('e', 2, 3);"></td>
+<td class="button move decloakP"><img src="straightC.png" class="rotateL"><img id="decloak1p" src="blank.png" class="overlay decloak" onClick="setDecloak('p', 1);"></td>
+<td class="button move" colspan=2 rowspan=2><img src="cloak.png"><img id="decloakA" src="blank.png" class="overlay decloak" style="width: 44px; height: 44px;" onClick="setDecloak('all');"></td>
+<td class="button move decloakE"><img src="bankC.png" class="rotateR"><img id="decloak4e" src="blank.png" class="overlay decloak" onClick="setDecloak('e', 4, 5);"></td>
+<td class="button move decloakP"><img src="straightC.png" class="rotateR"><img id="decloak2p" src="blank.png" class="overlay decloak" onClick="setDecloak('p', 2);"></td>
+</tr>
+<tr>
+<td></td>
+<td class="button move decloakE"><img src="bankC.png" class="rotateL"><img id="decloak6e" src="blank.png" class="overlay decloak" onClick="setDecloak('e', 6, 7);"></td>
+<td class="button move decloakP"><img src="straightC.png" class="rotateL"><img id="decloak3p" src="blank.png" class="overlay decloak" onClick="setDecloak('p', 3);"></td>
+<td class="button move decloakE"><img src="bankC.png" class="mirrorR"><img id="decloak8e" src="blank.png" class="overlay decloak" onClick="setDecloak('e', 8, 9);"></td>
+<td class="button move decloakP"><img src="straightC.png" class="rotateR"><img id="decloak4p" src="blank.png" class="overlay decloak" onClick="setDecloak('p', 4);"></td>
+</tr>
 </table>
 </td>
 </tr>
@@ -993,35 +1198,49 @@ function decloakGrid (version) {
 <tr>
 <td style="vertical-align:top">
 <table cellpadding=0>
-<tr>
-<td class="number">4</td>
-<td></td>
-<td></td>
-<td class="move"><img src="straightW.png"><img id="dial12" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(12);"></td>
-<td></td>
-<td></td>
+<tr id="mRow5">
+<td class="button move">5</td>
+<td class="button move" id="mTurn5l"><img id="aTurn5l" src="turnW.png"><img id="bTurn5l" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank5l"><img id="aBank5l" src="bankW.png"><img id="bBank5l" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mStraight5"><img id="aStraight5" src="straightW.png"><img id="bStraight5" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank5r"><img id="aBank5r" src="bankW.png" class="mirror"><img id="bBank5r" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTurn5r"><img id="aTurn5r" src="turnW.png" class="mirror"><img id="bTurn5r" src="blank.png" class="overlay maneuver"></td>
 </tr>
 <tr>
-<td class="number">3</td>
-<td class="move"><img src="turnW.png"><img id="dial7" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(7);"></td>
-<td class="move"><img src="bankW.png"><img id="dial8" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(8);"></td>
-<td class="move"><img src="straightG.png"><img id="dial9" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(9);"></td>
-<td class="move"><img src="bankW.png" class="mirror"><img id="dial10" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(10);"></td>
-<td class="move"><img src="turnW.png" class="mirror"><img id="dial11" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(11);"></td>
+<td class="button move">4</td>
+<td class="button move" id="mTurn4l"><img id="aTurn4l" src="turnW.png"><img id="bTurn4l" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank4l"><img id="aBank4l" src="bankW.png"><img id="bBank4l" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mStraight4"><img id="aStraight4" src="straightW.png"><img id="bStraight4" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank4r"><img id="aBank4r" src="bankW.png" class="mirror"><img id="bBank4r" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTurn4r"><img id="aTurn4r" src="turnW.png" class="mirror"><img id="bTurn4r" src="blank.png" class="overlay maneuver"></td>
 </tr>
 <tr>
-<td class="number">2</td>
-<td class="move"><img src="turnW.png"><img id="dial2" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(2);"></td>
-<td class="move"><img src="bankG.png"><img id="dial3" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(3);"></td>
-<td class="move"><img src="straightG.png"><img id="dial4" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(4);"></td>
-<td class="move"><img src="bankG.png" class="mirror"><img id="dial5" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(5);"></td>
-<td class="move"><img src="turnW.png" class="mirror"><img id="dial6" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(6);"></td>
+<td class="button move">3</td>
+<td class="button move" id="mTurn3l"><img id="aTurn3l" src="turnW.png"><img id="bTurn3l" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank3l"><img id="aBank3l" src="bankW.png"><img id="bBank3l" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mStraight3"><img id="aStraight3" src="straightG.png"><img id="bStraight3" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank3r"><img id="aBank3r" src="bankW.png" class="mirror"><img id="bBank3r" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTurn3r"><img id="aTurn3r" src="turnW.png" class="mirror"><img id="bTurn3r" src="blank.png" class="overlay maneuver"></td>
 </tr>
 <tr>
-<td class="number">1</td>
-<td class="move"><img src="turnW.png"><img id="dial0" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(0);"></td>
-<td class="move" colspan=3>ALL<img src="blank.png" id="all" class="overlayM" width=55 height=20 onClick="setDial('all');"></td>
-<td class="move"><img src="turnW.png" class="mirror"><img id="dial1" src="blank.png" class="overlayM" width=17 height=20 onClick="setDial(1);"></td>
+<td class="button move">2</td>
+<td class="button move" id="mTurn2l"><img id="aTurn2l" src="turnW.png"><img id="bTurn2l" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank2l"><img id="aBank2l" src="bankG.png"><img id="bBank2l" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mStraight2"><img id="aStraight2" src="straightG.png"><img id="bStraight2" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank2r"><img id="aBank2r" src="bankG.png" class="mirror"><img id="bBank2r" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTurn2r"><img id="aTurn2r" src="turnW.png" class="mirror"><img id="bTurn2r" src="blank.png" class="overlay maneuver"></td>
+</tr>
+<tr>
+<td class="button move">1</td>
+<td class="button move" id="mTurn1l"><img id="aTurn1l" src="turnW.png"><img id="bTurn1l" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank1l"><img id="aBank1l" src="bankG.png"><img id="bBank1l" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mStraight1"><img id="aStraight1" src="straightG.png"><img id="bStraight1" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank1r"><img id="aBank1r" src="bankG.png" class="mirror"><img id="bBank1r" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTurn1r"><img id="aTurn1r" src="turnW.png" class="mirror"><img id="bTurn1r" src="blank.png" class="overlay maneuver"></td>
+</tr>
+<tr>
+<td class="button move" colspan=2></td>
+<td class="button" colspan=3>ALL<img src="blank.png" id="all" class="overlay maneuver" style="width: 68px;" onClick="setDial('all');"></td>
 </tr>
 </table>
 </td>
@@ -1033,44 +1252,44 @@ function decloakGrid (version) {
 <td>
 <table cellpadding=0>
 <tr>
-<td class="options">
+<td class="button actions">
 <img src="rollG.png">
 <a id="lock_roll" class="lock"></a>
 <img id="button_barrel" src="blank.png" class="overlay" width=38 height=30 onClick="barrel_roll();" onMouseOver="switchFilter('roll');" style="opacity: 0.5">
 </td>
 </td>
-<td class="options">
+<td class="button actions">
 <img src="bbPTL.png">
 <a id="lock_bbPTL" class="lock"></a>
 <img id="button_bbPTL" src="blank.png" class="overlay" width=38 height=30 onClick="bbPTL();" style="opacity: 1">
 </td>
-<td class="options">
+<td class="button actions">
 <img src="boostG.png">
 <a id="lock_boost" class="lock"></a>
 <img id="button_boost" src="blank.png" class="overlay" width=38 height=30 onClick="boost();" onMouseOver="switchFilter('boost');" style="opacity: 0.5">
 <tr id="filterGrid" hidden>
-<td class="options" colspan=3 style="height: 48px;">
+<td class="button" colspan=3 style="height: 48px;">
 <table cellpadding=0 align=center>
 <tr id="boostFilters" hidden>
-<td class="filter"><img src="bankW.png"><img id="button_boostFilter0" src="blank.png" class="overlay" width=17 height=19 onClick="setFilter('boost', 0);" style="opacity: 0"></td>
-<td class="filter"><img src="straightW.png"><img id="button_boostFilter1" src="blank.png" class="overlay" width=17 height=19 onClick="setFilter('boost', 1);" style="opacity: 0"></td>
-<td class="filter"><img src="bankW.png" class="mirror"><img id="button_boostFilter2" src="blank.png" class="overlay" width=17 height=19 onClick="setFilter('boost', 2);" style="opacity: 0"></td>
+<td><img src="bankW.png"><img id="button_boostFilter0" src="blank.png" class="overlay" width=17 height=19 onClick="setFilter('boost', 0);" style="opacity: 0"></td>
+<td><img src="straightW.png"><img id="button_boostFilter1" src="blank.png" class="overlay" width=17 height=19 onClick="setFilter('boost', 1);" style="opacity: 0"></td>
+<td><img src="bankW.png" class="mirror"><img id="button_boostFilter2" src="blank.png" class="overlay" width=17 height=19 onClick="setFilter('boost', 2);" style="opacity: 0"></td>
 </tr>
 <tr id="rollFiltersA" hidden>
-<td class="filter"><img src="straightW.png" style="transform: rotate(-90deg); -webkit-transform: rotate(-90deg);"><img id="button_rollFilter0" src="blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 0);" style="opacity: 0"></td>
+<td><img src="straightW.png" style="transform: rotate(-90deg); -webkit-transform: rotate(-90deg);"><img id="button_rollFilter0" src="blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 0);" style="opacity: 0"></td>
 <td rowspan=2 width=17></td>
-<td class="filter"><img src="straightW.png" style="transform: rotate(90deg); -webkit-transform: rotate(90deg);"><img id="button_rollFilter1" src="blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 1);" style="opacity: 0"></td>
+<td><img src="straightW.png" style="transform: rotate(90deg); -webkit-transform: rotate(90deg);"><img id="button_rollFilter1" src="blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 1);" style="opacity: 0"></td>
 </tr>
 <tr id="rollFiltersB" hidden>
-<td class="filter"><img src="straightW.png" style="transform: rotate(-90deg); -webkit-transform: rotate(-90deg);"><img id="button_rollFilter2" src="blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 2);" style="opacity: 0"></td>
-<td class="filter"><img src="straightW.png" style="transform: rotate(90deg); -webkit-transform: rotate(90deg);"><img id="button_rollFilter3" src="blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 3);" style="opacity: 0"></td>
+<td><img src="straightW.png" style="transform: rotate(-90deg); -webkit-transform: rotate(-90deg);"><img id="button_rollFilter2" src="blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 2);" style="opacity: 0"></td>
+<td><img src="straightW.png" style="transform: rotate(90deg); -webkit-transform: rotate(90deg);"><img id="button_rollFilter3" src="blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 3);" style="opacity: 0"></td>
 </tr>
 </table>
 </td>
 </tr>
 </tr>
 <tr hidden>
-<td class="options">
+<td class="button actions">
 <img src="systemW.png">
 <a id="lock_sensors" class="lock"></a>
 <img id="button_sensors" src="blank.png" class="overlay" width=38 height=30 onClick="" style="opacity: 0.5">
@@ -1084,15 +1303,30 @@ function decloakGrid (version) {
 </tr>
 <tr>
 <td>
-<table>
+<table id="selectShip" cellpadding=0>
 <tr>
-<td style="position: relative;">
-<a id="select_empire" class="select">Galactic Empire</a>
-<a id="select_phantom" class="select" style="position: absolute; top: 20; left: 15" onClick="select(phantom);">TIE Phantom</a>
-<a id="select_echo" class="select" style="position: absolute; top: 40; left: 30" onClick="select(phantom, echo);">"Echo"</a>
-</td>
+<td><a id="select_empire" class="select faction" onClick="select(interceptor);">Galactic Empire</a></td>
+</tr>
+<tr>
+<td><a id="select_interceptor" class="select empire model" onClick="select(interceptor);">TIE Interceptor</a></td>
+</tr>
+<tr>
+<td><a id="select_phantom" class="select empire model" onClick="select(phantom);">TIE Phantom</a></td>
+</tr>
+<tr>
+<td><a id="select_echo" class="select empire phantom pilot" onClick="select(phantom, echo);">"Echo"</a></td>
+</tr>
+<tr>
+<td><a id="select_rebel" class="select faction" onClick="select(bwing);">Rebel Alliance</a></td>
+</tr>
+<tr>
+<td><a id="select_bwing" class="select rebel model" onClick="select(bwing);">B-Wing</a></td>
+</tr>
+<tr>
+<td><a id="select_xwing" class="select rebel model" onClick="select(xwing);">X-Wing</a></td>
 </tr>
 </table>
+<a id="readout"></a>
 </td>
 </tr>
 </table>
