@@ -61,10 +61,10 @@ var phantom = new Object();
 phantom.faction = "empire";
 phantom.id = "phantom";
 phantom.img = echo.img;
-phantom.width = smallbase;
+phantom.base = smallbase;
 phantom.protrusions = 17;
-phantom.nubs = 1;
-phantom.height = phantom.width + phantom.protrusions + phantom.nubs;
+phantom.width = 40;
+phantom.height = 58;
 phantom.pilots = [echo];
 phantom.actions = ["roll"];
 phantom.slots = ["crew", "system"];
@@ -96,8 +96,9 @@ interceptor.faction = "empire";
 interceptor.id = "interceptor";
 interceptor.img = new Image();
 interceptor.img.src = "images/interceptor.png";
-interceptor.width = smallbase;
+interceptor.base = smallbase;
 interceptor.protrusions = 13;
+interceptor.width = 40;
 interceptor.height = 54;
 interceptor.pilots = [];
 interceptor.actions = ["roll", "boost"];
@@ -120,13 +121,73 @@ interceptor.dial = [
 ["straight", "white", 5]
 ];
 
+var fighter = new Object();
+fighter.faction = "empire";
+fighter.id = "fighter";
+fighter.img = new Image();
+fighter.img.src = "images/fighter.png";
+fighter.base = smallbase;
+fighter.offset = 3;
+fighter.width = 46;
+fighter.height = 41;
+fighter.pilots = [];
+fighter.actions = ["roll"];
+fighter.slots = [];
+fighter.decloak = [];
+fighter.dial = [
+["turn", "white", 1, -1],
+["turn", "white", 1, 1],
+["turn", "white", 2, -1],
+["bank", "green", 2, -1],
+["straight", "green", 2],
+["bank", "green", 2, 1],
+["turn", "white", 2, 1],
+["turn", "white", 3, -1],
+["bank", "white", 3, -1],
+["straight", "green", 3],
+["bank", "white", 3, 1],
+["turn", "white", 3, 1],
+["straight", "white", 4],
+["straight", "white", 5]
+];
+
+var bwing = new Object();
+bwing.faction = "rebel";
+bwing.id = "bwing";
+bwing.img = new Image();
+bwing.img.src = "images/bwing.png";
+bwing.base = smallbase;
+bwing.width = 40;
+bwing.height = 41;
+bwing.pilots = [];
+bwing.actions = ["roll"];
+bwing.slots = ["system"];
+bwing.decloak = [];
+bwing.dial = [
+["turn", "red", 1, -1],
+["bank", "green", 1, -1],
+["straight", "green", 1],
+["bank", "green", 1, 1],
+["turn", "red", 1, 1],
+["turn", "white", 2, -1],
+["bank", "white", 2, -1],
+["straight", "green", 2],
+["bank", "white", 2, 1],
+["turn", "white", 2, 1],
+["bank", "red", 3, -1],
+["straight", "white", 3],
+["bank", "red", 3, 1],
+["straight", "red", 4]
+];
+
 var xwing = new Object();
 xwing.faction = "rebel";
 xwing.id = "xwing";
 xwing.img = new Image();
 xwing.img.src = "images/xwing.png";
-xwing.width = smallbase;
+xwing.base = smallbase;
 xwing.protrusions = 11;
+xwing.width = 40;
 xwing.height = 52;
 xwing.pilots = [];
 xwing.actions = [];
@@ -149,33 +210,36 @@ xwing.dial = [
 ["straight", "white", 4]
 ];
 
-var bwing = new Object();
-bwing.faction = "rebel";
-bwing.id = "bwing";
-bwing.img = new Image();
-bwing.img.src = "images/bwing.png";
-bwing.width = smallbase;
-bwing.protrusions = 0;
-bwing.height = 41;
-bwing.pilots = [];
-bwing.actions = ["roll"];
-bwing.slots = ["system"];
-bwing.decloak = [];
-bwing.dial = [
-["turn", "red", 1, -1],
+var yt1300 = new Object();
+yt1300.faction = "rebel";
+yt1300.id = "yt1300";
+yt1300.img = new Image();
+yt1300.img.src = "images/yt1300.png";
+yt1300.base = largebase;
+yt1300.protrusions = 32;
+yt1300.offset = 4;
+yt1300.width = 90;
+yt1300.height = 119;
+yt1300.pilots = [];
+yt1300.actions = [];
+yt1300.slots = ["crew"];
+yt1300.turret = true;
+yt1300.decloak = [];
+yt1300.dial = [
+["turn", "white", 1, -1],
 ["bank", "green", 1, -1],
 ["straight", "green", 1],
 ["bank", "green", 1, 1],
-["turn", "red", 1, 1],
+["turn", "white", 1, 1],
 ["turn", "white", 2, -1],
 ["bank", "white", 2, -1],
 ["straight", "green", 2],
 ["bank", "white", 2, 1],
 ["turn", "white", 2, 1],
-["bank", "red", 3, -1],
+["bank", "white", 3, -1],
 ["straight", "white", 3],
-["bank", "red", 3, 1],
-["straight", "red", 4]
+["bank", "white", 3, 1],
+["straight", "white", 4]
 ];
 
 var ship = new Object();
@@ -249,8 +313,11 @@ function select (model, pilot) {
 	decloakTable(ship.decloak.length);
 	maneuverTable(ship.dial);
 	ship.img = model.img;
+	ship.base = model.base;
+	ship.turret = model.turret;
+	ship.protrusions = (isFinite(model.protrusions)) ? model.protrusions : 0;;
+	ship.offset = (isFinite(model.offset)) ? model.offset : 0;
 	ship.width = model.width;
-	ship.protrusions = model.protrusions;
 	ship.height = model.height;
 	document.getElementById("lock_roll").innerHTML = (model.actions.indexOf("roll") == -1 && !elite) ? "E" : "";
 	document.getElementById("lock_boost").innerHTML = (model.actions.indexOf("boost") == -1) ? "M" : "";
@@ -594,18 +661,32 @@ function drawFiringArcs (x, y) {
 		arcrange = 0;
 	};
 	var color = (ship.faction == "empire") ? "#70C045" : "#EC2424";
+	var offset = (ship.base == smallbase) ? 16 : 35;
 	ctx[2].globalAlpha = 0.1;
 	ctx[2].fillStyle = color;
 	ctx[2].strokeStyle = color;
 	ctx[2].beginPath();
-	ctx[2].moveTo(x - 16, y);
-	ctx[2].arc(x - 16, y, 100 * arcrange, (1.5 - 2/9) * pi, 1.5 * pi, false);
-	ctx[2].lineTo(x + 16, y - 100 * arcrange);
-	ctx[2].arc(x + 16, y, 100 * arcrange, 1.5 * pi, (1.5 + 2/9) * pi, false);
-	ctx[2].lineTo(x + 16, y);
-	ctx[2].fill();
-	ctx[2].globalAlpha = 0.9;
-	ctx[2].stroke();
+	if (ship.turret) {
+		ctx[2].moveTo(x - ship.base / 2, y - 100 * arcrange);
+		ctx[2].lineTo(x + ship.base / 2, y - 100 * arcrange);
+		ctx[2].arc(x + ship.base / 2, y, 100 * arcrange, 1.5 * pi, 0, false);
+		ctx[2].lineTo(x + ship.base / 2 + 100 * arcrange, y + ship.base);
+		ctx[2].arc(x + ship.base / 2, y + ship.base, 100 * arcrange, 0, 0.5 * pi, false);
+		ctx[2].lineTo(x - ship.base / 2, y + ship.base + 100 * arcrange);
+		ctx[2].arc(x - ship.base / 2, y + ship.base, 100 * arcrange, 0.5 * pi, pi, false);
+		ctx[2].lineTo(x - ship.base / 2 - 100 * arcrange, y);
+		ctx[2].arc(x - ship.base / 2, y, 100 * arcrange, pi, 1.5 * pi, false);
+
+	} else {
+		ctx[2].moveTo(x - offset, y);
+		ctx[2].arc(x - offset, y, 100 * arcrange, (1.5 - 2/9) * pi, 1.5 * pi, false);
+		ctx[2].lineTo(x + offset, y - 100 * arcrange);
+		ctx[2].arc(x + offset, y, 100 * arcrange, 1.5 * pi, (1.5 + 2/9) * pi, false);
+		ctx[2].lineTo(x + offset, y);
+	};
+		ctx[2].fill();
+		ctx[2].globalAlpha = 0.9;
+		ctx[2].stroke();
 };
 
 function step () {
@@ -702,7 +783,7 @@ function timer_reset (override) {
 function drawShip (z, x, y, alpha) {
 	var arcrange = document.getElementById("fire_range").innerHTML;
 	ctx[z].globalAlpha = alpha;
-	ctx[z].drawImage(ship.img, x - ship.width / 2, y - ship.protrusions, ship.width, ship.height);
+	ctx[z].drawImage(ship.img, x - ship.base / 2 - ship.offset, y - ship.protrusions, ship.width, ship.height);
 	if (arcrange != "" && timer[3] == 100 && alpha == 1) {
 		drawFiringArcs(x, y);
 	};
@@ -712,35 +793,35 @@ function oBank (z, distance, direction) {
 	var radius = rBank[distance];
 	ctx[z].translate(direction * radius, 0);
 	ctx[z].rotate(direction * 0.25 * pi);
-	ctx[z].translate(direction * -radius, -ship.width);
+	ctx[z].translate(direction * -radius, -ship.base);
 };
 
 function oBankroll (z, distance, direction, start, end, bank) {
 	var radius = rBank[distance];
-	ctx[z].translate(direction * ship.width / 2, ship.width / 2 - start * ship.width / 4);
+	ctx[z].translate(direction * ship.base / 2, ship.base / 2 - start * ship.base / 4);
 	ctx[z].rotate(direction * 0.5 * pi);
 	ctx[z].translate(bank * radius, 0);
 	ctx[z].rotate(bank * 0.25 * pi);
 	ctx[z].translate(bank * -radius, 0);
 	ctx[z].rotate(direction * -0.5 * pi);
-	ctx[z].translate(direction * ship.width / 2, -ship.width / 2 + end * -ship.width / 4);
+	ctx[z].translate(direction * ship.base / 2, -ship.base / 2 + end * -ship.base / 4);
 };
 
 function oRoll (z, distance, direction, start) {
-	ctx[z].translate(direction * ship.width / 2, ship.width / 2 - start * ship.width / 4);
-	ctx[z].translate(direction * distance * ship.width, 0);
-	ctx[z].translate(direction * ship.width / 2, -ship.width / 2 + start * -ship.width / 4);
+	ctx[z].translate(direction * ship.base / 2, ship.base / 2 - start * (10 + (ship.base - 40) / 2));
+	ctx[z].translate(direction * distance * smallbase, 0);
+	ctx[z].translate(direction * ship.base / 2, -ship.base / 2 + start * -(10 + (ship.base - 40) / 2));
 };
 
 function oStraight (z, distance) {
-	ctx[z].translate(0, (distance + 1) * -ship.width);
+	ctx[z].translate(0, distance * -smallbase - ship.base);
 };
 
 function oTurn (z, distance, direction) {
 	var radius = rTurn[distance];
 	ctx[z].translate(direction * radius, 0);
 	ctx[z].rotate(direction * 0.5 * pi);
-	ctx[z].translate(direction * -radius, -ship.width);
+	ctx[z].translate(direction * -radius, -ship.base);
 };
 
 function animate (flightplan, phase) {
@@ -819,7 +900,7 @@ function animateBank (flightplan, phase) {
 			var phasemod = 0;
 			break;
 	};
-	drawShip(3, direction * -radius, timer[phase] / 100 * -ship.width, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
+	drawShip(3, direction * -radius, timer[phase] / 100 * -ship.base, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
@@ -878,7 +959,7 @@ function animateBankroll (flightplan, phase) {
 	var radius = rBank[distance];
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].save();
-		ctx[j].translate(direction * ship.width / 2, ship.width / 2 - start * ship.width / 4);
+		ctx[j].translate(direction * ship.base / 2, ship.base / 2 - start * ship.base / 4);
 		ctx[j].rotate(direction * 0.5 * pi);
 		ctx[j].translate(bank * radius, 0);
 		ctx[j].rotate(timer[phase + 1] * bank * 0.0025 * pi);
@@ -905,10 +986,10 @@ function animateBankroll (flightplan, phase) {
 	};
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].rotate(direction * -0.5 * pi);
-		ctx[j].translate(direction * ship.width / 2, -ship.width * 3 / 4);
+		ctx[j].translate(direction * ship.base / 2, -ship.base * 3 / 4);
 	};
-	drawShip(3, (1 - timer[phase] / 100) * direction * -ship.width, (1 - timer[phase] / 100 * (0.5 + 0.5 * start)) * ship.width / 2 + (-0.5 + 0.5 * start) * ship.width / 2 - direction * bank * radius, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
-	drawShip(3, (1 - timer[phase] / 100) * direction * -ship.width, (1 + timer[phase] / 100 * (0.5 - 0.5 * start)) * ship.width / 2 + (-0.5 + 0.5 * start) * ship.width / 2 - direction * bank * radius, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
+	drawShip(3, (1 - timer[phase] / 100) * direction * -ship.base, (1 - timer[phase] / 100 * (0.5 + 0.5 * start)) * ship.base / 2 + (-0.5 + 0.5 * start) * ship.base / 2 - direction * bank * radius, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
+	drawShip(3, (1 - timer[phase] / 100) * direction * -ship.base, (1 + timer[phase] / 100 * (0.5 - 0.5 * start)) * ship.base / 2 + (-0.5 + 0.5 * start) * ship.base / 2 - direction * bank * radius, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
@@ -940,13 +1021,13 @@ function animateRoll (flightplan, phase) {
 	var start = flightplan[4];
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].save();
-		ctx[j].translate(direction * ship.width / 2, ship.width / 2 - start * ship.width / 4);
+		ctx[j].translate(direction * ship.base / 2, ship.base / 2 - start * (10 + (ship.base - 40) / 2));
 		ctx[j].rotate(direction * 0.5 * pi);
 	};
 	ctx[1].globalAlpha = (1 - 0.5 * ((phase == 0) ? (timer[3] / 100) : 0)) * 0.5 * timer[phase + 1] / 100;
 	ctx[1].beginPath();
 	ctx[1].moveTo(0, 0);
-	ctx[1].lineTo(0, timer[phase + 1] / 100 * distance * -(ship.width + 1));
+	ctx[1].lineTo(0, timer[phase + 1] / 100 * distance * -smallbase);
 	ctx[1].strokeStyle = flightplan[1];
 	ctx[1].lineWidth = smallbase / 2;
 	ctx[1].stroke();
@@ -966,9 +1047,9 @@ function animateRoll (flightplan, phase) {
 	};
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].rotate(direction * -0.5 * pi);
-		ctx[j].translate(direction * ship.width / 2, -ship.width * 3 / 4);
+		ctx[j].translate(direction * ship.base / 2, -ship.base * 3 / 4);
 	};
-	drawShip(3, (1 - timer[phase] / 100) * distance * direction * -ship.width + timer[phase + 1] / 100 * distance * direction * ship.width, (1 - timer[phase] / 100) * start * ship.width / 2 + (1 - start) * ship.width / 4, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
+	drawShip(3, (1 - timer[phase] / 100) * distance * direction * -ship.base + timer[phase + 1] / 100 * distance * direction * smallbase, (1 - timer[phase] / 100) * start * ship.base / 2 + (1 - start) * (10 + (ship.base - 40) / 4) - start * ((ship.base == smallbase) ? 0 : 10), (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
@@ -1006,7 +1087,7 @@ function animateStraight (flightplan, phase) {
 	ctx[1].globalAlpha = (1 - 0.5 * ((phase == 0) ? (timer[3] / 100) : 0)) * 0.5 * timer[phase + 1] / 100;
 	ctx[1].beginPath();
 	ctx[1].moveTo(0, 0);
-	ctx[1].lineTo(0, timer[phase + 1] / 100 * distance * -ship.width);
+	ctx[1].lineTo(0, timer[phase + 1] / 100 * distance * -smallbase);
 	ctx[1].strokeStyle = flightplan[1];
 	ctx[1].lineWidth = smallbase / 2;
 	ctx[1].stroke();
@@ -1024,7 +1105,7 @@ function animateStraight (flightplan, phase) {
 			var phasemod = 0;
 			break;
 	};
-	drawShip(3, 0, timer[phase] / 100 * -ship.width + timer[phase + 1] / 100 * distance * -ship.width, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
+	drawShip(3, 0, timer[phase] / 100 * -ship.base + timer[phase + 1] / 100 * distance * -smallbase, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
@@ -1104,7 +1185,7 @@ function animateTurn (flightplan, phase) {
 			var phasemod = 0;
 			break;
 	};
-	drawShip(3, direction * -radius, timer[phase] / 100 * -ship.width, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
+	drawShip(3, direction * -radius, timer[phase] / 100 * -ship.base, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
@@ -1305,7 +1386,10 @@ function animateTurn (flightplan, phase) {
 <td>
 <table id="selectShip" cellpadding=0>
 <tr>
-<td><a id="select_empire" class="select faction" onClick="select(interceptor);">Galactic Empire</a></td>
+<td><a id="select_empire" class="select faction" onClick="select(fighter);">Galactic Empire</a></td>
+</tr>
+<tr>
+<td><a id="select_fighter" class="select empire model" onClick="select(fighter);">TIE Fighter</a></td>
 </tr>
 <tr>
 <td><a id="select_interceptor" class="select empire model" onClick="select(interceptor);">TIE Interceptor</a></td>
@@ -1317,7 +1401,7 @@ function animateTurn (flightplan, phase) {
 <td><a id="select_echo" class="select empire phantom pilot" onClick="select(phantom, echo);">"Echo"</a></td>
 </tr>
 <tr>
-<td><a id="select_rebel" class="select faction" onClick="select(bwing);">Rebel Alliance</a></td>
+<td><a id="select_rebel" class="select faction" onClick="select(xwing);">Rebel Alliance</a></td>
 </tr>
 <tr>
 <td><a id="select_bwing" class="select rebel model" onClick="select(bwing);">B-Wing</a></td>
@@ -1325,8 +1409,10 @@ function animateTurn (flightplan, phase) {
 <tr>
 <td><a id="select_xwing" class="select rebel model" onClick="select(xwing);">X-Wing</a></td>
 </tr>
+<tr>
+<td><a id="select_yt1300" class="select rebel model" onClick="select(yt1300);">YT-1300</a></td>
+</tr>
 </table>
-<a id="readout"></a>
 </td>
 </tr>
 </table>
