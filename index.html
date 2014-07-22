@@ -2,7 +2,7 @@
 <head>
 <title>echolocation</title>
 <style type="text/css">
-@font-face {font-family: Aurebesh; src: url(aurebesh.ttf);}
+@font-face {font-family: Aurebesh; src: url(fonts/aurebesh.ttf);}
 body {font-family: Arial; font-size: small; color: white;}
 table {position: relative; z-index: 100;}
 canvas {position: absolute; top: 10px; left: 10px; border: 1px solid #424242;}
@@ -41,7 +41,7 @@ var largebase = 80;
 var echo = new Object();
 echo.id = "echo";
 echo.img = new Image();
-echo.img.src = "echo.png";
+echo.img.src = "images/echo.png";
 echo.img.onload = function() {initialize();};
 echo.slots = ["elite", "crew", "system"];
 echo.decloak = [
@@ -95,7 +95,7 @@ var interceptor = new Object();
 interceptor.faction = "empire";
 interceptor.id = "interceptor";
 interceptor.img = new Image();
-interceptor.img.src = "interceptor.png";
+interceptor.img.src = "images/interceptor.png";
 interceptor.width = smallbase;
 interceptor.protrusions = 13;
 interceptor.height = 54;
@@ -124,7 +124,7 @@ var xwing = new Object();
 xwing.faction = "rebel";
 xwing.id = "xwing";
 xwing.img = new Image();
-xwing.img.src = "xwing.png";
+xwing.img.src = "images/xwing.png";
 xwing.width = smallbase;
 xwing.protrusions = 11;
 xwing.height = 52;
@@ -153,7 +153,7 @@ var bwing = new Object();
 bwing.faction = "rebel";
 bwing.id = "bwing";
 bwing.img = new Image();
-bwing.img.src = "bwing.png";
+bwing.img.src = "images/bwing.png";
 bwing.width = smallbase;
 bwing.protrusions = 0;
 bwing.height = 41;
@@ -217,9 +217,10 @@ function select (model, pilot) {
 	for (var i = 0; i < selections.length; i++) {
 		document.getElementsByClassName("select")[i].style.color = "gray";
 	};
-	document.getElementById("select_" + model.faction).style.color = "white";
-	var faction = document.getElementsByClassName(model.faction);
-	var enemy = document.getElementsByClassName((model.faction == "empire") ? "rebel" : "empire");
+	ship.faction = model.faction;
+	document.getElementById("select_" + ship.faction).style.color = "white";
+	var faction = document.getElementsByClassName(ship.faction);
+	var enemy = document.getElementsByClassName((ship.faction == "empire") ? "rebel" : "empire");
 	for (var i = 0; i < enemy.length; i++) {
 		enemy[i].hidden = true;
 	};
@@ -237,13 +238,13 @@ function select (model, pilot) {
 		ship.decloak = pilot.decloak;
 		document.getElementById("lock_sensors").innerHTML = (pilot.slots.indexOf("system") == -1) ? "&#x1F512;" : "";
 		elite = (pilot.slots.indexOf("elite") == -1) ? false : true;
-		document.getElementById("lock_bbPTL").innerHTML = (elite) ? "" : "&#x1F512;";
+		document.getElementById("lock_bbPTL").innerHTML = (elite) ? "" : "E";
 	} else {
 		document.getElementById("select_" + model.id).style.color = "white";
 		ship.decloak = model.decloak;
-		document.getElementById("lock_sensors").innerHTML = (model.slots.indexOf("system") == -1) ? "&#x1F512;" : "";
+		document.getElementById("lock_sensors").innerHTML = (model.slots.indexOf("system") == -1) ? "S" : "";
 		elite = (model.slots.indexOf("elite") == -1) ? false : true;
-		document.getElementById("lock_bbPTL").innerHTML = (elite) ?  "" : "&#x1F512;";
+		document.getElementById("lock_bbPTL").innerHTML = (elite) ?  "" : "E";
 	};
 	decloakTable(ship.decloak.length);
 	maneuverTable(ship.dial);
@@ -251,7 +252,7 @@ function select (model, pilot) {
 	ship.width = model.width;
 	ship.protrusions = model.protrusions;
 	ship.height = model.height;
-	document.getElementById("lock_roll").innerHTML = (model.actions.indexOf("roll") == -1 && !elite) ? "&#x1F512;" : "";
+	document.getElementById("lock_roll").innerHTML = (model.actions.indexOf("roll") == -1 && !elite) ? "E" : "";
 	document.getElementById("lock_boost").innerHTML = (model.actions.indexOf("boost") == -1) ? "M" : "";
 	decloak = undefined;
 	dial = undefined;
@@ -298,22 +299,22 @@ function maneuverTable (dial) {
 		document.getElementById("mTurn" + i + "l").style.opacity = (range[i][0] == 0) ? 0 : 1;
 		document.getElementById("mTurn" + i + "r").style.opacity = (range[i][0] == 0) ? 0 : 1;
 		if (range[i][0] != 0) {
-			document.getElementById("aTurn" + i + "l").src = "turn" + range[i][0].substr(0, 1).toUpperCase() + ".png";
-			document.getElementById("aTurn" + i + "r").src = "turn" + range[i][0].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("aTurn" + i + "l").src = "images/turn" + range[i][0].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("aTurn" + i + "r").src = "images/turn" + range[i][0].substr(0, 1).toUpperCase() + ".png";
 			document.getElementById("bTurn" + i + "l").onclick = function(){setDial(this.id)};
 			document.getElementById("bTurn" + i + "r").onclick = function(){setDial(this.id)};
 		};
 		document.getElementById("mBank" + i + "l").style.opacity = (range[i][1] == 0) ? 0 : 1;
 		document.getElementById("mBank" + i + "r").style.opacity = (range[i][1] == 0) ? 0 : 1;
 		if (range[i][1] != 0) {
-			document.getElementById("aBank" + i + "l").src = "bank" + range[i][1].substr(0, 1).toUpperCase() + ".png";
-			document.getElementById("aBank" + i + "r").src = "bank" + range[i][1].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("aBank" + i + "l").src = "images/bank" + range[i][1].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("aBank" + i + "r").src = "images/bank" + range[i][1].substr(0, 1).toUpperCase() + ".png";
 			document.getElementById("bBank" + i + "l").onclick = function(){setDial(this.id)};
 			document.getElementById("bBank" + i + "r").onclick = function(){setDial(this.id)};
 		};
 		document.getElementById("mStraight" + i).style.opacity = (range[i][2] == 0) ? 0 : 1;
 		if (range[i][2] != 0) {
-			document.getElementById("aStraight" + i).src = "straight" + range[i][2].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("aStraight" + i).src = "images/straight" + range[i][2].substr(0, 1).toUpperCase() + ".png";
 			document.getElementById("bStraight" + i).onclick = function(){setDial(this.id)};
 		};
 	};
@@ -592,21 +593,19 @@ function drawFiringArcs (x, y) {
 	if (arcrange == "") {
 		arcrange = 0;
 	};
-	ctx[2].globalAlpha = 1;
-	ctx[2].fillStyle = "orange";
-	ctx[2].beginPath();
-	ctx[2].rect(x - 17, y - 100 * arcrange, 34, 100 * arcrange);
-	ctx[2].fill();
+	var color = (ship.faction == "empire") ? "#70C045" : "#EC2424";
+	ctx[2].globalAlpha = 0.1;
+	ctx[2].fillStyle = color;
+	ctx[2].strokeStyle = color;
 	ctx[2].beginPath();
 	ctx[2].moveTo(x - 16, y);
-	ctx[2].arc (x - 16, y, 100 * arcrange, 1.5 * pi, 23/18 * pi, true);
-	ctx[2].closePath();
+	ctx[2].arc(x - 16, y, 100 * arcrange, (1.5 - 2/9) * pi, 1.5 * pi, false);
+	ctx[2].lineTo(x + 16, y - 100 * arcrange);
+	ctx[2].arc(x + 16, y, 100 * arcrange, 1.5 * pi, (1.5 + 2/9) * pi, false);
+	ctx[2].lineTo(x + 16, y);
 	ctx[2].fill();
-	ctx[2].beginPath();
-	ctx[2].moveTo(x + 16, y);
-	ctx[2].arc (x + 16, y, 100 * arcrange, 1.5 * pi, 31/18 * pi, false);
-	ctx[2].closePath();
-	ctx[2].fill();
+	ctx[2].globalAlpha = 0.9;
+	ctx[2].stroke();
 };
 
 function step () {
@@ -1141,18 +1140,18 @@ function animateTurn (flightplan, phase) {
 <td style="vertical-align:top">
 <table cellpadding=0 width=158>
 <tr>
-<td class="option"><img src="grid.png" class="overlay" style="z-index: -1">
+<td class="option"><img src="images/grid.png" class="overlay" style="z-index: -1">
 <a id="grid_level"></a>
-<img id="option_grid" src="blank.png" class="overlay option" style="opacity: 0.5;" onClick="gridfield();"></td>
-<td class="option"><img src="stars.png" class="overlay">
-<img id="option_starfield" src="blank.png" class="overlay option" style="opacity: 0.5;" onClick="starfield();"></td>
-<td class="option"><img src="loop.png" class="overlay">
-<img id="option_loop" src="blank.png" class="overlay option" style="opacity: 0.5;" onClick="loop();"></td>
+<img id="option_grid" src="images/blank.png" class="overlay option" style="opacity: 0.5;" onClick="gridfield();"></td>
+<td class="option"><img src="images/stars.png" class="overlay">
+<img id="option_starfield" src="images/blank.png" class="overlay option" style="opacity: 0.5;" onClick="starfield();"></td>
+<td class="option"><img src="images/loop.png" class="overlay">
+<img id="option_loop" src="images/blank.png" class="overlay option" style="opacity: 0.5;" onClick="loop();"></td>
 </tr>
 <tr>
-<td class="option"><img src="attackR.png" class="overlay" style="z-index: -1">
+<td class="option"><img src="images/attackR.png" class="overlay" style="z-index: -1">
 <a id="fire_range"></a>
-<img id="option_fire" src="blank.png" class="overlay option" onClick="fire();" style="opacity: 0.5">
+<img id="option_fire" src="images/blank.png" class="overlay option" onClick="fire();" style="opacity: 0.5">
 </td>
 </tr>
 </table>
@@ -1167,28 +1166,28 @@ function animateTurn (flightplan, phase) {
 <tr class="decloakE">
 <td width=22></td>
 <td></td>
-<td class="button move"><img src="bankC.png"><img id="decloak0e" src="blank.png" class="overlay decloak" onClick="setDecloak('e', 0);"></td>
-<td class="button move"><img src="bankC.png" class="mirror"><img id="decloak1e" src="blank.png" class="overlay decloak" onClick="setDecloak('e', 1);"></td>
+<td class="button move"><img src="images/bankC.png"><img id="decloak0e" src="images/blank.png" class="overlay decloak" onClick="setDecloak('e', 0);"></td>
+<td class="button move"><img src="images/bankC.png" class="mirror"><img id="decloak1e" src="images/blank.png" class="overlay decloak" onClick="setDecloak('e', 1);"></td>
 </tr>
 <tr class="decloakP" hidden>
 <td width=22></td>
 <td></td>
-<td class="button move" colspan=2><img src="straightC.png"><img id="decloak0p" src="blank.png" class="overlay decloak" style="width: 44px;" onClick="setDecloak('p', 0);"></td>
+<td class="button move" colspan=2><img src="images/straightC.png"><img id="decloak0p" src="images/blank.png" class="overlay decloak" style="width: 44px;" onClick="setDecloak('p', 0);"></td>
 </tr>
 <tr>
 <td></td>
-<td class="button move decloakE"><img src="bankC.png" class="mirrorL"><img id="decloak2e" src="blank.png" class="overlay decloak" onClick="setDecloak('e', 2, 3);"></td>
-<td class="button move decloakP"><img src="straightC.png" class="rotateL"><img id="decloak1p" src="blank.png" class="overlay decloak" onClick="setDecloak('p', 1);"></td>
-<td class="button move" colspan=2 rowspan=2><img src="cloak.png"><img id="decloakA" src="blank.png" class="overlay decloak" style="width: 44px; height: 44px;" onClick="setDecloak('all');"></td>
-<td class="button move decloakE"><img src="bankC.png" class="rotateR"><img id="decloak4e" src="blank.png" class="overlay decloak" onClick="setDecloak('e', 4, 5);"></td>
-<td class="button move decloakP"><img src="straightC.png" class="rotateR"><img id="decloak2p" src="blank.png" class="overlay decloak" onClick="setDecloak('p', 2);"></td>
+<td class="button move decloakE"><img src="images/bankC.png" class="mirrorL"><img id="decloak2e" src="images/blank.png" class="overlay decloak" onClick="setDecloak('e', 2, 3);"></td>
+<td class="button move decloakP"><img src="images/straightC.png" class="rotateL"><img id="decloak1p" src="images/blank.png" class="overlay decloak" onClick="setDecloak('p', 1);"></td>
+<td class="button move" colspan=2 rowspan=2><img src="images/cloak.png"><img id="decloakA" src="images/blank.png" class="overlay decloak" style="width: 44px; height: 44px;" onClick="setDecloak('all');"></td>
+<td class="button move decloakE"><img src="images/bankC.png" class="rotateR"><img id="decloak4e" src="images/blank.png" class="overlay decloak" onClick="setDecloak('e', 4, 5);"></td>
+<td class="button move decloakP"><img src="images/straightC.png" class="rotateR"><img id="decloak2p" src="images/blank.png" class="overlay decloak" onClick="setDecloak('p', 2);"></td>
 </tr>
 <tr>
 <td></td>
-<td class="button move decloakE"><img src="bankC.png" class="rotateL"><img id="decloak6e" src="blank.png" class="overlay decloak" onClick="setDecloak('e', 6, 7);"></td>
-<td class="button move decloakP"><img src="straightC.png" class="rotateL"><img id="decloak3p" src="blank.png" class="overlay decloak" onClick="setDecloak('p', 3);"></td>
-<td class="button move decloakE"><img src="bankC.png" class="mirrorR"><img id="decloak8e" src="blank.png" class="overlay decloak" onClick="setDecloak('e', 8, 9);"></td>
-<td class="button move decloakP"><img src="straightC.png" class="rotateR"><img id="decloak4p" src="blank.png" class="overlay decloak" onClick="setDecloak('p', 4);"></td>
+<td class="button move decloakE"><img src="images/bankC.png" class="rotateL"><img id="decloak6e" src="images/blank.png" class="overlay decloak" onClick="setDecloak('e', 6, 7);"></td>
+<td class="button move decloakP"><img src="images/straightC.png" class="rotateL"><img id="decloak3p" src="images/blank.png" class="overlay decloak" onClick="setDecloak('p', 3);"></td>
+<td class="button move decloakE"><img src="images/bankC.png" class="mirrorR"><img id="decloak8e" src="images/blank.png" class="overlay decloak" onClick="setDecloak('e', 8, 9);"></td>
+<td class="button move decloakP"><img src="images/straightC.png" class="rotateR"><img id="decloak4p" src="images/blank.png" class="overlay decloak" onClick="setDecloak('p', 4);"></td>
 </tr>
 </table>
 </td>
@@ -1201,47 +1200,47 @@ function animateTurn (flightplan, phase) {
 <table cellpadding=0>
 <tr id="mRow5">
 <td class="button move">5</td>
-<td class="button move" id="mTurn5l"><img id="aTurn5l" src="turnW.png"><img id="bTurn5l" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mBank5l"><img id="aBank5l" src="bankW.png"><img id="bBank5l" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mStraight5"><img id="aStraight5" src="straightW.png"><img id="bStraight5" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mBank5r"><img id="aBank5r" src="bankW.png" class="mirror"><img id="bBank5r" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mTurn5r"><img id="aTurn5r" src="turnW.png" class="mirror"><img id="bTurn5r" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTurn5l"><img id="aTurn5l" src="images/turnW.png"><img id="bTurn5l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank5l"><img id="aBank5l" src="images/bankW.png"><img id="bBank5l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mStraight5"><img id="aStraight5" src="images/straightW.png"><img id="bStraight5" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank5r"><img id="aBank5r" src="images/bankW.png" class="mirror"><img id="bBank5r" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTurn5r"><img id="aTurn5r" src="images/turnW.png" class="mirror"><img id="bTurn5r" src="images/blank.png" class="overlay maneuver"></td>
 </tr>
 <tr>
 <td class="button move">4</td>
-<td class="button move" id="mTurn4l"><img id="aTurn4l" src="turnW.png"><img id="bTurn4l" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mBank4l"><img id="aBank4l" src="bankW.png"><img id="bBank4l" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mStraight4"><img id="aStraight4" src="straightW.png"><img id="bStraight4" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mBank4r"><img id="aBank4r" src="bankW.png" class="mirror"><img id="bBank4r" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mTurn4r"><img id="aTurn4r" src="turnW.png" class="mirror"><img id="bTurn4r" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTurn4l"><img id="aTurn4l" src="images/turnW.png"><img id="bTurn4l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank4l"><img id="aBank4l" src="images/bankW.png"><img id="bBank4l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mStraight4"><img id="aStraight4" src="images/straightW.png"><img id="bStraight4" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank4r"><img id="aBank4r" src="images/bankW.png" class="mirror"><img id="bBank4r" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTurn4r"><img id="aTurn4r" src="images/turnW.png" class="mirror"><img id="bTurn4r" src="images/blank.png" class="overlay maneuver"></td>
 </tr>
 <tr>
 <td class="button move">3</td>
-<td class="button move" id="mTurn3l"><img id="aTurn3l" src="turnW.png"><img id="bTurn3l" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mBank3l"><img id="aBank3l" src="bankW.png"><img id="bBank3l" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mStraight3"><img id="aStraight3" src="straightG.png"><img id="bStraight3" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mBank3r"><img id="aBank3r" src="bankW.png" class="mirror"><img id="bBank3r" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mTurn3r"><img id="aTurn3r" src="turnW.png" class="mirror"><img id="bTurn3r" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTurn3l"><img id="aTurn3l" src="images/turnW.png"><img id="bTurn3l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank3l"><img id="aBank3l" src="images/bankW.png"><img id="bBank3l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mStraight3"><img id="aStraight3" src="images/straightG.png"><img id="bStraight3" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank3r"><img id="aBank3r" src="images/bankW.png" class="mirror"><img id="bBank3r" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTurn3r"><img id="aTurn3r" src="images/turnW.png" class="mirror"><img id="bTurn3r" src="images/blank.png" class="overlay maneuver"></td>
 </tr>
 <tr>
 <td class="button move">2</td>
-<td class="button move" id="mTurn2l"><img id="aTurn2l" src="turnW.png"><img id="bTurn2l" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mBank2l"><img id="aBank2l" src="bankG.png"><img id="bBank2l" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mStraight2"><img id="aStraight2" src="straightG.png"><img id="bStraight2" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mBank2r"><img id="aBank2r" src="bankG.png" class="mirror"><img id="bBank2r" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mTurn2r"><img id="aTurn2r" src="turnW.png" class="mirror"><img id="bTurn2r" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTurn2l"><img id="aTurn2l" src="images/turnW.png"><img id="bTurn2l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank2l"><img id="aBank2l" src="images/bankG.png"><img id="bBank2l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mStraight2"><img id="aStraight2" src="images/straightG.png"><img id="bStraight2" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank2r"><img id="aBank2r" src="images/bankG.png" class="mirror"><img id="bBank2r" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTurn2r"><img id="aTurn2r" src="images/turnW.png" class="mirror"><img id="bTurn2r" src="images/blank.png" class="overlay maneuver"></td>
 </tr>
 <tr>
 <td class="button move">1</td>
-<td class="button move" id="mTurn1l"><img id="aTurn1l" src="turnW.png"><img id="bTurn1l" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mBank1l"><img id="aBank1l" src="bankG.png"><img id="bBank1l" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mStraight1"><img id="aStraight1" src="straightG.png"><img id="bStraight1" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mBank1r"><img id="aBank1r" src="bankG.png" class="mirror"><img id="bBank1r" src="blank.png" class="overlay maneuver"></td>
-<td class="button move" id="mTurn1r"><img id="aTurn1r" src="turnW.png" class="mirror"><img id="bTurn1r" src="blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTurn1l"><img id="aTurn1l" src="images/turnW.png"><img id="bTurn1l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank1l"><img id="aBank1l" src="images/bankG.png"><img id="bBank1l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mStraight1"><img id="aStraight1" src="images/straightG.png"><img id="bStraight1" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mBank1r"><img id="aBank1r" src="images/bankG.png" class="mirror"><img id="bBank1r" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTurn1r"><img id="aTurn1r" src="images/turnW.png" class="mirror"><img id="bTurn1r" src="images/blank.png" class="overlay maneuver"></td>
 </tr>
 <tr>
 <td class="button move" colspan=2></td>
-<td class="button" colspan=3>ALL<img src="blank.png" id="all" class="overlay maneuver" style="width: 68px;" onClick="setDial('all');"></td>
+<td class="button" colspan=3>ALL<img src="images/blank.png" id="all" class="overlay maneuver" style="width: 68px;" onClick="setDial('all');"></td>
 </tr>
 </table>
 </td>
@@ -1254,36 +1253,36 @@ function animateTurn (flightplan, phase) {
 <table cellpadding=0>
 <tr>
 <td class="button actions">
-<img src="rollG.png">
+<img src="images/rollG.png">
 <a id="lock_roll" class="lock"></a>
-<img id="button_barrel" src="blank.png" class="overlay" width=38 height=30 onClick="barrel_roll();" onMouseOver="switchFilter('roll');" style="opacity: 0.5">
+<img id="button_barrel" src="images/blank.png" class="overlay" width=38 height=30 onClick="barrel_roll();" onMouseOver="switchFilter('roll');" style="opacity: 0.5">
 </td>
 </td>
 <td class="button actions">
-<img src="bbPTL.png">
+<img src="images/bbPTL.png">
 <a id="lock_bbPTL" class="lock"></a>
-<img id="button_bbPTL" src="blank.png" class="overlay" width=38 height=30 onClick="bbPTL();" style="opacity: 1">
+<img id="button_bbPTL" src="images/blank.png" class="overlay" width=38 height=30 onClick="bbPTL();" style="opacity: 1">
 </td>
 <td class="button actions">
-<img src="boostG.png">
+<img src="images/boostG.png">
 <a id="lock_boost" class="lock"></a>
-<img id="button_boost" src="blank.png" class="overlay" width=38 height=30 onClick="boost();" onMouseOver="switchFilter('boost');" style="opacity: 0.5">
+<img id="button_boost" src="images/blank.png" class="overlay" width=38 height=30 onClick="boost();" onMouseOver="switchFilter('boost');" style="opacity: 0.5">
 <tr id="filterGrid" hidden>
 <td class="button" colspan=3 style="height: 48px;">
 <table cellpadding=0 align=center>
 <tr id="boostFilters" hidden>
-<td><img src="bankW.png"><img id="button_boostFilter0" src="blank.png" class="overlay" width=17 height=19 onClick="setFilter('boost', 0);" style="opacity: 0"></td>
-<td><img src="straightW.png"><img id="button_boostFilter1" src="blank.png" class="overlay" width=17 height=19 onClick="setFilter('boost', 1);" style="opacity: 0"></td>
-<td><img src="bankW.png" class="mirror"><img id="button_boostFilter2" src="blank.png" class="overlay" width=17 height=19 onClick="setFilter('boost', 2);" style="opacity: 0"></td>
+<td><img src="images/bankW.png"><img id="button_boostFilter0" src="images/blank.png" class="overlay" width=17 height=19 onClick="setFilter('boost', 0);" style="opacity: 0"></td>
+<td><img src="images/straightW.png"><img id="button_boostFilter1" src="images/blank.png" class="overlay" width=17 height=19 onClick="setFilter('boost', 1);" style="opacity: 0"></td>
+<td><img src="images/bankW.png" class="mirror"><img id="button_boostFilter2" src="images/blank.png" class="overlay" width=17 height=19 onClick="setFilter('boost', 2);" style="opacity: 0"></td>
 </tr>
 <tr id="rollFiltersA" hidden>
-<td><img src="straightW.png" style="transform: rotate(-90deg); -webkit-transform: rotate(-90deg);"><img id="button_rollFilter0" src="blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 0);" style="opacity: 0"></td>
+<td><img src="images/straightW.png" style="transform: rotate(-90deg); -webkit-transform: rotate(-90deg);"><img id="button_rollFilter0" src="images/blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 0);" style="opacity: 0"></td>
 <td rowspan=2 width=17></td>
-<td><img src="straightW.png" style="transform: rotate(90deg); -webkit-transform: rotate(90deg);"><img id="button_rollFilter1" src="blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 1);" style="opacity: 0"></td>
+<td><img src="images/straightW.png" style="transform: rotate(90deg); -webkit-transform: rotate(90deg);"><img id="button_rollFilter1" src="images/blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 1);" style="opacity: 0"></td>
 </tr>
 <tr id="rollFiltersB" hidden>
-<td><img src="straightW.png" style="transform: rotate(-90deg); -webkit-transform: rotate(-90deg);"><img id="button_rollFilter2" src="blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 2);" style="opacity: 0"></td>
-<td><img src="straightW.png" style="transform: rotate(90deg); -webkit-transform: rotate(90deg);"><img id="button_rollFilter3" src="blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 3);" style="opacity: 0"></td>
+<td><img src="images/straightW.png" style="transform: rotate(-90deg); -webkit-transform: rotate(-90deg);"><img id="button_rollFilter2" src="images/blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 2);" style="opacity: 0"></td>
+<td><img src="images/straightW.png" style="transform: rotate(90deg); -webkit-transform: rotate(90deg);"><img id="button_rollFilter3" src="images/blank.png" class="overlay" width=19 height=19 onClick="setFilter('roll', 3);" style="opacity: 0"></td>
 </tr>
 </table>
 </td>
@@ -1291,9 +1290,9 @@ function animateTurn (flightplan, phase) {
 </tr>
 <tr hidden>
 <td class="button actions">
-<img src="systemW.png">
+<img src="">
 <a id="lock_sensors" class="lock"></a>
-<img id="button_sensors" src="blank.png" class="overlay" width=38 height=30 onClick="" style="opacity: 0.5">
+<img id="button_sensors" src="images/blank.png" class="overlay" width=38 height=30 onClick="" style="opacity: 0.5">
 </td>
 </tr>
 </table>
@@ -1334,7 +1333,7 @@ function animateTurn (flightplan, phase) {
 <canvas id="layer0" width="800" height="600"></canvas>
 <canvas id="gridlayer" width="800" height="600"></canvas>
 <canvas id="layer1" width="800" height="600"></canvas>
-<canvas id="layer2" width="800" height="600" style="opacity: 0.5;"></canvas>
+<canvas id="layer2" width="800" height="600"></canvas>
 <canvas id="layer3" width="800" height="600"></canvas>
 </body>
 </html>
