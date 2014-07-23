@@ -9,7 +9,7 @@ canvas {position: absolute; top: 10px; left: 10px; border: 1px solid #424242;}
 td {position: relative;}
 td.button {background-color: black; border: 1px solid #424242; text-align: center;}
 td.move {width: 20px; height: 22px; font-family: Aurebesh; font-size: 12px;}
-td.actions {width: 38px; height: 30px;}
+td.actions {width: 44px; height: 30px;}
 img.mirror {transform: scale(-1, 1); -webkit-transform: scale(-1, 1);}
 img.rotateL {transform: rotate(-90deg); -webkit-transform: rotate(-90deg);}
 img.rotateR {transform: rotate(90deg); -webkit-transform: rotate(90deg);}
@@ -127,8 +127,8 @@ fighter.id = "fighter";
 fighter.img = new Image();
 fighter.img.src = "images/fighter.png";
 fighter.base = smallbase;
-fighter.offset = 3;
-fighter.width = 46;
+fighter.offset = 2;
+fighter.width = 44;
 fighter.height = 41;
 fighter.pilots = [];
 fighter.actions = ["roll"];
@@ -187,7 +187,8 @@ xwing.img = new Image();
 xwing.img.src = "images/xwing.png";
 xwing.base = smallbase;
 xwing.protrusions = 11;
-xwing.width = 40;
+xwing.offset = 1;
+xwing.width = 42;
 xwing.height = 52;
 xwing.pilots = [];
 xwing.actions = [];
@@ -201,6 +202,37 @@ xwing.dial = [
 ["bank", "white", 2, -1],
 ["straight", "green", 2],
 ["bank", "white", 2, 1],
+["turn", "white", 2, 1],
+["turn", "white", 3, -1],
+["bank", "white", 3, -1],
+["straight", "white", 3],
+["bank", "white", 3, 1],
+["turn", "white", 3, 1],
+["straight", "white", 4]
+];
+
+var z95 = new Object();
+z95.faction = "rebel";
+z95.id = "z95";
+z95.img = new Image();
+z95.img.src = "images/z95.png";
+z95.base = smallbase;
+z95.protrusions = 6;
+z95.offset = 1;
+z95.width = 43;
+z95.height = 47;
+z95.pilots = [];
+z95.actions = [];
+z95.slots = [];
+z95.decloak = [];
+z95.dial = [
+["bank", "white", 1, -1],
+["straight", "green", 1],
+["bank", "white", 1, 1],
+["turn", "white", 2, -1],
+["bank", "green", 2, -1],
+["straight", "green", 2],
+["bank", "green", 2, 1],
 ["turn", "white", 2, 1],
 ["turn", "white", 3, -1],
 ["bank", "white", 3, -1],
@@ -508,10 +540,10 @@ function barrel_roll () {
 		barrel_roll_timer = [timer[4], timer[5]];
 		timer[4] = 0;
 		timer[5] = 0;
-		if (!boost) {
-			document.getElementById("filterGrid").hidden = true;
-		};
 		bbPTL();
+		if (!boost) {
+			advSensors();
+		};
 	} else {
 		target.style.opacity = 0;
 		timer[4] = barrel_roll_timer[0];
@@ -519,7 +551,9 @@ function barrel_roll () {
 		if (boost) {
 			document.getElementById("button_bbPTL").style.opacity = 0.5;
 		};
-		document.getElementById("filterGrid").hidden = false;
+		if (!boost) {
+			document.getElementById("button_sensors").style.opacity = 0.5;
+		};
 		fRoll = [false, false, false, false];
 		document.getElementById("button_rollFilter0").style.opacity = 0;
 		document.getElementById("button_rollFilter1").style.opacity = 0;
@@ -538,10 +572,10 @@ function boost () {
 		boost_timer = [timer[6], timer[7]];
 		timer[6] = 0;
 		timer[7] = 0;
-		if (!barrel_roll) {
-			document.getElementById("filterGrid").hidden = true;
-		};
 		bbPTL();
+		if (!barrel_roll) {
+			advSensors();
+		};
 	} else {
 		target.style.opacity = 0;
 		timer[6] = boost_timer[0];
@@ -549,7 +583,9 @@ function boost () {
 		if (barrel_roll) {
 			document.getElementById("button_bbPTL").style.opacity = 0.5;
 		};
-		document.getElementById("filterGrid").hidden = false;
+		if (!barrel_roll) {
+			document.getElementById("button_sensors").style.opacity = 0.5;
+		};
 		fBoost = [false, false, false];
 		document.getElementById("button_boostFilter0").style.opacity = 0;
 		document.getElementById("button_boostFilter1").style.opacity = 0;
@@ -579,6 +615,24 @@ function bbPTL () {
 		timer[8] = 0;
 		timer[9] = 0;
 	};
+};
+
+function advSensors () {
+	stepOverride = true;
+	var barrel_roll = (document.getElementById("button_barrel").style.opacity > 0) ? false : true;
+	var boost = (document.getElementById("button_boost").style.opacity > 0) ? false : true;
+	var target = document.getElementById("button_sensors");
+	var state = target.style.opacity;
+	if (state == 0.5 && (barrel_roll || boost)) {
+		target.style.opacity = 0;
+	} else {
+		if (!barrel_roll && !boost) {
+			target.style.opacity = 1;
+		} else {
+			target.style.opacity = 0.5;
+		};
+	};
+	timer_reset(true);
 };
 
 function starfield () {
@@ -711,19 +765,20 @@ function step () {
 	var barrel_rolls = (document.getElementById("button_barrel").style.opacity > 0) ? false : true;
 	var boosts = (document.getElementById("button_boost").style.opacity > 0) ? false : true;
 	var bbPTL = (document.getElementById("button_bbPTL").style.opacity > 0) ? false : true;
+	var sensors = (document.getElementById("button_sensors").style.opacity > 0) ? false : true;
 	if (stepOverride || (looping && !queued) || (cloaking && timer[1] < 100) || timer[3] < 100 || (barrel_rolls && timer[5] < 100) || (boosts && timer[7] < 100) || (bbPTL && timer[9] < 100)) {
 		stepOverride = false;
 		reset();
 // decloak separation timer
-		if (timer[0] < 100 && cloaking) {
+		if (cloaking && timer[0] < 100 && (!sensors || (sensors && (barrel_rolls || boosts) && (timer[9] >= 100 || (!bbPTL && (timer[5] >= 100 || !barrel_rolls) && (timer[7] >= 100 || !boosts)))))) {
 			timer[0] += 5;
 		};
 // decloak movement timer
-		if (timer[0] >= 100 && timer[1] < 100 && cloaking) {
+		if (cloaking && timer[0] >= 100 && timer[1] < 100) {
 			timer[1] += 2
 		};
 // maneuver separation timer
-		if ((timer[1] >= 100 || !cloaking) && timer[2] < 100) {
+		if ((!cloaking || timer[1] >= 100) && timer[2] < 100 && (!sensors || (sensors && (barrel_rolls || boosts) && (timer[9] >= 100 || (!bbPTL && (timer[5] >= 100 || !barrel_rolls) && (timer[7] >= 100 || !boosts)))))) {
 			timer[2] += 5;
 		};
 // maneuver movement timer
@@ -731,29 +786,38 @@ function step () {
 			timer[3] += 2
 		};
 // action barrel roll separation timer
-		if (timer[3] >= 100 && timer[4] < 100 && barrel_rolls) {
+		if (barrel_rolls && (sensors || timer[3] >= 100) && timer[4] < 100) {
 			timer[4] += 5
 		};
 // action barrel roll movement timer
-		if (timer[4] >= 100 && timer[5] < 100 && barrel_rolls) {
+		if (barrel_rolls && timer[4] >= 100 && timer[5] < 100) {
 			timer[5] += 2
 		};
 // action boost separation timer
-		if (timer[3] >= 100 && timer[6] < 100 && boosts) {
+		if (boosts && (sensors || timer[3] >= 100) && timer[6] < 100) {
 			timer[6] += 5
 		};
 // action boost movement timer
-		if (timer[6] >= 100 && timer[7] < 100 && boosts) {
+		if (boosts && timer[6] >= 100 && timer[7] < 100) {
 			timer[7] += 2
 		};
 // PTL barrel roll/boost separation timer
-		if (timer[5] >= 100 && timer[7] >= 100 && timer[8] < 100 && barrel_rolls && boosts && bbPTL) {
+		if (bbPTL && barrel_rolls && boosts && timer[5] >= 100 && timer[7] >= 100 && timer[8] < 100) {
 			timer[8] += 5
 		};
 // PTL barrel roll/boost movement timer
-		if (timer[8] >= 100 && timer[9] < 100 && barrel_rolls && boosts && bbPTL) {
+		if (bbPTL && barrel_rolls && boosts && timer[8] >= 100 && timer[9] < 100) {
 			timer[9] += 2
 		};
+
+if (sensors) {
+	if (barrel_rolls) {
+		animateBarrelRolls("purple", 4);
+	};
+	if (boosts) {
+		animateBoosts("purple", 6);
+	};
+} else {
 		if (decloak.length > 0) {
 			for (var i = 0; i < decloak.length; i++) {
 				animate(decloak[i], 0);
@@ -763,15 +827,11 @@ function step () {
 				animate(dial[i], 2);
 			};
 		};
-		if (looping && timer[3] >= 100 && !queued) {
-			if (!barrel_rolls || timer[5] >= 100) {
-				if (!boosts || timer[7] >= 100) {
-					if (!bbPTL || timer[9] >= 100) {
-						setTimeout(function(){timer_reset();}, 3000);
-						queued = true;
-					};
-				};
-			};
+};
+
+		if (looping && timer[3] >= 100 && !queued && (!barrel_rolls || timer[5] >= 100) && (!boosts || timer[7] >= 100) && (!bbPTL || timer[9] >= 100)) {
+			setTimeout(function(){timer_reset();}, 3000);
+			queued = true;
 		};
 		drawShip(3, 0, 0, 0.99 - timer[0] / 400 - timer[1] / 400);
 	};
@@ -783,19 +843,13 @@ function timer_reset (timerOverride) {
 	var barrel_rolls = (document.getElementById("button_barrel").style.opacity > 0) ? false : true;
 	var boosts = (document.getElementById("button_boost").style.opacity > 0) ? false : true;
 	var bbPTL = (document.getElementById("button_bbPTL").style.opacity > 0) ? false : true;
-	if ((looping || timerOverride) && timer[3] >= 100) {
-		if (!barrel_rolls || timer[5] >= 100) {
-			if (!boosts || timer[7] >= 100) {
-				if (!bbPTL || timer[9] >= 100) {
-					for (var i = 0; i < timer.length; i++) {
-						timer[i] = 0;
-					};
-					barrel_roll_timer = [0, 0];
-					boost_timer = [0, 0];
-					bbPTL_timer = [0, 0];
-				};
-			};
+	if (timerOverride || ((looping && timer[3] >= 100) && (!barrel_rolls || timer[5] >= 100) && (!boosts || timer[7] >= 100) && (!bbPTL || timer[9] >= 100))) {	
+		for (var i = 0; i < timer.length; i++) {
+			timer[i] = 0;
 		};
+		barrel_roll_timer = [0, 0];
+		boost_timer = [0, 0];
+		bbPTL_timer = [0, 0];
 	};
 };
 
@@ -894,6 +948,9 @@ function animateBank (flightplan, phase) {
 	var distance = flightplan[2];
 	var direction = flightplan[3];
 	var radius = rBank[distance];
+	var cloaking = (decloak.length > 0) ? true : false;
+	var bbPTL = (document.getElementById("button_bbPTL").style.opacity > 0) ? false : true;
+	var sensors = (document.getElementById("button_sensors").style.opacity > 0) ? false : true;
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].save();
 		ctx[j].translate(direction * radius, 0);
@@ -907,13 +964,13 @@ function animateBank (flightplan, phase) {
 	ctx[1].stroke();
 	switch (phase) {
 		case 2:
-			var phasemod = Math.max(timer[phase + 3], timer[phase + 5]) / 100;
-			break;
-		case 4:
-			var phasemod = timer[phase + 5] / 100;
+			var phasemod = (sensors) ? 0 : (Math.max(timer[5], timer[7]) / 100);
 			break;
 		case 6:
-			var phasemod = timer[phase + 3] / 100;
+			var phasemod = (sensors && !bbPTL) ? ((cloaking) ? (timer[1] / 100) : (timer[3] / 100)) : (timer[9] / 100);
+			break;
+		case 8:
+			var phasemod = (sensors) ? ((cloaking) ? (timer[1] / 100) : (timer[3] / 100)) : 0;
 			break;
 		default:
 			var phasemod = 0;
@@ -923,7 +980,19 @@ function animateBank (flightplan, phase) {
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
-	if (phase == 0 && timer[phase + 1] >= 100) {
+	if (sensors && cloaking && timer[phase + 1] >= 100 && ((phase == 6 && !bbPTL) || phase == 8)) {
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].save();
+			oBank(j, distance, direction);
+		};
+		for (var j = 0; j < decloak.length; j++) {
+			animate(decloak[j], 0);
+		};
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].restore();
+		};
+	};
+	if ((phase == 0 && timer[1] >= 100) || (sensors && !cloaking && timer[phase + 1] >= 100 && ((phase == 6 && !bbPTL) || phase == 8))) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oBank(j, distance, direction);
@@ -935,7 +1004,7 @@ function animateBank (flightplan, phase) {
 			ctx[j].restore();
 		};
 	};
-	if (phase == 2 && timer[phase + 1] >= 100) {
+	if (!sensors && phase == 2 && timer[3] >= 100) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oBank(j, distance, direction);
@@ -945,7 +1014,7 @@ function animateBank (flightplan, phase) {
 			ctx[j].restore();
 		};
 	};
-	if (phase == 2 && timer[phase + 1] >= 100) {
+	if (!sensors && phase == 2 && timer[3] >= 100) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oBank(j, distance, direction);
@@ -955,7 +1024,7 @@ function animateBank (flightplan, phase) {
 			ctx[j].restore();
 		};
 	};
-	if (phase == 6 && timer[phase + 1] >= 100) {
+	if (bbPTL && phase == 6 && timer[7] >= 100) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oBank(j, distance, direction);
@@ -976,6 +1045,9 @@ function animateBankroll (flightplan, phase) {
 	var start = flightplan[4];
 	var bank = flightplan[5];
 	var radius = rBank[distance];
+	var cloaking = (decloak.length > 0) ? true : false;
+	var bbPTL = (document.getElementById("button_bbPTL").style.opacity > 0) ? false : true;
+	var sensors = (document.getElementById("button_sensors").style.opacity > 0) ? false : true;
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].save();
 		ctx[j].translate(direction * ship.base / 2, ship.base / 2 - start * ship.base / 4);
@@ -989,20 +1061,7 @@ function animateBankroll (flightplan, phase) {
 	ctx[1].strokeStyle = flightplan[1];
 	ctx[1].lineWidth = smallbase / 2;
 	ctx[1].stroke();
-	switch (phase) {
-		case 2:
-			var phasemod = Math.max(timer[phase + 3], timer[phase + 5]) / 100;
-			break;
-		case 4:
-			var phasemod = timer[phase + 5] / 100;
-			break;
-		case 6:
-			var phasemod = timer[phase + 3] / 100;
-			break;
-		default:
-			var phasemod = 0;
-			break;
-	};
+	var phasemod = 0;
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].rotate(direction * -0.5 * pi);
 		ctx[j].translate(direction * ship.base / 2, -ship.base * 3 / 4);
@@ -1012,7 +1071,7 @@ function animateBankroll (flightplan, phase) {
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
-	if (phase == 0 && timer[phase + 1] >= 100) {
+	if (phase == 0 && timer[1] >= 100) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oBankroll(j, distance, direction, start, 1, bank);
@@ -1038,6 +1097,9 @@ function animateRoll (flightplan, phase) {
 	var distance = flightplan[2];
 	var direction = flightplan[3];
 	var start = flightplan[4];
+	var cloaking = (decloak.length > 0) ? true : false;
+	var bbPTL = (document.getElementById("button_bbPTL").style.opacity > 0) ? false : true;
+	var sensors = (document.getElementById("button_sensors").style.opacity > 0) ? false : true;
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].save();
 		ctx[j].translate(direction * ship.base / 2, ship.base / 2 - start * (10 + (ship.base - 40) / 2));
@@ -1051,14 +1113,11 @@ function animateRoll (flightplan, phase) {
 	ctx[1].lineWidth = smallbase / 2;
 	ctx[1].stroke();
 	switch (phase) {
-		case 2:
-			var phasemod = Math.max(timer[phase + 3], timer[phase + 5]) / 100;
-			break;
 		case 4:
-			var phasemod = timer[phase + 5] / 100;
+			var phasemod = (sensors && !bbPTL) ? ((cloaking) ? (timer[1] / 100) : (timer[3] / 100)) : (timer[9] / 100);
 			break;
-		case 6:
-			var phasemod = timer[phase + 3] / 100;
+		case 8:
+			var phasemod = (sensors) ? ((cloaking) ? (timer[1] / 100) : (timer[3] / 100)) : 0;
 			break;
 		default:
 			var phasemod = 0;
@@ -1072,7 +1131,19 @@ function animateRoll (flightplan, phase) {
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
-	if (phase == 0 && timer[phase + 1] >= 100) {
+	if (sensors && cloaking && timer[phase + 1] >= 100 && ((phase == 4 && !bbPTL) || phase == 8)) {
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].save();
+			oRoll(j, distance, direction, start);
+		};
+		for (var j = 0; j < decloak.length; j++) {
+			animate(decloak[j], 0);
+		};
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].restore();
+		};
+	};
+	if ((phase == 0 && timer[1] >= 100) || (sensors && !cloaking && timer[phase + 1] >= 100 && ((phase == 4 && !bbPTL) || phase == 8))) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oRoll(j, distance, direction, start);
@@ -1084,7 +1155,7 @@ function animateRoll (flightplan, phase) {
 			ctx[j].restore();
 		};
 	};
-	if (phase == 4 && timer[phase + 1] >= 100) {
+	if (bbPTL && phase == 4 && timer[5] >= 100) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oRoll(j, distance, direction, start);
@@ -1100,6 +1171,9 @@ function animateRoll (flightplan, phase) {
 
 function animateStraight (flightplan, phase) {
 	var distance = flightplan[2];
+	var cloaking = (decloak.length > 0) ? true : false;
+	var bbPTL = (document.getElementById("button_bbPTL").style.opacity > 0) ? false : true;
+	var sensors = (document.getElementById("button_sensors").style.opacity > 0) ? false : true;
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].save();
 	};
@@ -1112,13 +1186,13 @@ function animateStraight (flightplan, phase) {
 	ctx[1].stroke();
 	switch (phase) {
 		case 2:
-			var phasemod = Math.max(timer[phase + 3], timer[phase + 5]) / 100;
-			break;
-		case 4:
-			var phasemod = timer[phase + 5] / 100;
+			var phasemod = (sensors) ? 0 : (Math.max(timer[5], timer[7]) / 100);
 			break;
 		case 6:
-			var phasemod = timer[phase + 3] / 100;
+			var phasemod = (sensors && !bbPTL) ? ((cloaking) ? (timer[1] / 100) : (timer[3] / 100)) : (timer[9] / 100);
+			break;
+		case 8:
+			var phasemod = (sensors) ? ((cloaking) ? (timer[1] / 100) : (timer[3] / 100)) : 0;
 			break;
 		default:
 			var phasemod = 0;
@@ -1128,7 +1202,19 @@ function animateStraight (flightplan, phase) {
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
-	if (phase == 0 && timer[phase + 1] >= 100) {
+	if (sensors && cloaking && timer[phase + 1] >= 100 && ((phase == 6 && !bbPTL) || phase == 8)) {
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].save();
+			oStraight(j, distance);
+		};
+		for (var j = 0; j < decloak.length; j++) {
+			animate(decloak[j], 0);
+		};
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].restore();
+		};
+	};
+	if ((phase == 0 && timer[1] >= 100) || (sensors && !cloaking && timer[phase + 1] >= 100 && ((phase == 6 && !bbPTL) || phase == 8))) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oStraight(j, distance);
@@ -1140,7 +1226,7 @@ function animateStraight (flightplan, phase) {
 			ctx[j].restore();
 		};
 	};
-	if (phase == 2 && timer[phase + 1] >= 100) {
+	if (!sensors && phase == 2 && timer[3] >= 100) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oStraight(j, distance);
@@ -1150,7 +1236,7 @@ function animateStraight (flightplan, phase) {
 			ctx[j].restore();
 		};
 	};
-	if (phase == 2 && timer[phase + 1] >= 100) {
+	if (!sensors && phase == 2 && timer[3] >= 100) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oStraight(j, distance);
@@ -1160,7 +1246,7 @@ function animateStraight (flightplan, phase) {
 			ctx[j].restore();
 		};
 	};
-	if (phase == 6 && timer[phase + 1] >= 100) {
+	if (bbPTL && phase == 6 && timer[7] >= 100) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oStraight(j, distance);
@@ -1179,6 +1265,9 @@ function animateTurn (flightplan, phase) {
 	var distance = flightplan[2];
 	var direction = flightplan[3];
 	var radius = rTurn[distance];
+	var cloaking = (decloak.length > 0) ? true : false;
+	var bbPTL = (document.getElementById("button_bbPTL").style.opacity > 0) ? false : true;
+	var sensors = (document.getElementById("button_sensors").style.opacity > 0) ? false : true;
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].save();
 		ctx[j].translate(direction * radius, 0);
@@ -1192,13 +1281,7 @@ function animateTurn (flightplan, phase) {
 	ctx[1].stroke();
 	switch (phase) {
 		case 2:
-			var phasemod = Math.max(timer[phase + 3], timer[phase + 5]) / 100;
-			break;
-		case 4:
-			var phasemod = timer[phase + 5] / 100;
-			break;
-		case 6:
-			var phasemod = timer[phase + 3] / 100;
+			var phasemod = (sensors) ? 0 : (Math.max(timer[5], timer[7]) / 100);
 			break;
 		default:
 			var phasemod = 0;
@@ -1208,7 +1291,7 @@ function animateTurn (flightplan, phase) {
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
-	if (phase == 2 && timer[phase + 1] >= 100) {
+	if (!sensors && phase == 2 && timer[3] >= 100) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oTurn(j, distance, direction);
@@ -1218,7 +1301,7 @@ function animateTurn (flightplan, phase) {
 			ctx[j].restore();
 		};
 	};
-	if (phase == 2 && timer[phase + 1] >= 100) {
+	if (!sensors && phase == 2 && timer[3] >= 100) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oTurn(j, distance, direction);
@@ -1354,20 +1437,20 @@ function animateTurn (flightplan, phase) {
 <td class="button actions">
 <img src="images/rollG.png">
 <a id="lock_roll" class="lock"></a>
-<img id="button_barrel" src="images/blank.png" class="overlay" width=38 height=30 onClick="barrel_roll();" onMouseOver="switchFilter('roll');" style="opacity: 0.5">
-</td>
-</td>
-<td class="button actions">
-<img src="images/bbPTL.png">
-<a id="lock_bbPTL" class="lock"></a>
-<img id="button_bbPTL" src="images/blank.png" class="overlay" width=38 height=30 onClick="bbPTL();" style="opacity: 1">
+<img id="button_barrel" src="images/blank.png" class="overlay" width=44 height=30 onClick="barrel_roll();" onMouseOver="switchFilter('roll');" style="opacity: 0.5">
 </td>
 <td class="button actions">
 <img src="images/boostG.png">
 <a id="lock_boost" class="lock"></a>
-<img id="button_boost" src="images/blank.png" class="overlay" width=38 height=30 onClick="boost();" onMouseOver="switchFilter('boost');" style="opacity: 0.5">
-<tr id="filterGrid" hidden>
-<td class="button" colspan=3 style="height: 48px;">
+<img id="button_boost" src="images/blank.png" class="overlay" width=44 height=30 onClick="boost();" onMouseOver="switchFilter('boost');" style="opacity: 0.5">
+</td>
+<td class="button actions">
+<img src="images/bbPTL.png">
+<a id="lock_bbPTL" class="lock"></a>
+<img id="button_bbPTL" src="images/blank.png" class="overlay" width=44 height=30 onClick="bbPTL();" style="opacity: 1">
+</td>
+<tr>
+<td class="button" colspan=2 rowspan=2>
 <table cellpadding=0 align=center>
 <tr id="boostFilters" hidden>
 <td><img src="images/bankW.png"><img id="button_boostFilter0" src="images/blank.png" class="overlay" width=17 height=19 onClick="setFilter('boost', 0);" style="opacity: 0"></td>
@@ -1385,14 +1468,13 @@ function animateTurn (flightplan, phase) {
 </tr>
 </table>
 </td>
-</tr>
-</tr>
-<tr hidden>
-<td class="button actions">
-<img src="">
+<td class="button actions"><img src="images/systemW.png">
 <a id="lock_sensors" class="lock"></a>
-<img id="button_sensors" src="images/blank.png" class="overlay" width=38 height=30 onClick="" style="opacity: 0.5">
+<img id="button_sensors" src="images/blank.png" class="overlay" width=44 height=30 onClick="advSensors();" style="opacity: 1">
 </td>
+</tr>
+<tr>
+<td class="button actions"></td>
 </tr>
 </table>
 </td>
@@ -1429,6 +1511,9 @@ function animateTurn (flightplan, phase) {
 </tr>
 <tr>
 <td><a id="select_yt1300" class="select rebel model" onClick="select(yt1300);">YT-1300</a></td>
+</tr>
+<tr>
+<td><a id="select_z95" class="select rebel model" onClick="select(z95);">Z-95 Headhunter</a></td>
 </tr>
 </table>
 </td>
