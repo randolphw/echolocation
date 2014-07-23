@@ -252,6 +252,7 @@ var queued = false;
 var barrel_roll_timer = [0, 0];
 var boost_timer = [0, 0];
 var bbPTL_timer = [0, 0];
+var stepOverride = false;
 
 var remnant = 0.3;
 
@@ -398,6 +399,7 @@ function reset () {
 };
 
 function setDecloak (pattern, index, index2) {
+	stepOverride = true;
 	var overlays = document.getElementsByClassName("decloak");
 	var all = (decloak != undefined && ship.decloak.length == decloak.length);
 	if (pattern == "all") {
@@ -426,6 +428,7 @@ function setDecloak (pattern, index, index2) {
 };
 
 function setDial (buttonID) {
+	stepOverride = true;
 	var overlays = document.getElementsByClassName("maneuver");
 	var all = (dial != undefined && ship.dial.length == dial.length);
 	if (buttonID == "all") {
@@ -483,6 +486,7 @@ function switchFilter (type) {
 };
 
 function setFilter (type, index) {
+	stepOverride = true;
 	var buttonID = "button_" + type + "Filter" + index;
 	var target = document.getElementById(buttonID);
 	var state = target.style.opacity;
@@ -495,6 +499,7 @@ function setFilter (type, index) {
 };
 
 function barrel_roll () {
+	stepOverride = true;
 	var boost = (document.getElementById("button_boost").style.opacity > 0) ? false : true;
 	var target = document.getElementById("button_barrel");
 	var state = target.style.opacity;
@@ -524,6 +529,7 @@ function barrel_roll () {
 };
 
 function boost () {
+	stepOverride = true;
 	var barrel_roll = (document.getElementById("button_barrel").style.opacity > 0) ? false : true;
 	var target = document.getElementById("button_boost");
 	var state = target.style.opacity;
@@ -552,6 +558,7 @@ function boost () {
 };
 
 function bbPTL () {
+	stepOverride = true;
 	var barrel_roll = (document.getElementById("button_barrel").style.opacity > 0) ? false : true;
 	var boost = (document.getElementById("button_boost").style.opacity > 0) ? false : true;
 	var target = document.getElementById("button_bbPTL");
@@ -641,6 +648,7 @@ function gridfield () {
 };
 
 function fire () {
+	stepOverride = true;
 	var arcrange = document.getElementById("fire_range").innerHTML;
 	if (arcrange == "") {
 		arcrange = 0;
@@ -662,11 +670,14 @@ function drawFiringArcs (x, y) {
 	};
 	var color = (ship.faction == "empire") ? "#70C045" : "#EC2424";
 	var offset = (ship.base == smallbase) ? 16 : 35;
-	ctx[2].globalAlpha = 0.1;
+	var forward = 0;
+	ctx[2].save();
 	ctx[2].fillStyle = color;
 	ctx[2].strokeStyle = color;
-	ctx[2].beginPath();
 	if (ship.turret) {
+		forward = 10;
+		ctx[2].globalAlpha = 0.1;
+		ctx[2].beginPath();
 		ctx[2].moveTo(x - ship.base / 2, y - 100 * arcrange);
 		ctx[2].lineTo(x + ship.base / 2, y - 100 * arcrange);
 		ctx[2].arc(x + ship.base / 2, y, 100 * arcrange, 1.5 * pi, 0, false);
@@ -676,95 +687,103 @@ function drawFiringArcs (x, y) {
 		ctx[2].arc(x - ship.base / 2, y + ship.base, 100 * arcrange, 0.5 * pi, pi, false);
 		ctx[2].lineTo(x - ship.base / 2 - 100 * arcrange, y);
 		ctx[2].arc(x - ship.base / 2, y, 100 * arcrange, pi, 1.5 * pi, false);
-
-	} else {
-		ctx[2].moveTo(x - offset, y);
-		ctx[2].arc(x - offset, y, 100 * arcrange, (1.5 - 2/9) * pi, 1.5 * pi, false);
-		ctx[2].lineTo(x + offset, y - 100 * arcrange);
-		ctx[2].arc(x + offset, y, 100 * arcrange, 1.5 * pi, (1.5 + 2/9) * pi, false);
-		ctx[2].lineTo(x + offset, y);
-	};
 		ctx[2].fill();
 		ctx[2].globalAlpha = 0.9;
 		ctx[2].stroke();
+		ctx[2].clip();
+	};
+	ctx[2].globalAlpha = 0.1;
+	ctx[2].beginPath();
+	ctx[2].moveTo(x - offset, y);
+	ctx[2].arc(x - offset, y, 100 * arcrange + forward, (1.5 - 2/9) * pi, 1.5 * pi, false);
+	ctx[2].lineTo(x + offset, y - 100 * arcrange - forward);
+	ctx[2].arc(x + offset, y, 100 * arcrange + forward, 1.5 * pi, (1.5 + 2/9) * pi, false);
+	ctx[2].lineTo(x + offset, y);
+	ctx[2].fill();
+	ctx[2].globalAlpha = 0.9;
+	ctx[2].stroke();
+	ctx[2].restore();
 };
 
 function step () {
-	reset();
+	var looping = (document.getElementById("option_loop").style.opacity > 0) ? false : true;
+	var cloaking = (decloak.length > 0) ? true : false;
 	var barrel_rolls = (document.getElementById("button_barrel").style.opacity > 0) ? false : true;
 	var boosts = (document.getElementById("button_boost").style.opacity > 0) ? false : true;
 	var bbPTL = (document.getElementById("button_bbPTL").style.opacity > 0) ? false : true;
-	var looping = (document.getElementById("option_loop").style.opacity > 0) ? false : true;
-	var cloaking = (decloak.length > 0) ? true : false;
+	if (stepOverride || (looping && !queued) || (cloaking && timer[1] < 100) || timer[3] < 100 || (barrel_rolls && timer[5] < 100) || (boosts && timer[7] < 100) || (bbPTL && timer[9] < 100)) {
+		stepOverride = false;
+		reset();
 // decloak separation timer
-	if (timer[0] < 100 && cloaking) {
-		timer[0] += 5;
-	};
+		if (timer[0] < 100 && cloaking) {
+			timer[0] += 5;
+		};
 // decloak movement timer
-	if (timer[0] >= 100 && timer[1] < 100 && cloaking) {
-		timer[1] += 2
-	};
+		if (timer[0] >= 100 && timer[1] < 100 && cloaking) {
+			timer[1] += 2
+		};
 // maneuver separation timer
-	if ((timer[1] >= 100 || !cloaking) && timer[2] < 100) {
-		timer[2] += 5;
-	};
+		if ((timer[1] >= 100 || !cloaking) && timer[2] < 100) {
+			timer[2] += 5;
+		};
 // maneuver movement timer
-	if (timer[2] >= 100 && timer[3] < 100) {
-		timer[3] += 2
-	};
+		if (timer[2] >= 100 && timer[3] < 100) {
+			timer[3] += 2
+		};
 // action barrel roll separation timer
-	if (timer[3] >= 100 && timer[4] < 100 && barrel_rolls) {
-		timer[4] += 5
-	};
+		if (timer[3] >= 100 && timer[4] < 100 && barrel_rolls) {
+			timer[4] += 5
+		};
 // action barrel roll movement timer
-	if (timer[4] >= 100 && timer[5] < 100 && barrel_rolls) {
-		timer[5] += 2
-	};
+		if (timer[4] >= 100 && timer[5] < 100 && barrel_rolls) {
+			timer[5] += 2
+		};
 // action boost separation timer
-	if (timer[3] >= 100 && timer[6] < 100 && boosts) {
-		timer[6] += 5
-	};
+		if (timer[3] >= 100 && timer[6] < 100 && boosts) {
+			timer[6] += 5
+		};
 // action boost movement timer
-	if (timer[6] >= 100 && timer[7] < 100 && boosts) {
-		timer[7] += 2
-	};
+		if (timer[6] >= 100 && timer[7] < 100 && boosts) {
+			timer[7] += 2
+		};
 // PTL barrel roll/boost separation timer
-	if (timer[5] >= 100 && timer[7] >= 100 && timer[8] < 100 && barrel_rolls && boosts && bbPTL) {
-		timer[8] += 5
-	};
+		if (timer[5] >= 100 && timer[7] >= 100 && timer[8] < 100 && barrel_rolls && boosts && bbPTL) {
+			timer[8] += 5
+		};
 // PTL barrel roll/boost movement timer
-	if (timer[8] >= 100 && timer[9] < 100 && barrel_rolls && boosts && bbPTL) {
-		timer[9] += 2
-	};
-if (decloak.length > 0) {
-	for (var i = 0; i < decloak.length; i++) {
-		animate(decloak[i], 0);
-	};
-} else {
-	for (var i = 0; i < dial.length; i++) {
-		animate(dial[i], 2);
-	};
-};
-	if (looping && timer[3] >= 100 && !queued) {
-		if (!barrel_rolls || timer[5] >= 100) {
-			if (!boosts || timer[7] >= 100) {
-				if (!bbPTL || timer[9] >= 100) {
-					setTimeout(function(){timer_reset();}, 3000);
-					queued = true;
+		if (timer[8] >= 100 && timer[9] < 100 && barrel_rolls && boosts && bbPTL) {
+			timer[9] += 2
+		};
+		if (decloak.length > 0) {
+			for (var i = 0; i < decloak.length; i++) {
+				animate(decloak[i], 0);
+			};
+		} else {
+			for (var i = 0; i < dial.length; i++) {
+				animate(dial[i], 2);
+			};
+		};
+		if (looping && timer[3] >= 100 && !queued) {
+			if (!barrel_rolls || timer[5] >= 100) {
+				if (!boosts || timer[7] >= 100) {
+					if (!bbPTL || timer[9] >= 100) {
+						setTimeout(function(){timer_reset();}, 3000);
+						queued = true;
+					};
 				};
 			};
 		};
+		drawShip(3, 0, 0, 0.99 - timer[0] / 400 - timer[1] / 400);
 	};
-	drawShip(3, 0, 0, 0.99 - timer[0] / 400 - timer[1] / 400);
 };
 
-function timer_reset (override) {
+function timer_reset (timerOverride) {
 	queued = false;
 	var looping = (document.getElementById("option_loop").style.opacity > 0) ? false : true;
 	var barrel_rolls = (document.getElementById("button_barrel").style.opacity > 0) ? false : true;
 	var boosts = (document.getElementById("button_boost").style.opacity > 0) ? false : true;
 	var bbPTL = (document.getElementById("button_bbPTL").style.opacity > 0) ? false : true;
-	if ((looping || override) && timer[3] >= 100) {
+	if ((looping || timerOverride) && timer[3] >= 100) {
 		if (!barrel_rolls || timer[5] >= 100) {
 			if (!boosts || timer[7] >= 100) {
 				if (!bbPTL || timer[9] >= 100) {
@@ -1214,7 +1233,6 @@ function animateTurn (flightplan, phase) {
 </script>
 </head>
 <body bgcolor=black>
-
 <table cellpadding=0 cellspacing=0>
 <tr>
 <td width=810 rowspan=9></td>
