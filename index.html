@@ -5,11 +5,12 @@
 @font-face {font-family: Aurebesh; src: url(fonts/aurebesh.ttf);}
 body {font-family: Arial; font-size: small; color: white;}
 table {position: relative; z-index: 100;}
-canvas {position: absolute; top: 10px; left: 10px; border: 1px solid #424242;}
+canvas {position: absolute; top: 10px; left: 65px; border: 1px solid #424242;}
 td {position: relative;}
 td.button {background-color: black; border: 1px solid #424242; text-align: center;}
 td.move {width: 20px; height: 22px; font-family: Aurebesh; font-size: 12px;}
 td.actions {width: 44px; height: 30px;}
+td.select {vertical-align: bottom; height: 119px;}
 img.mirror {transform: scale(-1, 1); -webkit-transform: scale(-1, 1);}
 img.rotateL {transform: rotate(-90deg); -webkit-transform: rotate(-90deg);}
 img.rotateR {transform: rotate(90deg); -webkit-transform: rotate(90deg);}
@@ -20,12 +21,8 @@ img.decloak {width: 20px; height: 20px;}
 img.maneuver {width: 20px; height: 20px;}
 a {position: relative;}
 a.lock {position: absolute; top: 0px; left: 0px; font-size: 10px;}
+
 .option {width: 50px; height: 50px; text-align: center; font-family: Aurebesh; font-size: 26px;}
-.model {left: 15px;}
-.pilot {left: 35px;}
-
-a.select {color: gray;}
-
 </style>
 <script type="text/javascript">
 <!--
@@ -100,7 +97,6 @@ interceptor.base = smallbase;
 interceptor.protrusions = 13;
 interceptor.width = 40;
 interceptor.height = 54;
-interceptor.pilots = [];
 interceptor.actions = ["roll", "boost"];
 interceptor.slots = [];
 interceptor.decloak = [];
@@ -127,10 +123,10 @@ fighter.id = "fighter";
 fighter.img = new Image();
 fighter.img.src = "images/fighter.png";
 fighter.base = smallbase;
+fighter.protrusions = 1;
 fighter.offset = 2;
 fighter.width = 44;
-fighter.height = 41;
-fighter.pilots = [];
+fighter.height = 42;
 fighter.actions = ["roll"];
 fighter.slots = [];
 fighter.decloak = [];
@@ -151,15 +147,46 @@ fighter.dial = [
 ["straight", "white", 5]
 ];
 
+var firespray = new Object();
+firespray.faction = "empire";
+firespray.id = "firespray";
+firespray.img = new Image();
+firespray.img.src = "images/firespray.png";
+firespray.base = largebase;
+firespray.protrusions = 1;
+firespray.offset = 4;
+firespray.width = 90;
+firespray.height = 82;
+firespray.actions = [];
+firespray.slots = ["crew"];
+firespray.arc = "rear";
+firespray.decloak = [];
+firespray.dial = [
+["bank", "green", 1, -1],
+["straight", "green", 1],
+["bank", "green", 1, 1],
+["turn", "white", 2, -1],
+["bank", "white", 2, -1],
+["straight", "green", 2],
+["bank", "white", 2, 1],
+["turn", "white", 2, 1],
+["turn", "white", 3, -1],
+["bank", "white", 3, -1],
+["straight", "white", 3],
+["bank", "white", 3, 1],
+["turn", "white", 3, 1],
+["straight", "white", 4]
+];
+
 var bwing = new Object();
-bwing.faction = "rebel";
+bwing.faction = "alliance";
 bwing.id = "bwing";
 bwing.img = new Image();
 bwing.img.src = "images/bwing.png";
 bwing.base = smallbase;
+bwing.protrusions = 1;
 bwing.width = 40;
-bwing.height = 41;
-bwing.pilots = [];
+bwing.height = 42;
 bwing.actions = ["roll"];
 bwing.slots = ["system"];
 bwing.decloak = [];
@@ -181,7 +208,7 @@ bwing.dial = [
 ];
 
 var xwing = new Object();
-xwing.faction = "rebel";
+xwing.faction = "alliance";
 xwing.id = "xwing";
 xwing.img = new Image();
 xwing.img.src = "images/xwing.png";
@@ -190,7 +217,6 @@ xwing.protrusions = 11;
 xwing.offset = 1;
 xwing.width = 42;
 xwing.height = 52;
-xwing.pilots = [];
 xwing.actions = [];
 xwing.slots = ["astromech"];
 xwing.decloak = [];
@@ -212,7 +238,7 @@ xwing.dial = [
 ];
 
 var z95 = new Object();
-z95.faction = "rebel";
+z95.faction = "alliance";
 z95.id = "z95";
 z95.img = new Image();
 z95.img.src = "images/z95.png";
@@ -221,7 +247,6 @@ z95.protrusions = 6;
 z95.offset = 1;
 z95.width = 43;
 z95.height = 47;
-z95.pilots = [];
 z95.actions = [];
 z95.slots = [];
 z95.decloak = [];
@@ -243,7 +268,7 @@ z95.dial = [
 ];
 
 var yt1300 = new Object();
-yt1300.faction = "rebel";
+yt1300.faction = "alliance";
 yt1300.id = "yt1300";
 yt1300.img = new Image();
 yt1300.img.src = "images/yt1300.png";
@@ -252,10 +277,9 @@ yt1300.protrusions = 32;
 yt1300.offset = 4;
 yt1300.width = 90;
 yt1300.height = 119;
-yt1300.pilots = [];
 yt1300.actions = [];
 yt1300.slots = ["crew"];
-yt1300.turret = true;
+yt1300.arc = "turret";
 yt1300.decloak = [];
 yt1300.dial = [
 ["turn", "white", 1, -1],
@@ -312,53 +336,79 @@ function initialize () {
 function select (model, pilot) {
 	var selections = document.getElementsByClassName("select");
 	for (var i = 0; i < selections.length; i++) {
-		document.getElementsByClassName("select")[i].style.color = "gray";
+		document.getElementsByClassName("select")[i].style.color = "#116699";
 	};
-	ship.faction = model.faction;
-	document.getElementById("select_" + ship.faction).style.color = "white";
-	var faction = document.getElementsByClassName(ship.faction);
-	var enemy = document.getElementsByClassName((ship.faction == "empire") ? "rebel" : "empire");
-	for (var i = 0; i < enemy.length; i++) {
-		enemy[i].hidden = true;
-	};
-	for (var i = 0; i < faction.length; i++) {
-		if (faction[i].className.search("pilot") != -1){
-			faction[i].hidden = (faction[i].className.search(model.id) == -1) ? true : false;
+	if (model == "empire" || model == "alliance") {
+		var enemy = (model == "empire") ? "alliance" : "empire";
+		var faction = document.getElementsByClassName(model);
+		var eFaction = document.getElementsByClassName(enemy);
+		var target = document.getElementById("select_" + model);
+		var eTarget = document.getElementById("select_" + enemy);
+		var state = target.style.opacity;
+		if (state == 1) {
+			for (var i = 0; i < faction.length; i++) {
+				faction[i].hidden = true;
+			};
+			target.style.opacity = 0.3;
 		} else {
-			faction[i].hidden = false;
+			for (var i = 0; i < eFaction.length; i++) {
+				eFaction[i].hidden = true;
+			};
+			for (var i = 0; i < faction.length; i++) {
+if (faction[i].className.indexOf("pilot") == -1) {
+				faction[i].hidden = false;
+};
+			};
+			eTarget.style.opacity = 0.3;
+			target.style.opacity = 1;
 		};
-	};
-	ship.dial = model.dial;
-	var elite = false;
-	if (pilot != undefined) {
-		document.getElementById("select_" + pilot.id).style.color = "white";
-		ship.decloak = pilot.decloak;
-		document.getElementById("lock_sensors").innerHTML = (pilot.slots.indexOf("system") == -1) ? "&#x1F512;" : "";
-		elite = (pilot.slots.indexOf("elite") == -1) ? false : true;
-		document.getElementById("lock_bbPTL").innerHTML = (elite) ? "" : "E";
 	} else {
-		document.getElementById("select_" + model.id).style.color = "white";
-		ship.decloak = model.decloak;
-		document.getElementById("lock_sensors").innerHTML = (model.slots.indexOf("system") == -1) ? "S" : "";
-		elite = (model.slots.indexOf("elite") == -1) ? false : true;
-		document.getElementById("lock_bbPTL").innerHTML = (elite) ?  "" : "E";
+		ship.faction = model.faction;
+		var enemy = (ship.faction == "empire") ? "alliance" : "empire";
+		var faction = document.getElementsByClassName(ship.faction);
+		var eFaction = document.getElementsByClassName(enemy);
+		document.getElementById("select_" + enemy).style.opacity = 0.3;
+		for (var i = 0; i < eFaction.length; i++) {
+			eFaction[i].hidden = true;
+		};
+		for (var i = 0; i < faction.length; i++) {
+			if (faction[i].className.search("pilot") != -1){
+				faction[i].hidden = (faction[i].className.search(model.id) == -1) ? true : false;
+			} else {
+				faction[i].hidden = false;
+			};
+		};
+		ship.dial = model.dial;
+		var elite = false;
+		if (pilot != undefined) {
+			document.getElementById("select_" + pilot.id).style.color = "#11EEFF";
+			ship.decloak = pilot.decloak;
+			document.getElementById("lock_sensors").innerHTML = (pilot.slots.indexOf("system") == -1) ? "&#x1F512;" : "";
+			elite = (pilot.slots.indexOf("elite") == -1) ? false : true;
+			document.getElementById("lock_bbPTL").innerHTML = (elite) ? "" : "E";
+		} else {
+			ship.decloak = model.decloak;
+			document.getElementById("lock_sensors").innerHTML = (model.slots.indexOf("system") == -1) ? "S" : "";
+			elite = (model.slots.indexOf("elite") == -1) ? false : true;
+			document.getElementById("lock_bbPTL").innerHTML = (elite) ?  "" : "E";
 	};
-	decloakTable(ship.decloak.length);
-	maneuverTable(ship.dial);
-	ship.img = model.img;
-	ship.base = model.base;
-	ship.turret = model.turret;
-	ship.protrusions = (isFinite(model.protrusions)) ? model.protrusions : 0;;
-	ship.offset = (isFinite(model.offset)) ? model.offset : 0;
-	ship.width = model.width;
-	ship.height = model.height;
-	document.getElementById("lock_roll").innerHTML = (model.actions.indexOf("roll") == -1 && !elite) ? "E" : "";
-	document.getElementById("lock_boost").innerHTML = (model.actions.indexOf("boost") == -1) ? "M" : "";
-	decloak = undefined;
-	dial = undefined;
-	setDecloak("all");
-	setDial("all");
-	timer_reset(true);
+		decloakTable(ship.decloak.length);
+		maneuverTable(ship.dial);
+		ship.img = model.img;
+		ship.base = model.base;
+		ship.arc = model.arc;
+		ship.protrusions = (isFinite(model.protrusions)) ? model.protrusions : 0;;
+		ship.offset = (isFinite(model.offset)) ? model.offset : 0;
+		ship.width = model.width;
+		ship.height = model.height;
+		document.getElementById("lock_roll").innerHTML = (model.actions.indexOf("roll") == -1 && !elite) ? "E" : "";
+		document.getElementById("lock_boost").innerHTML = (model.actions.indexOf("boost") == -1) ? "M" : "";
+		decloak = undefined;
+		dial = undefined;
+		setDecloak("all");
+		setDial("all");
+		timer_reset(true);
+	};
 };
 
 function decloakTable (paths) {
@@ -418,8 +468,7 @@ function maneuverTable (dial) {
 			document.getElementById("bStraight" + i).onclick = function(){setDial(this.id)};
 		};
 	};
-	document.getElementById("mRow5").style.opacity = (range[5].join("") == "000") ? 0 : 1;
-	
+	document.getElementById("mRow5").style.opacity = (range[5].join("") == "000") ? 0.5 : 1;
 };
 
 function reset () {
@@ -604,11 +653,7 @@ function bbPTL () {
 		timer[8] = bbPTL_timer[0];
 		timer[9] = bbPTL_timer[1];
 	} else {
-		if (!barrel_roll || !boost) {
-			target.style.opacity = 1;
-		} else {
-			target.style.opacity = 0.5;
-		};
+		target.style.opacity = (!barrel_roll || !boost) ? 1 : 0.5;
 		if (timer[8] > 0) {
 			bbPTL_timer = [timer[8], timer[9]];
 		};
@@ -625,14 +670,13 @@ function advSensors () {
 	var state = target.style.opacity;
 	if (state == 0.5 && (barrel_roll || boost)) {
 		target.style.opacity = 0;
+		timer_reset(true);
 	} else {
-		if (!barrel_roll && !boost) {
-			target.style.opacity = 1;
-		} else {
-			target.style.opacity = 0.5;
+		target.style.opacity = (!barrel_roll && !boost) ? 1 : 0.5;
+		if (state == 0) {
+			timer_reset(true);
 		};
 	};
-	timer_reset(true);
 };
 
 function starfield () {
@@ -728,7 +772,7 @@ function drawFiringArcs (x, y) {
 	ctx[2].save();
 	ctx[2].fillStyle = color;
 	ctx[2].strokeStyle = color;
-	if (ship.turret) {
+	if (ship.arc == "turret") {
 		forward = 10;
 		ctx[2].globalAlpha = 0.1;
 		ctx[2].beginPath();
@@ -756,6 +800,19 @@ function drawFiringArcs (x, y) {
 	ctx[2].fill();
 	ctx[2].globalAlpha = 0.9;
 	ctx[2].stroke();
+	if (ship.arc == "rear") {
+	ctx[2].globalAlpha = 0.1;
+	ctx[2].beginPath();
+	ctx[2].moveTo(x - offset, y + ship.base);
+	ctx[2].arc(x - offset, y + ship.base, 100 * arcrange, (0.5 + 2/9) * pi, 0.5 * pi, true);
+	ctx[2].lineTo(x + offset, y + ship.base + 100 * arcrange);
+	ctx[2].arc(x + offset, y + ship.base, 100 * arcrange, 0.5 * pi, (0.5 - 2/9) * pi, true);
+	ctx[2].lineTo(x + offset, y + ship.base);
+	ctx[2].fill();
+	ctx[2].globalAlpha = 0.9;
+	ctx[2].setLineDash([4]);
+	ctx[2].stroke();
+	};
 	ctx[2].restore();
 };
 
@@ -1318,8 +1375,8 @@ function animateTurn (flightplan, phase) {
 <body bgcolor=black>
 <table cellpadding=0 cellspacing=0>
 <tr>
-<td width=810 rowspan=9></td>
-<td style="vertical-align:top">
+<td width=862 rowspan=8></td>
+<td style="vertical-align:top" height=106>
 <table cellpadding=0 width=158>
 <tr>
 <td class="option"><img src="images/grid.png" class="overlay" style="z-index: -1">
@@ -1340,10 +1397,10 @@ function animateTurn (flightplan, phase) {
 </td>
 </tr>
 <tr>
-<td height=20></td>
+<td height=10></td>
 </tr>
 <tr>
-<td style="vertical-align: top;" height=75>
+<td style="vertical-align: top;" height=74>
 <table cellpadding=0 id="tDecloak">
 <tr class="decloakE">
 <td width=22></td>
@@ -1378,7 +1435,7 @@ function animateTurn (flightplan, phase) {
 <td height=10></td>
 </tr>
 <tr>
-<td style="vertical-align:top">
+<td style="vertical-align:top" height=146>
 <table cellpadding=0>
 <tr id="mRow5">
 <td class="button move">5</td>
@@ -1431,7 +1488,7 @@ function animateTurn (flightplan, phase) {
 <td height=10></td>
 </tr>
 <tr>
-<td>
+<td style="vertical-align:top" height=104>
 <table cellpadding=0>
 <tr>
 <td class="button actions">
@@ -1443,11 +1500,6 @@ function animateTurn (flightplan, phase) {
 <img src="images/boostG.png">
 <a id="lock_boost" class="lock"></a>
 <img id="button_boost" src="images/blank.png" class="overlay" width=44 height=30 onClick="boost();" onMouseOver="switchFilter('boost');" style="opacity: 0.5">
-</td>
-<td class="button actions">
-<img src="images/bbPTL.png">
-<a id="lock_bbPTL" class="lock"></a>
-<img id="button_bbPTL" src="images/blank.png" class="overlay" width=44 height=30 onClick="bbPTL();" style="opacity: 1">
 </td>
 <tr>
 <td class="button" colspan=2 rowspan=2>
@@ -1468,52 +1520,50 @@ function animateTurn (flightplan, phase) {
 </tr>
 </table>
 </td>
+<td class="button actions">
+<img src="images/bbPTL.png">
+<a id="lock_bbPTL" class="lock"></a>
+<img id="button_bbPTL" src="images/blank.png" class="overlay" width=44 height=30 onClick="bbPTL();" style="opacity: 1">
+</td>
+</tr>
+<tr>
 <td class="button actions"><img src="images/systemW.png">
 <a id="lock_sensors" class="lock"></a>
 <img id="button_sensors" src="images/blank.png" class="overlay" width=44 height=30 onClick="advSensors();" style="opacity: 1">
 </td>
 </tr>
-<tr>
-<td class="button actions"></td>
-</tr>
 </table>
 </td>
 </tr>
 <tr>
-<td height=10></td>
+<td height=20></td>
 </tr>
 <tr>
 <td>
-<table id="selectShip" cellpadding=0>
+<table cellpadding=0 height=126>
 <tr>
-<td><a id="select_empire" class="select faction" onClick="select(fighter);">Galactic Empire</a></td>
+<td class="select option" style="height: 70px;"><img id="select_empire" src="images/empire.png" class="select faction" style="opacity: 1" onClick="select ('empire');"></td>
+<td width=5></td>
+<td id="select_firespray" class="option select empire model" rowspan=2><img src="images/firespray.png" onClick="select(firespray);"></td>
+<td id="select_fighter" class="option select empire model" rowspan=2><img src="images/fighter.png" onClick="select(fighter);"></td>
+<td id="select_interceptor" class="option select empire model" rowspan=2><img src="images/interceptor.png" onClick="select(interceptor);"></td>
+<td id="select_phantom" class="option select empire model" rowspan=2><img src="images/echo.png" width=40 onClick="select(phantom);"></td>
+<td id="select_echo" class="option select empire phantom pilot" rowspan=2><a class="pilot" onClick="select(phantom, echo);" style="position: relative; left: 0px; bottom: 10px;">Echo</a></td>
+<td id="select_yt1300" class="option select alliance model" rowspan=2><img src="images/yt1300.png" onClick="select(yt1300);" style="position: relative; left: 0px; bottom: -6px;"></td>
+<td id="select_bwing" class="option select alliance model" rowspan=2><img src="images/bwing.png" onClick="select(bwing);"></td>
+<td id="select_xwing" class="option select alliance model" rowspan=2><img src="images/xwing.png" onClick="select(xwing);"></td>
+<td id="select_z95" class="option select alliance model" rowspan=2><img src="images/z95.png" onClick="select(z95);"></td>
 </tr>
 <tr>
-<td><a id="select_fighter" class="select empire model" onClick="select(fighter);">TIE Fighter</a></td>
+<td class="select option" style="height: 50px;" rowspan=2><img id="select_alliance" src="images/alliance.png" class="select faction" onClick="select('alliance');"></td>
 </tr>
 <tr>
-<td><a id="select_interceptor" class="select empire model" onClick="select(interceptor);">TIE Interceptor</a></td>
+<td height=1></td>
 </tr>
 <tr>
-<td><a id="select_phantom" class="select empire model" onClick="select(phantom);">TIE Phantom</a></td>
-</tr>
-<tr>
-<td><a id="select_echo" class="select empire phantom pilot" onClick="select(phantom, echo);">"Echo"</a></td>
-</tr>
-<tr>
-<td><a id="select_rebel" class="select faction" onClick="select(xwing);">Rebel Alliance</a></td>
-</tr>
-<tr>
-<td><a id="select_bwing" class="select rebel model" onClick="select(bwing);">B-Wing</a></td>
-</tr>
-<tr>
-<td><a id="select_xwing" class="select rebel model" onClick="select(xwing);">X-Wing</a></td>
-</tr>
-<tr>
-<td><a id="select_yt1300" class="select rebel model" onClick="select(yt1300);">YT-1300</a></td>
-</tr>
-<tr>
-<td><a id="select_z95" class="select rebel model" onClick="select(z95);">Z-95 Headhunter</a></td>
+<td></td>
+<td></td>
+
 </tr>
 </table>
 </td>
