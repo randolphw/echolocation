@@ -499,6 +499,8 @@ function select (model, pilot) {
 		for (var i = 0; i < faction.length; i++) {
 			if (faction[i].className.search("pilot") == -1 || ship.pilots.indexOf(eval(faction[i].id.substr(7))) != -1) {
 				faction[i].hidden = false;
+			} else {
+				faction[i].hidden = true;
 			};
 		};
 		ship.dial = model.dial;
