@@ -1533,16 +1533,16 @@ function animateTurn (flightplan, phase) {
 <tr>
 <td class="option"><img src="images/grid.png" class="overlay" style="z-index: -1">
 <a id="grid_level"></a>
-<img id="option_grid" src="images/blank.png" class="overlay option" style="opacity: 0.5;" onClick="gridfield();"></td>
+<img id="option_grid" src="images/blank.png" title="Tactical Overlay" class="overlay option" style="opacity: 0.5;" onClick="gridfield();"></td>
 <td class="option"><img src="images/stars.png" class="overlay">
-<img id="option_starfield" src="images/blank.png" class="overlay option" style="opacity: 0.5;" onClick="starfield();"></td>
+<img id="option_starfield" src="images/blank.png" title="Starfield" class="overlay option" style="opacity: 0.5;" onClick="starfield();"></td>
 <td class="option"><img src="images/loop.png" class="overlay">
-<img id="option_loop" src="images/blank.png" class="overlay option" style="opacity: 0.5;" onClick="loop();"></td>
+<img id="option_loop" src="images/blank.png" title="Loop" class="overlay option" style="opacity: 0.5;" onClick="loop();"></td>
 </tr>
 <tr>
 <td class="option"><img src="images/attackR.png" class="overlay" style="z-index: -1">
 <a id="fire_range"></a>
-<img id="option_fire" src="images/blank.png" class="overlay option" onClick="fire();" style="opacity: 0.5">
+<img id="option_fire" src="images/blank.png" title="Firing Arcs" class="overlay option" onClick="fire();" style="opacity: 0.5">
 </td>
 <td class="option"><img id="option_blarg" src="images/blank.png" title="?" class="overlay option" onClick="wharrgarbl = wharrgarbl * -1; stepOverride = true;" style="opacity: 0">
 </td>
@@ -1648,12 +1648,12 @@ function animateTurn (flightplan, phase) {
 <td class="button actions">
 <img src="images/rollG.png">
 <a id="lock_roll" class="lock"></a>
-<img id="button_barrel" src="images/blank.png" class="overlay" width=44 height=30 onClick="barrel_roll();" onMouseOver="switchFilter('roll');" style="opacity: 0.5">
+<img id="button_barrel" src="images/blank.png" title="Barrel Roll" class="overlay" width=44 height=30 onClick="barrel_roll();" onMouseOver="switchFilter('roll');" style="opacity: 0.5">
 </td>
 <td class="button actions">
 <img src="images/boostG.png">
 <a id="lock_boost" class="lock"></a>
-<img id="button_boost" src="images/blank.png" class="overlay" width=44 height=30 onClick="boost();" onMouseOver="switchFilter('boost');" style="opacity: 0.5">
+<img id="button_boost" src="images/blank.png" title="Boost" class="overlay" width=44 height=30 onClick="boost();" onMouseOver="switchFilter('boost');" style="opacity: 0.5">
 </td>
 <tr>
 <td class="button" colspan=2 rowspan=2>
@@ -1677,13 +1677,13 @@ function animateTurn (flightplan, phase) {
 <td class="button actions">
 <img src="images/bbPTL.png">
 <a id="lock_bbPTL" class="lock"></a>
-<img id="button_bbPTL" src="images/blank.png" class="overlay" width=44 height=30 onClick="bbPTL();" style="opacity: 1">
+<img id="button_bbPTL" src="images/blank.png" title="Push the Limit: Boost + Barrel Roll" class="overlay" width=44 height=30 onClick="bbPTL();" style="opacity: 1">
 </td>
 </tr>
 <tr>
 <td class="button actions"><img src="images/systemW.png">
 <a id="lock_sensors" class="lock"></a>
-<img id="button_sensors" src="images/blank.png" class="overlay" width=44 height=30 onClick="advSensors();" style="opacity: 1">
+<img id="button_sensors" src="images/blank.png" title="Advanced Sensors" class="overlay" width=44 height=30 onClick="advSensors();" style="opacity: 1">
 </td>
 </tr>
 </table>
