@@ -1071,6 +1071,20 @@ function drawShip (z, x, y, alpha) {
 	};
 };
 
+function drawX () {
+	ctx[3].globalAlpha = 1;
+	ctx[3].lineWidth = 1;
+	ctx[3].strokeStyle = "red";
+	ctx[3].beginPath();
+	ctx[3].moveTo(-3, 0);
+	ctx[3].lineTo(3, 0);
+	ctx[3].stroke();
+	ctx[3].beginPath();
+	ctx[3].moveTo(0, -6);
+	ctx[3].lineTo(0, 3);
+	ctx[3].stroke();
+};
+
 function oBank (z, distance, direction) {
 	var radius = rBank[distance];
 	ctx[z].translate(direction * radius, 0);
@@ -1090,9 +1104,9 @@ function oBankroll (z, distance, direction, start, end, bank) {
 };
 
 function oRoll (z, distance, direction, start) {
-	ctx[z].translate(direction * ship.base / 2, ship.base / 2 - start * (10 + (ship.base - 40) / 2));
-	ctx[z].translate(direction * distance * smallbase, 0);
-	ctx[z].translate(direction * ship.base / 2, -ship.base / 2 + start * -(10 + (ship.base - 40) / 2));
+	ctx[z].translate(direction * ship.base / 2, ship.base / 2 - start * ship.base / 4);
+	ctx[z].translate(direction * distance * (20 + (largebase - ship.base) / 2), 0);
+	ctx[z].translate(direction * ship.base / 2, -start * ship.base / 4 - ship.base / 2);
 };
 
 function oStraight (z, distance) {
@@ -1311,15 +1325,15 @@ function animateRoll (flightplan, phase) {
 	var sensors = (document.getElementById("button_sensors").style.opacity > 0) ? false : true;
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].save();
-		ctx[j].translate(direction * ship.base / 2, ship.base / 2 - start * (10 + (ship.base - 40) / 2));
+		ctx[j].translate(direction * ship.base / 2, ship.base / 2 - start * ship.base / 4);
 		ctx[j].rotate(direction * 0.5 * pi);
 	};
 	ctx[1].globalAlpha = (1 - 0.5 * ((phase == 0) ? (timer[3] / 100) : 0)) * 0.5 * timer[phase + 1] / 100;
 	ctx[1].beginPath();
 	ctx[1].moveTo(0, 0);
-	ctx[1].lineTo(0, timer[phase + 1] / 100 * distance * -smallbase);
+	ctx[1].lineTo(0, timer[phase + 1] / 100 * distance * -(20 + (largebase - ship.base) / 2));
 	ctx[1].strokeStyle = flightplan[1];
-	ctx[1].lineWidth = smallbase / 2;
+	ctx[1].lineWidth = ship.base / 2;
 	ctx[1].stroke();
 	switch (phase) {
 		case 4:
@@ -1334,9 +1348,9 @@ function animateRoll (flightplan, phase) {
 	};
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].rotate(direction * -0.5 * pi);
-		ctx[j].translate(direction * ship.base / 2, -ship.base * 3 / 4);
+		ctx[j].translate(direction * ship.base / 2, -ship.base / 2);
 	};
-	drawShip(3, (1 - timer[phase] / 100) * distance * direction * -ship.base + timer[phase + 1] / 100 * distance * direction * smallbase, (1 - timer[phase] / 100) * start * ship.base / 2 + (1 - start) * (10 + (ship.base - 40) / 4) - start * ((ship.base == smallbase) ? 0 : 10), (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
+	drawShip(3, (1 - timer[phase] / 100) * distance * direction * -ship.base + timer[phase + 1] / 100 * distance * direction * (20 + (largebase - ship.base) / 2), start * ship.base / 4 - timer[phase] / 100 * start * ship.base / 2, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
