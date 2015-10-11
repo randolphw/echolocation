@@ -35,386 +35,946 @@ var rTurn = [0, 35, 63, 90];
 var smallbase = 40;
 var largebase = 80;
 
-var echo = new Object();
-echo.id = "echo";
+var echo = {
+	id: "echo",
+	slots: ["elite", "crew", "system"],
+	decloak: [
+		["bank", "blue", 2, -1],
+		["bank", "blue", 2, 1],
+		["bankroll", "blue", 2, -1, 1, 1],
+		["bankroll", "blue", 2, -1, -1, 1],
+		["bankroll", "blue", 2, 1, 1, -1],
+		["bankroll", "blue", 2, 1, -1, -1],
+		["bankroll", "blue", 2, -1, 1, -1],
+		["bankroll", "blue", 2, -1, -1, -1],
+		["bankroll", "blue", 2, 1, 1, 1],
+		["bankroll", "blue", 2, 1, -1, 1]
+	]
+};
 echo.img = new Image();
 echo.img.src = "images/echo.png";
 echo.img.onload = function() {initialize();};
-echo.slots = ["elite", "crew", "system"];
-echo.decloak = [
-["bank", "blue", 2, -1],
-["bank", "blue", 2, 1],
-["bankroll", "blue", 2, -1, 1, 1],
-["bankroll", "blue", 2, -1, -1, 1],
-["bankroll", "blue", 2, 1, 1, -1],
-["bankroll", "blue", 2, 1, -1, -1],
-["bankroll", "blue", 2, -1, 1, -1],
-["bankroll", "blue", 2, -1, -1, -1],
-["bankroll", "blue", 2, 1, 1, 1],
-["bankroll", "blue", 2, 1, -1, 1]
-];
 
-var tiephantom = new Object();
-tiephantom.faction = "empire";
-tiephantom.id = "tiephantom";
-tiephantom.img = echo.img;
-tiephantom.base = smallbase;
-tiephantom.protrusions = 17;
-tiephantom.width = 40;
-tiephantom.height = 58;
-tiephantom.pilots = [echo];
-tiephantom.actions = ["roll"];
-tiephantom.slots = ["crew", "system"];
-tiephantom.decloak = [
-["straight", "blue", 2],
-["roll", "blue", 2, -1, 1],
-["roll", "blue", 2, 1, 1],
-["roll", "blue", 2, -1, -1],
-["roll", "blue", 2, 1, -1]
-];
-tiephantom.dial = [
-["turn", "white", 1, -1],
-["turn", "white", 1, 1],
-["turn", "white", 2, -1],
-["bank", "green", 2, -1],
-["straight", "green", 2],
-["bank", "green", 2, 1],
-["turn", "white", 2, 1],
-["turn", "white", 3, -1],
-["bank", "white", 3, -1],
-["straight", "green", 3],
-["bank", "white", 3, 1],
-["turn", "white", 3, 1],
-["straight", "white", 4]
-];
+var tiephantom = {
+	faction: "empire",
+	id: "tiephantom",
+	img: echo.img,
+	base: smallbase,
+	protrusions: 17,
+	width: 40,
+	height: 58,
+	pilots: [echo],
+	actions: ["roll"],
+	slots: ["crew", "system"],
+	decloak: [
+		["straight", "blue", 2],
+		["roll", "blue", 2, -1, 1],
+		["roll", "blue", 2, 1, 1],
+		["roll", "blue", 2, -1, -1],
+		["roll", "blue", 2, 1, -1]
+	],
+	dial: [
+		["turn", "white", 1, -1],
+		["turn", "white", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "green", 2, -1],
+		["straight", "green", 2],
+		["bank", "green", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["koiogran", "red", 3],
+		["straight", "white", 4],
+		["koiogran", "red", 4]
+	]
+};
 
-var tieadvanced = new Object();
-tieadvanced.faction = "empire";
-tieadvanced.id = "tieadvanced";
+var tieadvanced = {
+	faction: "empire",
+	id: "tieadvanced",
+	base: smallbase,
+	protrusions: 1,
+	width: 40,
+	height: 50,
+	actions: ["roll"],
+	slots: [],
+	decloak: [],
+	dial: [
+		["bank", "green", 1, -1],
+		["bank", "green", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["straight", "white", 4],
+		["koiogran", "red", 4],
+		["straight", "white", 5]
+	]
+};
 tieadvanced.img = new Image();
 tieadvanced.img.src = "images/tieadvanced.png";
-tieadvanced.base = smallbase;
-tieadvanced.protrusions = 1;
-tieadvanced.width = 40;
-tieadvanced.height = 50;
-tieadvanced.actions = ["roll"];
-tieadvanced.slots = [];
-tieadvanced.decloak = [];
-tieadvanced.dial = [
-["bank", "green", 1, -1],
-["bank", "green", 1, 1],
-["turn", "white", 2, -1],
-["bank", "white", 2, -1],
-["straight", "green", 2],
-["bank", "white", 2, 1],
-["turn", "white", 2, 1],
-["turn", "white", 3, -1],
-["bank", "white", 3, -1],
-["straight", "green", 3],
-["bank", "white", 3, 1],
-["turn", "white", 3, 1],
-["straight", "white", 4],
-["straight", "white", 5]
-];
 
-var tiebomber = new Object();
-tiebomber.faction = "empire";
-tiebomber.id = "tiebomber";
+var tiebomber = {
+	faction: "empire",
+	id: "tiebomber",
+	base: smallbase,
+	protrusions: 1,
+	offset: 4,
+	width: 47,
+	height: 48,
+	actions: ["roll"],
+	slots: [],
+	decloak: [],
+	dial: [
+		["bank", "white", 1, -1],
+		["straight", "green", 1],
+		["bank", "white", 1, 1],
+		["turn", "red", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "red", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["straight", "white", 4],
+		["koiogran", "red", 5]
+	]
+};
 tiebomber.img = new Image();
 tiebomber.img.src = "images/tiebomber.png";
-tiebomber.base = smallbase;
-tiebomber.protrusions = 1;
-tiebomber.offset = 4;
-tiebomber.width = 47;
-tiebomber.height = 48;
-tiebomber.actions = ["roll"];
-tiebomber.slots = [];
-tiebomber.decloak = [];
-tiebomber.dial = [
-["bank", "white", 1, -1],
-["straight", "green", 1],
-["bank", "white", 1, 1],
-["turn", "red", 2, -1],
-["bank", "white", 2, -1],
-["straight", "green", 2],
-["bank", "white", 2, 1],
-["turn", "red", 2, 1],
-["turn", "white", 3, -1],
-["bank", "white", 3, -1],
-["straight", "green", 3],
-["bank", "white", 3, 1],
-["turn", "white", 3, 1],
-["straight", "white", 4]
-];
 
-var tiefighter = new Object();
-tiefighter.faction = "empire";
-tiefighter.id = "tiefighter";
+var tiefighter = {
+	faction: "empire",
+	id: "tiefighter",
+	base: smallbase,
+	protrusions: 1,
+	offset: 2,
+	width: 44,
+	height: 42,
+	actions: ["roll"],
+	slots: [],
+	decloak: [],
+	dial: [
+		["turn", "white", 1, -1],
+		["turn", "white", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "green", 2, -1],
+		["straight", "green", 2],
+		["bank", "green", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["koiogran", "red", 3],
+		["straight", "white", 4],
+		["koiogran", "red", 4],
+		["straight", "white", 5]
+	]
+};
 tiefighter.img = new Image();
 tiefighter.img.src = "images/tiefighter.png";
-tiefighter.base = smallbase;
-tiefighter.protrusions = 1;
-tiefighter.offset = 2;
-tiefighter.width = 44;
-tiefighter.height = 42;
-tiefighter.actions = ["roll"];
-tiefighter.slots = [];
-tiefighter.decloak = [];
-tiefighter.dial = [
-["turn", "white", 1, -1],
-["turn", "white", 1, 1],
-["turn", "white", 2, -1],
-["bank", "green", 2, -1],
-["straight", "green", 2],
-["bank", "green", 2, 1],
-["turn", "white", 2, 1],
-["turn", "white", 3, -1],
-["bank", "white", 3, -1],
-["straight", "green", 3],
-["bank", "white", 3, 1],
-["turn", "white", 3, 1],
-["straight", "white", 4],
-["straight", "white", 5]
-];
 
-var tieinterceptor = new Object();
-tieinterceptor.faction = "empire";
-tieinterceptor.id = "tieinterceptor";
+var tieinterceptor = {
+	faction: "empire",
+	id: "tieinterceptor",
+	base: smallbase,
+	protrusions: 13,
+	width: 40,
+	height: 54,
+	actions: ["roll", "boost"],
+	slots: [],
+	decloak: [],
+	dial: [
+		["turn", "white", 1, -1],
+		["turn", "white", 1, 1],
+		["turn", "green", 2, -1],
+		["bank", "green", 2, -1],
+		["straight", "green", 2],
+		["bank", "green", 2, 1],
+		["turn", "green", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["koiogran", "red", 3],
+		["straight", "green", 4],
+		["straight", "white", 5],
+		["koiogran", "red", 5]
+	]
+};
 tieinterceptor.img = new Image();
 tieinterceptor.img.src = "images/tieinterceptor.png";
-tieinterceptor.base = smallbase;
-tieinterceptor.protrusions = 13;
-tieinterceptor.width = 40;
-tieinterceptor.height = 54;
-tieinterceptor.actions = ["roll", "boost"];
-tieinterceptor.slots = [];
-tieinterceptor.decloak = [];
-tieinterceptor.dial = [
-["turn", "white", 1, -1],
-["turn", "white", 1, 1],
-["turn", "green", 2, -1],
-["bank", "green", 2, -1],
-["straight", "green", 2],
-["bank", "green", 2, 1],
-["turn", "green", 2, 1],
-["turn", "white", 3, -1],
-["bank", "white", 3, -1],
-["straight", "green", 3],
-["bank", "white", 3, 1],
-["turn", "white", 3, 1],
-["straight", "green", 4],
-["straight", "white", 5]
-];
 
-var firespray = new Object();
-firespray.faction = "empire";
-firespray.id = "firespray";
+var tiepunisher = {
+	faction: "empire",
+	id: "tiepunisher",
+	base: smallbase,
+	protrusions: 3,
+	offset: 9,
+	width: 57,
+	height: 52,
+	actions: ["boost"],
+	slots: ["system"],
+	decloak: [],
+	dial: [
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "red", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "red", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "white", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["koiogran", "red", 4]
+	]
+};
+tiepunisher.img = new Image();
+tiepunisher.img.src = "images/tiepunisher.png";
+
+var tiefofighter = {
+	faction: "empire",
+	id: "tiefofighter",
+	base: smallbase,
+	protrusions: 1,
+	width: 40,
+	height: 42,
+	actions: ["roll"],
+	slots: [],
+	decloak: [],
+	dial: [
+		["turn", "white", 1, -1],
+		["turn", "white", 1, 1],
+		["turn", "green", 2, -1],
+		["bank", "green", 2, -1],
+		["straight", "green", 2],
+		["bank", "green", 2, 1],
+		["turn", "green", 2, 1],
+		["segnors", "red", 2, -1],
+		["segnors", "red", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["straight", "white", 4],
+		["koiogran", "red", 4],
+		["straight", "white", 5]
+	]
+};
+tiefofighter.img = new Image();
+tiefofighter.img.src = "images/tiefofighter.png";
+
+var firespray = {
+	faction: "empire",
+	id: "firespray",
+	base: largebase,
+	protrusions: 1,
+	offset: 4,
+	width: 90,
+	height: 82,
+	actions: [],
+	slots: ["crew"],
+	arc: "rear",
+	decloak: [],
+	dial: [
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "white", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["koiogran", "red", 3],
+		["straight", "white", 4],
+		["koiogran", "red", 4]
+	]
+};
 firespray.img = new Image();
 firespray.img.src = "images/firespray.png";
-firespray.base = largebase;
-firespray.protrusions = 1;
-firespray.offset = 4;
-firespray.width = 90;
-firespray.height = 82;
-firespray.actions = [];
-firespray.slots = ["crew"];
-firespray.arc = "rear";
-firespray.decloak = [];
-firespray.dial = [
-["bank", "green", 1, -1],
-["straight", "green", 1],
-["bank", "green", 1, 1],
-["turn", "white", 2, -1],
-["bank", "white", 2, -1],
-["straight", "green", 2],
-["bank", "white", 2, 1],
-["turn", "white", 2, 1],
-["turn", "white", 3, -1],
-["bank", "white", 3, -1],
-["straight", "white", 3],
-["bank", "white", 3, 1],
-["turn", "white", 3, 1],
-["straight", "white", 4]
-];
 
-var awing = new Object();
-awing.faction = "alliance";
-awing.id = "awing";
+var lambda = {
+	faction: "empire",
+	id: "lambda",
+	base: largebase,
+	protrusions: 4,
+	offset: 21,
+	width: 124,
+	height: 85,
+	actions: [],
+	slots: ["system", "crew"],
+	decloak: [],
+	dial: [
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "red", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "red", 2, 1],
+		["bank", "red", 3, -1],
+		["straight", "white", 3],
+		["bank", "red", 3, 1]
+	]
+};
+lambda.img = new Image();
+lambda.img.src = "images/lambda.png";
+
+var awing = {
+	faction: "alliance",
+	id: "awing",
+	base: smallbase,
+	protrusions: 1,
+	width: 40,
+	height: 42,
+	actions: ["boost"],
+	slots: [],
+	decloak: [],
+	dial: [
+		["turn", "white", 1, -1],
+		["turn", "white", 1, 1],
+		["turn", "green", 2, -1],
+		["bank", "green", 2, -1],
+		["straight", "green", 2],
+		["bank", "green", 2, 1],
+		["turn", "green", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["koiogran", "red", 3],
+		["straight", "green", 4],
+		["straight", "green", 5],
+		["koiogran", "red", 5]
+	]
+};
 awing.img = new Image();
 awing.img.src = "images/awing.png";
-awing.base = smallbase;
-awing.protrusions = 1;
-awing.width = 40;
-awing.height = 42;
-awing.actions = ["boost"];
-awing.slots = [];
-awing.decloak = [];
-awing.dial = [
-["turn", "white", 1, -1],
-["turn", "white", 1, 1],
-["turn", "green", 2, -1],
-["bank", "green", 2, -1],
-["straight", "green", 2],
-["bank", "green", 2, 1],
-["turn", "green", 2, 1],
-["turn", "white", 3, -1],
-["bank", "white", 3, -1],
-["straight", "green", 3],
-["bank", "white", 3, 1],
-["turn", "white", 3, 1],
-["straight", "green", 4],
-["straight", "green", 5]
-];
 
-var bwing = new Object();
-bwing.faction = "alliance";
-bwing.id = "bwing";
+var bwing = {
+	faction: "alliance",
+	id: "bwing",
+	base: smallbase,
+	protrusions: 1,
+	width: 40,
+	height: 42,
+	actions: ["roll"],
+	slots: ["system"],
+	decloak: [],
+	dial: [
+		["turn", "red", 1, -1],
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "red", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["koiogran", "red", 2],
+		["bank", "red", 3, -1],
+		["straight", "white", 3],
+		["bank", "red", 3, 1],
+		["straight", "red", 4]
+]
+};
 bwing.img = new Image();
 bwing.img.src = "images/bwing.png";
-bwing.base = smallbase;
-bwing.protrusions = 1;
-bwing.width = 40;
-bwing.height = 42;
-bwing.actions = ["roll"];
-bwing.slots = ["system"];
-bwing.decloak = [];
-bwing.dial = [
-["turn", "red", 1, -1],
-["bank", "green", 1, -1],
-["straight", "green", 1],
-["bank", "green", 1, 1],
-["turn", "red", 1, 1],
-["turn", "white", 2, -1],
-["bank", "white", 2, -1],
-["straight", "green", 2],
-["bank", "white", 2, 1],
-["turn", "white", 2, 1],
-["bank", "red", 3, -1],
-["straight", "white", 3],
-["bank", "red", 3, 1],
-["straight", "red", 4]
-];
 
-var xwing = new Object();
-xwing.faction = "alliance";
-xwing.id = "xwing";
+var ewing = {
+	faction: "alliance",
+	id: "ewing",
+	base: smallbase,
+	protrusions: 6,
+	width: 40,
+	height: 47,
+	actions: ["roll"],
+	slots: ["system", "astromech"],
+	decloak: [],
+	dial: [
+		["bank", "white", 1, -1],
+		["straight", "green", 1],
+		["bank", "white", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "green", 2, -1],
+		["straight", "green", 2],
+		["bank", "green", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["koiogran", "red", 3],
+		["straight", "white", 4],
+		["koiogran", "red", 4],
+		["straight", "white", 5]
+]
+};
+ewing.img = new Image();
+ewing.img.src = "images/ewing.png";
+
+var kwing = {
+	faction: "alliance",
+	id: "kwing",
+	base: smallbase,
+	protrusions: 18,
+	offset: 35,
+	width: 110,
+	height: 69,
+	actions: ["slam"],
+	slots: ["crew"],
+	arc: "turret",
+	decloak: [],
+	dial: [
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["bank", "white", 3, -1],
+		["straight", "white", 3],
+		["bank", "white", 3, 1]
+]
+};
+kwing.img = new Image();
+kwing.img.src = "images/kwing.png";
+
+var xwing = {
+	faction: "alliance",
+	id: "xwing",
+	base: smallbase,
+	protrusions: 11,
+	offset: 1,
+	width: 42,
+	height: 52,
+	actions: [],
+	slots: ["astromech"],
+	decloak: [],
+	dial: [
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "white", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["straight", "white", 4],
+		["koiogran", "red", 4]
+	]
+};
 xwing.img = new Image();
 xwing.img.src = "images/xwing.png";
-xwing.base = smallbase;
-xwing.protrusions = 11;
-xwing.offset = 1;
-xwing.width = 42;
-xwing.height = 52;
-xwing.actions = [];
-xwing.slots = ["astromech"];
-xwing.decloak = [];
-xwing.dial = [
-["bank", "green", 1, -1],
-["straight", "green", 1],
-["bank", "green", 1, 1],
-["turn", "white", 2, -1],
-["bank", "white", 2, -1],
-["straight", "green", 2],
-["bank", "white", 2, 1],
-["turn", "white", 2, 1],
-["turn", "white", 3, -1],
-["bank", "white", 3, -1],
-["straight", "white", 3],
-["bank", "white", 3, 1],
-["turn", "white", 3, 1],
-["straight", "white", 4]
-];
 
-var ywing = new Object();
-ywing.faction = "alliance";
-ywing.id = "ywing";
+var ywing = {
+	faction: "alliance",
+	id: "ywing",
+	base: smallbase,
+	protrusions: 8,
+	width: 40,
+	height: 60,
+	actions: [],
+	slots: ["astromech"],
+	arc: "turret",
+	decloak: [],
+	dial: [
+		["bank", "white", 1, -1],
+		["straight", "green", 1],
+		["bank", "white", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "red", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "white", 3],
+		["bank", "white", 3, 1],
+		["turn", "red", 3, 1],
+		["straight", "red", 4],
+		["koiogran", "red", 4]
+	]
+};
 ywing.img = new Image();
 ywing.img.src = "images/ywing.png";
-ywing.base = smallbase;
-ywing.protrusions = 8;
-ywing.width = 40;
-ywing.height = 60;
-ywing.actions = [];
-ywing.slots = ["astromech"];
-ywing.arc = "turret";
-ywing.decloak = [];
-ywing.dial = [
-["bank", "white", 1, -1],
-["straight", "green", 1],
-["bank", "white", 1, 1],
-["turn", "white", 2, -1],
-["bank", "white", 2, -1],
-["straight", "green", 2],
-["bank", "white", 2, 1],
-["turn", "white", 2, 1],
-["turn", "red", 3, -1],
-["bank", "white", 3, -1],
-["straight", "white", 3],
-["bank", "white", 3, 1],
-["turn", "red", 3, 1],
-["straight", "red", 4]
-];
 
-var z95 = new Object();
-z95.faction = "alliance";
-z95.id = "z95";
+var z95 = {
+	faction: "alliance",
+	id: "z95",
+	base: smallbase,
+	protrusions: 6,
+	offset: 1,
+	width: 43,
+	height: 47,
+	actions: [],
+	slots: [],
+	decloak: [],
+	dial: [
+		["bank", "white", 1, -1],
+		["straight", "green", 1],
+		["bank", "white", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "green", 2, -1],
+		["straight", "green", 2],
+		["bank", "green", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "white", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["koiogran", "red", 3],
+		["straight", "white", 4]
+	]
+};
 z95.img = new Image();
 z95.img.src = "images/z95.png";
-z95.base = smallbase;
-z95.protrusions = 6;
-z95.offset = 1;
-z95.width = 43;
-z95.height = 47;
-z95.actions = [];
-z95.slots = [];
-z95.decloak = [];
-z95.dial = [
-["bank", "white", 1, -1],
-["straight", "green", 1],
-["bank", "white", 1, 1],
-["turn", "white", 2, -1],
-["bank", "green", 2, -1],
-["straight", "green", 2],
-["bank", "green", 2, 1],
-["turn", "white", 2, 1],
-["turn", "white", 3, -1],
-["bank", "white", 3, -1],
-["straight", "white", 3],
-["bank", "white", 3, 1],
-["turn", "white", 3, 1],
-["straight", "white", 4]
-];
 
-var yt1300 = new Object();
-yt1300.faction = "alliance";
-yt1300.id = "yt1300";
+var hwk = {
+	faction: "alliance",
+	id: "hwk",
+	base: smallbase,
+	protrusions: 12,
+	offset: 3,
+	width: 46,
+	height: 56,
+	actions: [],
+	slots: ["crew"],
+	arc: "turret",
+	decloak: [],
+	dial: [
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["bank", "red", 3, -1],
+		["straight", "white", 3],
+		["bank", "red", 3, 1],
+		["straight", "red", 4]
+	]
+};
+hwk.img = new Image();
+hwk.img.src = "images/hwk.png";
+
+var t70xwing = {
+	faction: "alliance",
+	id: "t70xwing",
+	base: smallbase,
+	protrusions: 8,
+	offset: 1,
+	width: 42,
+	height: 49,
+	actions: ["boost"],
+	slots: ["astromech"],
+	decloak: [],
+	dial: [
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["tallon", "red", 3, -1],
+		["tallon", "red", 3, 1],
+		["straight", "white", 4],
+		["koiogran", "red", 4]
+	]
+};
+t70xwing.img = new Image();
+t70xwing.img.src = "images/t70xwing.png";
+
+var yt1300 = {
+	faction: "alliance",
+	id: "yt1300",
+	base: largebase,
+	protrusions: 32,
+	offset: 4,
+	width: 90,
+	height: 119,
+	actions: [],
+	slots: ["crew"],
+	arc: "turret",
+	decloak: [],
+	dial: [
+		["turn", "white", 1, -1],
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "white", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["bank", "white", 3, -1],
+		["straight", "white", 3],
+		["bank", "white", 3, 1],
+		["koiogran", "red", 3],
+		["straight", "white", 4],
+		["koiogran", "red", 4]
+	]
+};
 yt1300.img = new Image();
 yt1300.img.src = "images/yt1300.png";
-yt1300.base = largebase;
-yt1300.protrusions = 32;
-yt1300.offset = 4;
-yt1300.width = 90;
-yt1300.height = 119;
-yt1300.actions = [];
-yt1300.slots = ["crew"];
-yt1300.arc = "turret";
-yt1300.decloak = [];
-yt1300.dial = [
-["turn", "white", 1, -1],
-["bank", "green", 1, -1],
-["straight", "green", 1],
-["bank", "green", 1, 1],
-["turn", "white", 1, 1],
-["turn", "white", 2, -1],
-["bank", "white", 2, -1],
-["straight", "green", 2],
-["bank", "white", 2, 1],
-["turn", "white", 2, 1],
-["bank", "white", 3, -1],
-["straight", "white", 3],
-["bank", "white", 3, 1],
-["straight", "white", 4]
-];
+
+var yt2400 = {
+	faction: "alliance",
+	id: "yt2400",
+	base: largebase,
+	protrusions: 1,
+	offset: 10,
+	width: 100,
+	height: 82,
+	actions: ["roll"],
+	slots: ["crew"],
+	arc: "turret",
+	decloak: [],
+	dial: [
+		["turn", "white", 1, -1],
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "white", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "white", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["straight", "white", 4],
+		["koiogran", "red", 4]
+	]
+};
+yt2400.img = new Image();
+yt2400.img.src = "images/yt2400.png";
+
+var Shwk = {
+	faction: "scum",
+	id: "Shwk",
+	base: smallbase,
+	img: hwk.img,
+	protrusions: 12,
+	offset: 3,
+	width: 46,
+	height: 56,
+	actions: [],
+	slots: ["crew", "illicit"],
+	arc: "turret",
+	decloak: [
+		["straight", "blue", 2],
+		["roll", "blue", 2, -1, 1],
+		["roll", "blue", 2, 1, 1],
+		["roll", "blue", 2, -1, -1],
+		["roll", "blue", 2, 1, -1]
+	],
+	dial: [
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["bank", "red", 3, -1],
+		["straight", "white", 3],
+		["bank", "red", 3, 1],
+		["straight", "red", 4]
+	]
+};
+
+var kihraxz = {
+	faction: "scum",
+	id: "kihraxz",
+	base: smallbase,
+	protrusions: 11,
+	width: 40,
+	height: 52,
+	actions: [],
+	slots: ["illicit"],
+	decloak: [
+		["straight", "blue", 2],
+		["roll", "blue", 2, -1, 1],
+		["roll", "blue", 2, 1, 1],
+		["roll", "blue", 2, -1, -1],
+		["roll", "blue", 2, 1, -1]
+	],
+	dial: [
+		["turn", "white", 1, -1],
+		["bank", "green", 1, -1],
+		["bank", "green", 1, 1],
+		["turn", "white", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "green", 2, -1],
+		["straight", "green", 2],
+		["bank", "green", 2, 1],
+		["turn", "white", 2, 1],
+		["bank", "white", 3, -1],
+		["straight", "white", 3],
+		["bank", "white", 3, 1],
+		["straight", "white", 4],
+		["koiogran", "red", 4],
+		["koiogran", "red", 5]
+	]
+};
+kihraxz.img = new Image();
+kihraxz.img.src = "images/kihraxz.png";
+
+var scyk = {
+	faction: "scum",
+	id: "scyk",
+	base: smallbase,
+	protrusions: 1,
+	width: 40,
+	height: 53,
+	actions: ["roll"],
+	slots: [],
+	decloak: [],
+	dial: [
+		["turn", "white", 1, -1],
+		["bank", "green", 1, -1],
+		["bank", "green", 1, 1],
+		["turn", "white", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "green", 2, -1],
+		["straight", "green", 2],
+		["bank", "green", 2, 1],
+		["turn", "white", 2, 1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["koiogran", "red", 3],
+		["straight", "white", 4],
+		["koiogran", "red", 5]
+	]
+};
+scyk.img = new Image();
+scyk.img.src = "images/scyk.png";
+
+var starviper = {
+	faction: "scum",
+	id: "starviper",
+	base: smallbase,
+	protrusions: 1,
+	offset: 9,
+	width: 57,
+	height: 45,
+	actions: ["roll", "boost"],
+	slots: ["system", "illicit"],
+	decloak: [
+		["straight", "blue", 2],
+		["roll", "blue", 2, -1, 1],
+		["roll", "blue", 2, 1, 1],
+		["roll", "blue", 2, -1, -1],
+		["roll", "blue", 2, 1, -1]
+	],
+	dial: [
+		["turn", "white", 1, -1],
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "white", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["segnors", "red", 3, -1],
+		["segnors", "red", 3, 1],
+		["straight", "white", 4]
+	]
+};
+starviper.img = new Image();
+starviper.img.src = "images/starviper.png";
+
+var Sywing = {
+	faction: "scum",
+	id: "Sywing",
+	base: smallbase,
+	protrusions: 8,
+	width: 40,
+	height: 59,
+	actions: [],
+	slots: ["salvaged astromech"],
+	arc: "turret",
+	decloak: [],
+	dial: [
+		["bank", "white", 1, -1],
+		["straight", "green", 1],
+		["bank", "white", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "red", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "white", 3],
+		["bank", "white", 3, 1],
+		["turn", "red", 3, 1],
+		["straight", "red", 4],
+		["koiogran", "red", 4]
+	]
+};
+Sywing.img = new Image();
+Sywing.img.src = "images/ywing-s.png";
+
+var Sz95 = {
+	faction: "scum",
+	id: "Sz95",
+	base: smallbase,
+	protrusions: 8,
+	width: 40,
+	height: 49,
+	actions: [],
+	slots: ["illicit"],
+	decloak: [
+		["straight", "blue", 2],
+		["roll", "blue", 2, -1, 1],
+		["roll", "blue", 2, 1, 1],
+		["roll", "blue", 2, -1, -1],
+		["roll", "blue", 2, 1, -1]
+	],
+	dial: [
+		["bank", "white", 1, -1],
+		["straight", "green", 1],
+		["bank", "white", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "green", 2, -1],
+		["straight", "green", 2],
+		["bank", "green", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "white", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["koiogran", "red", 3],
+		["straight", "white", 4]
+	]
+};
+Sz95.img = new Image();
+Sz95.img.src = "images/z95-s.png";
+
+var aggressor = {
+	faction: "scum",
+	id: "aggressor",
+	base: largebase,
+	protrusions: 7,
+	width: 80,
+	height: 88,
+	actions: ["boost"],
+	slots: ["system", "illicit"],
+	decloak: [],
+	dial: [
+		["turn", "white", 1, -1],
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "white", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "green", 2, -1],
+		["straight", "green", 2],
+		["bank", "green", 2, 1],
+		["turn", "white", 2, 1],
+		["bank", "green", 3, -1],
+		["straight", "green", 3],
+		["bank", "green", 3, 1],
+		["segnors", "red", 3, -1],
+		["segnors", "red", 3, 1],
+		["koiogran", "red", 4]
+	]
+};
+aggressor.img = new Image();
+aggressor.img.src = "images/aggressor.png";
+
+var Sfirespray = {
+	faction: "scum",
+	id: "Sfirespray",
+	img: firespray.img,
+	base: largebase,
+	protrusions: 1,
+	offset: 4,
+	width: 90,
+	height: 82,
+	actions: [],
+	slots: ["crew", "illicit"],
+	arc: "rear",
+	decloak: [],
+	dial: [
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "white", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["koiogran", "red", 3],
+		["straight", "white", 4],
+		["koiogran", "red", 4]
+	]
+};
 
 var ship = new Object();
 
@@ -458,12 +1018,14 @@ function select (model, pilot) {
 	for (var i = 0; i < selections.length; i++) {
 		document.getElementsByClassName("select")[i].style.color = "#116699";
 	};
-	if (model == "empire" || model == "alliance") {
-		var enemy = (model == "empire") ? "alliance" : "empire";
+	if (model == "empire" || model == "alliance" || model == "scum") {
+
+var enemies = ["alliance", "empire", "scum"];
+enemies.splice(enemies.indexOf(model), 1);
 		var faction = document.getElementsByClassName(model);
-		var eFaction = document.getElementsByClassName(enemy);
+		var eFactions = [document.getElementsByClassName(enemies[0]), document.getElementsByClassName(enemies[1])];
 		var target = document.getElementById("select_" + model);
-		var eTarget = document.getElementById("select_" + enemy);
+		var eTargets = [document.getElementById("select_" + enemies[0]), document.getElementById("select_" + enemies[1])];
 		var state = target.style.opacity;
 		if (state == 1) {
 			for (var i = 0; i < faction.length; i++) {
@@ -471,8 +1033,10 @@ function select (model, pilot) {
 			};
 			target.style.opacity = 0.3;
 		} else {
-			for (var i = 0; i < eFaction.length; i++) {
-				eFaction[i].hidden = true;
+			for (var i = 0; i < eFactions.length; i++) {
+				for (var j = 0; j < eFactions[i].length; j++) {
+					eFactions[i][j].hidden = true;
+				};
 			};
 			for (var i = 0; i < faction.length; i++) {
 				if (faction[i].className.indexOf("pilot") == -1 || ship.pilots.indexOf(eval(faction[i].id.substr(7))) != -1) {
@@ -482,19 +1046,24 @@ function select (model, pilot) {
 					document.getElementById("select_" + faction[i].id.substr(7)).style.color = "#11EEFF";
 				};
 			};
-			eTarget.style.opacity = 0.3;
+			eTargets[0].style.opacity = 0.3;
+			eTargets[1].style.opacity = 0.3;
 			target.style.opacity = 1;
 		};
 	} else {
 		ship.faction = model.faction;
 		ship.id = model.id;
 		ship.pilots = (model.pilots == undefined) ? [] : model.pilots;
-		var enemy = (ship.faction == "empire") ? "alliance" : "empire";
+		var enemies = ["alliance", "empire", "scum"];
+		enemies.splice(enemies.indexOf(ship.faction), 1);
 		var faction = document.getElementsByClassName(ship.faction);
-		var eFaction = document.getElementsByClassName(enemy);
-		document.getElementById("select_" + enemy).style.opacity = 0.3;
-		for (var i = 0; i < eFaction.length; i++) {
-			eFaction[i].hidden = true;
+		var eFactions = [document.getElementsByClassName(enemies[0]), document.getElementsByClassName(enemies[1])];
+		document.getElementById("select_" + enemies[0]).style.opacity = 0.3;
+		document.getElementById("select_" + enemies[1]).style.opacity = 0.3;
+		for (var i = 0; i < eFactions.length; i++) {
+			for (var j = 0; j < eFactions[i].length; j++) {
+				eFactions[i][j].hidden = true;
+			};
 		};
 		for (var i = 0; i < faction.length; i++) {
 			if (faction[i].className.search("pilot") == -1 || ship.pilots.indexOf(eval(faction[i].id.substr(7))) != -1) {
@@ -532,6 +1101,9 @@ function select (model, pilot) {
 		decloak = undefined;
 		dial = undefined;
 		setDecloak("all");
+		if (model.id != "tiephantom") {
+			setDecloak("all");
+		};
 		setDial("all");
 		timer_reset(true);
 	};
@@ -556,7 +1128,7 @@ function decloakTable (paths) {
 function maneuverTable (dial) {
 	var range = [];
 	for (var i = 1; i < 6; i++) {
-		range[i] = [0, 0, 0];
+		range[i] = [0, 0, 0, 0, 0, 0];
 		for (var j = 0; j < dial.length; j++) {
 			if (dial[j][2] == i) {
 				switch (dial[j][0]) {
@@ -569,6 +1141,15 @@ function maneuverTable (dial) {
 					case "straight":
 						range[i][2] = dial[j][1];
 						break;
+					case "koiogran":
+						range[i][3] = dial[j][1];
+						break;
+					case "segnors":
+						range[i][4] = dial[j][1];
+						break;
+					case "tallon":
+						range[i][5] = dial[j][1];
+						break;
 				}; 
 			};
 		};
@@ -579,6 +1160,9 @@ function maneuverTable (dial) {
 			document.getElementById("aTurn" + i + "r").src = "images/turn" + range[i][0].substr(0, 1).toUpperCase() + ".png";
 			document.getElementById("bTurn" + i + "l").onclick = function(){setDial(this.id)};
 			document.getElementById("bTurn" + i + "r").onclick = function(){setDial(this.id)};
+		} else {
+			document.getElementById("bTurn" + i + "l").onclick = null;
+			document.getElementById("bTurn" + i + "r").onclick = null;
 		};
 		document.getElementById("mBank" + i + "l").style.opacity = (range[i][1] == 0) ? 0 : 1;
 		document.getElementById("mBank" + i + "r").style.opacity = (range[i][1] == 0) ? 0 : 1;
@@ -587,14 +1171,56 @@ function maneuverTable (dial) {
 			document.getElementById("aBank" + i + "r").src = "images/bank" + range[i][1].substr(0, 1).toUpperCase() + ".png";
 			document.getElementById("bBank" + i + "l").onclick = function(){setDial(this.id)};
 			document.getElementById("bBank" + i + "r").onclick = function(){setDial(this.id)};
+		} else {
+			document.getElementById("bBank" + i + "l").onclick = null;
+			document.getElementById("bBank" + i + "r").onclick = null;
 		};
 		document.getElementById("mStraight" + i).style.opacity = (range[i][2] == 0) ? 0 : 1;
 		if (range[i][2] != 0) {
 			document.getElementById("aStraight" + i).src = "images/straight" + range[i][2].substr(0, 1).toUpperCase() + ".png";
 			document.getElementById("bStraight" + i).onclick = function(){setDial(this.id)};
+		} else {
+			document.getElementById("bStraight" + i).onclick = null;
+		};
+		document.getElementById("mKoiogran" + i).style.opacity = (range[i][3] == 0) ? 0 : 1;
+		if (range[i][3] != 0) {
+			document.getElementById("aKoiogran" + i).src = "images/koiogran" + range[i][3].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("bKoiogran" + i).onclick = function(){setDial(this.id)};
+		} else {
+			document.getElementById("bKoiogran" + i).onclick = null;
+		};
+		if (range[i][4] != 0) {
+			document.getElementById("mSegnors" + i + "l").hidden = false;
+			document.getElementById("mSegnors" + i + "r").hidden = false;
+			document.getElementById("aSegnors" + i + "l").src = "images/segnors" + range[i][4].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("aSegnors" + i + "r").src = "images/segnors" + range[i][4].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("bSegnors" + i + "l").onclick = function(){setDial(this.id)};
+			document.getElementById("bSegnors" + i + "r").onclick = function(){setDial(this.id)};
+		} else {
+			document.getElementById("mSegnors" + i + "l").hidden = true;
+			document.getElementById("mSegnors" + i + "r").hidden = true;
+			document.getElementById("bSegnors" + i + "l").onclick = null;
+			document.getElementById("bSegnors" + i + "r").onclick = null;
+		};
+		if (range[i][5] != 0) {
+			document.getElementById("mTallon" + i + "l").hidden = false;
+			document.getElementById("mTallon" + i + "r").hidden = false;
+			document.getElementById("aTallon" + i + "l").src = "images/tallon" + range[i][5].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("aTallon" + i + "r").src = "images/tallon" + range[i][5].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("bTallon" + i + "l").onclick = function(){setDial(this.id)};
+			document.getElementById("bTallon" + i + "r").onclick = function(){setDial(this.id)};
+		} else {
+			document.getElementById("mTallon" + i + "l").hidden = true;
+			document.getElementById("mTallon" + i + "r").hidden = true;
+			document.getElementById("bTallon" + i + "l").onclick = null;
+			document.getElementById("bTallon" + i + "r").onclick = null;
 		};
 	};
-	document.getElementById("mRow5").style.opacity = (range[5].join("") == "000") ? 0.5 : 1;
+	var kturns = range[1][3] + range[2][3] + range[3][3] + range[4][3] + range[5][3];
+	for (var i = 1; i < 6; i++) {
+		document.getElementById("mKoiogran" + i).hidden = (kturns == 0) ? true : false;
+	};
+	document.getElementById("mRow5").style.opacity = (range[5].join("") == "000000") ? 0.5 : 1;
 };
 
 function reset () {
@@ -646,11 +1272,11 @@ function setDial (buttonID) {
 	} else {
 		var direction = buttonID.substr(-1);
 		if (isFinite(direction)) {
-			var movement = "straight";
+			var movement = buttonID.substr(1, 8).toLowerCase();
 			var distance = direction;
 			var direction = undefined;
 		} else {
-			var movement = buttonID.substr(1, 4).toLowerCase();
+			var movement = buttonID.substr(1, buttonID.length - 3).toLowerCase();
 			var distance = buttonID.substr(-2, 1);
 			direction = (direction == "l") ? -1 : 1;
 		};
@@ -892,7 +1518,7 @@ function drawFiringArcs (x, y) {
 	if (arcrange == "") {
 		arcrange = 0;
 	};
-	var color = (ship.faction == "empire") ? "#70C045" : "#EC2424";
+	var color = (ship.faction == "empire") ? "#70C045" : ((ship.faction == "alliance") ? "#EC2424" : "#DCA824");
 	var offset = (ship.base == smallbase) ? 16 : 35;
 	var forward = 0;
 	ctx[2].save();
@@ -954,7 +1580,7 @@ function step () {
 		stepOverride = false;
 		reset();
 // decloak separation timer
-		if (cloaking && timer[0] < 100 && (!sensors || (sensors && (barrel_rolls || boosts) && (timer[9] >= 100 || (!bbPTL && (timer[5] >= 100 || !barrel_rolls) && (timer[7] >= 100 || !boosts)))))) {
+		if (cloaking && timer[0] < 100) {
 			timer[0] += 5;
 		};
 // decloak movement timer
@@ -970,7 +1596,7 @@ function step () {
 			timer[3] += 2
 		};
 // action barrel roll separation timer
-		if (barrel_rolls && (sensors || timer[3] >= 100) && timer[4] < 100) {
+		if (barrel_rolls && ((sensors && (!cloaking || timer[1] >= 100)) || timer[3] >= 100) && timer[4] < 100) {
 			timer[4] += 5
 		};
 // action barrel roll movement timer
@@ -978,7 +1604,7 @@ function step () {
 			timer[5] += 2
 		};
 // action boost separation timer
-		if (boosts && (sensors || timer[3] >= 100) && timer[6] < 100) {
+		if (boosts && ((sensors && (!cloaking || timer[1] >= 100)) || timer[3] >= 100) && timer[6] < 100) {
 			timer[6] += 5
 		};
 // action boost movement timer
@@ -993,17 +1619,17 @@ function step () {
 		if (bbPTL && barrel_rolls && boosts && timer[8] >= 100 && timer[9] < 100) {
 			timer[9] += 2
 		};
-		if (sensors) {
-			if (barrel_rolls) {
-				animateBarrelRolls("purple", 4);
-			};
-			if (boosts) {
-				animateBoosts("purple", 6);
+		if (decloak.length > 0) {
+			for (var i = 0; i < decloak.length; i++) {
+				animate(decloak[i], 0);
 			};
 		} else {
-			if (decloak.length > 0) {
-				for (var i = 0; i < decloak.length; i++) {
-					animate(decloak[i], 0);
+			if (sensors) {
+				if (barrel_rolls) {
+					animateBarrelRolls("purple", 4);
+				};
+				if (boosts) {
+					animateBoosts("purple", 6);
 				};
 			} else {
 				for (var i = 0; i < dial.length; i++) {
@@ -1120,6 +1746,12 @@ function oTurn (z, distance, direction) {
 	ctx[z].translate(direction * -radius, -ship.base);
 };
 
+function oRotate (z, arc) {
+	ctx[z].translate(0, ship.base / 2);
+	ctx[z].rotate(arc * pi);
+	ctx[z].translate(0, -ship.base / 2);
+};
+
 function animate (flightplan, phase) {
 	switch (flightplan[0]) {
 		case "bank":
@@ -1128,11 +1760,20 @@ function animate (flightplan, phase) {
 		case "bankroll":
 			animateBankroll(flightplan, phase);
 			break;
+		case "koiogran":
+			animateKoiogran(flightplan, phase);
+			break;
 		case "roll":
 			animateRoll(flightplan, phase);
 			break;
+		case "segnors":
+			animateSegnors(flightplan, phase);
+			break;
 		case "straight":
 			animateStraight(flightplan, phase);
+			break;
+		case "tallon":
+			animateTallon(flightplan, phase);
 			break;
 		case "turn":
 			animateTurn(flightplan, phase);
@@ -1190,10 +1831,10 @@ function animateBank (flightplan, phase) {
 			var phasemod = (sensors) ? 0 : (Math.max(timer[5], timer[7]) / 100);
 			break;
 		case 6:
-			var phasemod = (sensors && !bbPTL) ? ((cloaking) ? (timer[1] / 100) : (timer[3] / 100)) : (timer[9] / 100);
+			var phasemod = (sensors && !bbPTL) ? (timer[3] / 100) : (timer[9] / 100);
 			break;
 		case 8:
-			var phasemod = (sensors) ? ((cloaking) ? (timer[1] / 100) : (timer[3] / 100)) : 0;
+			var phasemod = (sensors) ? (timer[3] / 100) : 0;
 			break;
 		default:
 			var phasemod = 0;
@@ -1203,19 +1844,7 @@ function animateBank (flightplan, phase) {
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
-	if (sensors && cloaking && timer[phase + 1] >= 100 && ((phase == 6 && !bbPTL) || phase == 8)) {
-		for (var j = 1; j < ctx.length; j++) {
-			ctx[j].save();
-			oBank(j, distance, direction);
-		};
-		for (var j = 0; j < decloak.length; j++) {
-			animate(decloak[j], 0);
-		};
-		for (var j = 1; j < ctx.length; j++) {
-			ctx[j].restore();
-		};
-	};
-	if ((phase == 0 && timer[1] >= 100) || (sensors && !cloaking && timer[phase + 1] >= 100 && ((phase == 6 && !bbPTL) || phase == 8))) {
+	if ((!sensors && phase == 0 && timer[1] >= 100) || (sensors && timer[phase + 1] >= 100 && ((phase == 6 && !bbPTL) || phase == 8))) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oBank(j, distance, direction);
@@ -1227,21 +1856,12 @@ function animateBank (flightplan, phase) {
 			ctx[j].restore();
 		};
 	};
-	if (!sensors && phase == 2 && timer[3] >= 100) {
+	if ((sensors && phase == 0 && timer[1] >= 100) || (!sensors && phase == 2 && timer[3] >= 100)) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oBank(j, distance, direction);
 		};
 		animateBarrelRolls("purple", 4);
-		for (var j = 1; j < ctx.length; j++) {
-			ctx[j].restore();
-		};
-	};
-	if (!sensors && phase == 2 && timer[3] >= 100) {
-		for (var j = 1; j < ctx.length; j++) {
-			ctx[j].save();
-			oBank(j, distance, direction);
-		};
 		animateBoosts("purple", 6);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
@@ -1294,7 +1914,7 @@ function animateBankroll (flightplan, phase) {
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
-	if (phase == 0 && timer[1] >= 100) {
+	if (!sensors && phase == 0 && timer[1] >= 100) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oBankroll(j, distance, direction, start, 1, bank);
@@ -1310,6 +1930,24 @@ function animateBankroll (flightplan, phase) {
 		for (var j = dial.length; j > 0; j--) {
 			animate(dial[j-1], 2);
 		};
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].restore();
+		};
+	};
+	if (sensors && phase == 0 && timer[1] >= 100) {
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].save();
+			oBankroll(j, distance, direction, start, 1, bank);
+		};
+		animateBarrelRolls("purple", 4);
+		animateBoosts("purple", 6);
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].restore();
+			ctx[j].save();
+			oBankroll(j, distance, direction, start, -1, bank);
+		};
+		animateBarrelRolls("purple", 4);
+		animateBoosts("purple", 6);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -1337,10 +1975,10 @@ function animateRoll (flightplan, phase) {
 	ctx[1].stroke();
 	switch (phase) {
 		case 4:
-			var phasemod = (sensors && !bbPTL) ? ((cloaking) ? (timer[1] / 100) : (timer[3] / 100)) : (timer[9] / 100);
+			var phasemod = (sensors && !bbPTL) ? (timer[3] / 100) : (timer[9] / 100);
 			break;
 		case 8:
-			var phasemod = (sensors) ? ((cloaking) ? (timer[1] / 100) : (timer[3] / 100)) : 0;
+			var phasemod = (sensors) ? (timer[3] / 100) : 0;
 			break;
 		default:
 			var phasemod = 0;
@@ -1354,19 +1992,7 @@ function animateRoll (flightplan, phase) {
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
-	if (sensors && cloaking && timer[phase + 1] >= 100 && ((phase == 4 && !bbPTL) || phase == 8)) {
-		for (var j = 1; j < ctx.length; j++) {
-			ctx[j].save();
-			oRoll(j, distance, direction, start);
-		};
-		for (var j = 0; j < decloak.length; j++) {
-			animate(decloak[j], 0);
-		};
-		for (var j = 1; j < ctx.length; j++) {
-			ctx[j].restore();
-		};
-	};
-	if ((phase == 0 && timer[1] >= 100) || (sensors && !cloaking && timer[phase + 1] >= 100 && ((phase == 4 && !bbPTL) || phase == 8))) {
+	if ((!sensors && phase == 0 && timer[1] >= 100) || (sensors && timer[phase + 1] >= 100 && ((phase == 4 && !bbPTL) || phase == 8))) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oRoll(j, distance, direction, start);
@@ -1374,6 +2000,17 @@ function animateRoll (flightplan, phase) {
 		for (var j = dial.length; j > 0; j--) {
 			animate(dial[j-1], 2);
 		};
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].restore();
+		};
+	};
+	if (sensors && phase == 0 && timer[1] >= 100) {
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].save();
+			oRoll(j, distance, direction, start);
+		};
+		animateBarrelRolls("purple", 4);
+		animateBoosts("purple", 6);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -1386,6 +2023,99 @@ function animateRoll (flightplan, phase) {
 		animateBank(["bank", "red", 1, -1], 8);
 		animateStraight(["straight", "red", 1], 8);
 		animateBank(["bank", "red", 1, 1], 8);
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].restore();
+		};
+	};
+};
+
+function animateKoiogran (flightplan, phase) {
+	var distance = flightplan[2];
+	var cloaking = (decloak.length > 0) ? true : false;
+	var bbPTL = (document.getElementById("button_bbPTL").style.opacity > 0) ? false : true;
+	var sensors = (document.getElementById("button_sensors").style.opacity > 0) ? false : true;
+	for (var j = 1; j < ctx.length; j++) {
+		ctx[j].save();
+	};
+	ctx[1].globalAlpha = (1 - 0.5 * ((phase == 0) ? (timer[3] / 100) : 0)) * 0.5 * timer[phase + 1] / 100;
+	ctx[1].beginPath();
+	ctx[1].moveTo(0, 0);
+	ctx[1].lineTo(0, timer[phase + 1] / 100 * distance * -smallbase);
+	ctx[1].strokeStyle = flightplan[1];
+	ctx[1].lineWidth = smallbase / 2;
+	ctx[1].stroke();
+	switch (phase) {
+		case 2:
+			var phasemod = (sensors) ? 0 : (Math.max(timer[5], timer[7]) / 100);
+			break;
+		default:
+			var phasemod = 0;
+			break;
+	};
+	for (var j = 1; j < ctx.length; j++) {
+		ctx[j].translate(0, timer[phase] / 100 * -ship.base + timer[phase + 1] / 100 * distance * -smallbase + ship.base / 2);
+		ctx[j].rotate(timer[phase + 1] * 0.01 * pi);
+};
+	drawShip(3, 0, -ship.base/2, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
+	for (var j = 1; j < ctx.length; j++) {
+		ctx[j].restore();
+	};
+	if (!sensors && phase == 2 && timer[3] >= 100) {
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].save();
+			oStraight(j, distance);
+			oRotate(j, 1);
+		};
+		animateBarrelRolls("purple", 4);
+		animateBoosts("purple", 6);
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].restore();
+		};
+	};
+};
+
+function animateSegnors (flightplan, phase) {
+	var distance = flightplan[2];
+	var direction = flightplan[3];
+	var radius = rBank[distance];
+	var cloaking = (decloak.length > 0) ? true : false;
+	var bbPTL = (document.getElementById("button_bbPTL").style.opacity > 0) ? false : true;
+	var sensors = (document.getElementById("button_sensors").style.opacity > 0) ? false : true;
+	for (var j = 1; j < ctx.length; j++) {
+		ctx[j].save();
+		ctx[j].translate(direction * radius, 0);
+		ctx[j].rotate(timer[phase + 1] * direction * 0.0025 * pi);
+	};
+	ctx[1].globalAlpha = (1 - 0.5 * ((phase == 0) ? (timer[3] / 100) : 0)) * 0.5 * timer[phase + 1] / 100;
+	ctx[1].beginPath();
+	ctx[1].arc (0, 0, radius, (0.5 + direction * 0.5) * pi, (0.5 + direction * 0.5  + direction * timer[phase + 1] * -0.0025) * pi, (direction == 1) ? true : false);
+	ctx[1].strokeStyle = flightplan[1];
+	ctx[1].lineWidth = smallbase / 2;
+	ctx[1].stroke();
+	switch (phase) {
+		case 2:
+			var phasemod = (sensors) ? 0 : (Math.max(timer[5], timer[7]) / 100);
+			break;
+		default:
+			var phasemod = 0;
+			break;
+	};
+	for (var j = 1; j < ctx.length; j++) {
+		ctx[j].translate(-direction * radius, -ship.base / 2);
+		ctx[j].rotate(timer[phase + 1] * direction * 0.01 * pi);
+	};
+	drawShip(3, 0, timer[phase] / 100 * -ship.base + ship.base / 2, (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
+	for (var j = 1; j < ctx.length; j++) {
+		ctx[j].restore();
+	};
+	if (!sensors && phase == 2 && timer[3] >= 100) {
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].save();
+			oBank(j, distance, direction);
+			oRotate(j, 1);
+		};
+		animateBarrelRolls("purple", 4);
+		animateBoosts("purple", 6);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -1412,10 +2142,10 @@ function animateStraight (flightplan, phase) {
 			var phasemod = (sensors) ? 0 : (Math.max(timer[5], timer[7]) / 100);
 			break;
 		case 6:
-			var phasemod = (sensors && !bbPTL) ? ((cloaking) ? (timer[1] / 100) : (timer[3] / 100)) : (timer[9] / 100);
+			var phasemod = (sensors && !bbPTL) ? (timer[3] / 100) : (timer[9] / 100);
 			break;
 		case 8:
-			var phasemod = (sensors) ? ((cloaking) ? (timer[1] / 100) : (timer[3] / 100)) : 0;
+			var phasemod = (sensors) ? (timer[3] / 100) : 0;
 			break;
 		default:
 			var phasemod = 0;
@@ -1425,19 +2155,7 @@ function animateStraight (flightplan, phase) {
 	for (var j = 1; j < ctx.length; j++) {
 		ctx[j].restore();
 	};
-	if (sensors && cloaking && timer[phase + 1] >= 100 && ((phase == 6 && !bbPTL) || phase == 8)) {
-		for (var j = 1; j < ctx.length; j++) {
-			ctx[j].save();
-			oStraight(j, distance);
-		};
-		for (var j = 0; j < decloak.length; j++) {
-			animate(decloak[j], 0);
-		};
-		for (var j = 1; j < ctx.length; j++) {
-			ctx[j].restore();
-		};
-	};
-	if ((phase == 0 && timer[1] >= 100) || (sensors && !cloaking && timer[phase + 1] >= 100 && ((phase == 6 && !bbPTL) || phase == 8))) {
+	if ((!sensors && phase == 0 && timer[1] >= 100) || (sensors && timer[phase + 1] >= 100 && ((phase == 6 && !bbPTL) || phase == 8))) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oStraight(j, distance);
@@ -1449,21 +2167,12 @@ function animateStraight (flightplan, phase) {
 			ctx[j].restore();
 		};
 	};
-	if (!sensors && phase == 2 && timer[3] >= 100) {
+	if ((sensors && phase == 0 && timer[1] >= 100) || (!sensors && phase == 2 && timer[3] >= 100)) {
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].save();
 			oStraight(j, distance);
 		};
 		animateBarrelRolls("purple", 4);
-		for (var j = 1; j < ctx.length; j++) {
-			ctx[j].restore();
-		};
-	};
-	if (!sensors && phase == 2 && timer[3] >= 100) {
-		for (var j = 1; j < ctx.length; j++) {
-			ctx[j].save();
-			oStraight(j, distance);
-		};
 		animateBoosts("purple", 6);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
@@ -1478,6 +2187,65 @@ function animateStraight (flightplan, phase) {
 		animateRoll(["roll", "red", 1, -1, -1], 8);
 		animateRoll(["roll", "red", 1, 1, 1], 8);
 		animateRoll(["roll", "red", 1, 1, -1], 8);
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].restore();
+		};
+	};
+};
+
+function animateTallon (flightplan, phase) {
+	var distance = flightplan[2];
+	var direction = flightplan[3];
+	var radius = rTurn[distance];
+	var cloaking = (decloak.length > 0) ? true : false;
+	var bbPTL = (document.getElementById("button_bbPTL").style.opacity > 0) ? false : true;
+	var sensors = (document.getElementById("button_sensors").style.opacity > 0) ? false : true;
+	for (var j = 1; j < ctx.length; j++) {
+		ctx[j].save();
+		ctx[j].translate(direction * radius, 0);
+		ctx[j].rotate(timer[phase + 1] * direction * 0.005 * pi);
+	};
+	ctx[1].globalAlpha = (1 - 0.5 * ((phase == 0) ? (timer[3] / 100) : 0)) * 0.5 * timer[phase + 1] / 100;
+	ctx[1].beginPath();
+	ctx[1].arc (0, 0, radius, (0.5 + direction * 0.5) * pi, (0.5 + direction * 0.5  + direction * timer[phase + 1] * -0.005) * pi, (direction == 1) ? true : false);
+	ctx[1].strokeStyle = flightplan[1];
+	ctx[1].lineWidth = smallbase / 2;
+	ctx[1].stroke();
+	switch (phase) {
+		case 2:
+			var phasemod = (sensors) ? 0 : (Math.max(timer[5], timer[7]) / 100);
+			break;
+		default:
+			var phasemod = 0;
+			break;
+	};
+	for (var j = 1; j < ctx.length; j++) {
+		ctx[j].translate(-direction * radius, -ship.base / 2);
+		ctx[j].rotate(timer[phase + 1] * direction * 0.005 * pi);
+	};
+	drawShip(3, 0, timer[phase] / 100 * -ship.base + ship.base / 2 + 0.25 * ship.base * (Math.max(timer[3] - 50, 0) / 50), (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
+	drawShip(3, 0, timer[phase] / 100 * -ship.base + ship.base / 2 - 0.25 * ship.base * (Math.max(timer[3] - 50, 0) / 50), (1 - 0.7 * ((phase == 0) ? (timer[3] / 100) : 0)) * (0.1 * timer[phase] / 100 + 0.9 * timer[phase + 1] / 100) * (1 - (1 - remnant) * phasemod));
+	for (var j = 1; j < ctx.length; j++) {
+		ctx[j].restore();
+	};
+	if (!sensors && phase == 2 && timer[3] >= 100) {
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].save();
+			oTurn(j, distance, direction);
+			oRotate(j, direction * 0.5);
+			ctx[j].translate(0, + ship.base / 4);
+		};
+		animateBarrelRolls("purple", 4);
+		animateBoosts("purple", 6);
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].restore();
+			ctx[j].save();
+			oTurn(j, distance, direction);
+			oRotate(j, direction * 0.5);
+			ctx[j].translate(0, - ship.base / 4);
+		};
+		animateBarrelRolls("purple", 4);
+		animateBoosts("purple", 6);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -1520,15 +2288,6 @@ function animateTurn (flightplan, phase) {
 			oTurn(j, distance, direction);
 		};
 		animateBarrelRolls("purple", 4);
-		for (var j = 1; j < ctx.length; j++) {
-			ctx[j].restore();
-		};
-	};
-	if (!sensors && phase == 2 && timer[3] >= 100) {
-		for (var j = 1; j < ctx.length; j++) {
-			ctx[j].save();
-			oTurn(j, distance, direction);
-		};
 		animateBoosts("purple", 6);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
@@ -1612,6 +2371,11 @@ function animateTurn (flightplan, phase) {
 <td class="button move" id="mStraight5"><img id="aStraight5" src="images/straightW.png"><img id="bStraight5" src="images/blank.png" class="overlay maneuver"></td>
 <td class="button move" id="mBank5r"><img id="aBank5r" src="images/bankW.png" class="mirror"><img id="bBank5r" src="images/blank.png" class="overlay maneuver"></td>
 <td class="button move" id="mTurn5r"><img id="aTurn5r" src="images/turnW.png" class="mirror"><img id="bTurn5r" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mKoiogran5"><img id="aKoiogran5" src="images/koiogranR.png"><img id="bKoiogran5" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mSegnors5l"><img id="aSegnors5l" src="images/segnorsR.png"><img id="bSegnors5l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mSegnors5r"><img id="aSegnors5r" src="images/segnorsR.png" class="mirror"><img id="bSegnors5r" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTallon5l"><img id="aTallon5l" src="images/tallonR.png"><img id="bTallon5l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTallon5r"><img id="aTallon5r" src="images/tallonR.png" class="mirror"><img id="bTallon5r" src="images/blank.png" class="overlay maneuver"></td>
 </tr>
 <tr>
 <td class="button move">4</td>
@@ -1620,6 +2384,11 @@ function animateTurn (flightplan, phase) {
 <td class="button move" id="mStraight4"><img id="aStraight4" src="images/straightW.png"><img id="bStraight4" src="images/blank.png" class="overlay maneuver"></td>
 <td class="button move" id="mBank4r"><img id="aBank4r" src="images/bankW.png" class="mirror"><img id="bBank4r" src="images/blank.png" class="overlay maneuver"></td>
 <td class="button move" id="mTurn4r"><img id="aTurn4r" src="images/turnW.png" class="mirror"><img id="bTurn4r" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mKoiogran4"><img id="aKoiogran4" src="images/koiogranR.png"><img id="bKoiogran4" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mSegnors4l"><img id="aSegnors4l" src="images/segnorsR.png"><img id="bSegnors4l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mSegnors4r"><img id="aSegnors4r" src="images/segnorsR.png" class="mirror"><img id="bSegnors4r" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTallon4l"><img id="aTallon4l" src="images/tallonR.png"><img id="bTallon4l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTallon4r"><img id="aTallon4r" src="images/tallonR.png" class="mirror"><img id="bTallon4r" src="images/blank.png" class="overlay maneuver"></td>
 </tr>
 <tr>
 <td class="button move">3</td>
@@ -1628,6 +2397,11 @@ function animateTurn (flightplan, phase) {
 <td class="button move" id="mStraight3"><img id="aStraight3" src="images/straightG.png"><img id="bStraight3" src="images/blank.png" class="overlay maneuver"></td>
 <td class="button move" id="mBank3r"><img id="aBank3r" src="images/bankW.png" class="mirror"><img id="bBank3r" src="images/blank.png" class="overlay maneuver"></td>
 <td class="button move" id="mTurn3r"><img id="aTurn3r" src="images/turnW.png" class="mirror"><img id="bTurn3r" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mKoiogran3"><img id="aKoiogran3" src="images/koiogranR.png"><img id="bKoiogran3" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mSegnors3l"><img id="aSegnors3l" src="images/segnorsR.png"><img id="bSegnors3l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mSegnors3r"><img id="aSegnors3r" src="images/segnorsR.png" class="mirror"><img id="bSegnors3r" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTallon3l"><img id="aTallon3l" src="images/tallonR.png"><img id="bTallon3l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTallon3r"><img id="aTallon3r" src="images/tallonR.png" class="mirror"><img id="bTallon3r" src="images/blank.png" class="overlay maneuver"></td>
 </tr>
 <tr>
 <td class="button move">2</td>
@@ -1636,6 +2410,11 @@ function animateTurn (flightplan, phase) {
 <td class="button move" id="mStraight2"><img id="aStraight2" src="images/straightG.png"><img id="bStraight2" src="images/blank.png" class="overlay maneuver"></td>
 <td class="button move" id="mBank2r"><img id="aBank2r" src="images/bankG.png" class="mirror"><img id="bBank2r" src="images/blank.png" class="overlay maneuver"></td>
 <td class="button move" id="mTurn2r"><img id="aTurn2r" src="images/turnW.png" class="mirror"><img id="bTurn2r" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mKoiogran2"><img id="aKoiogran2" src="images/koiogranR.png"><img id="bKoiogran2" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mSegnors2l"><img id="aSegnors2l" src="images/segnorsR.png"><img id="bSegnors2l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mSegnors2r"><img id="aSegnors2r" src="images/segnorsR.png" class="mirror"><img id="bSegnors2r" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTallon2l"><img id="aTallon2l" src="images/tallonR.png"><img id="bTallon2l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTallon2r"><img id="aTallon2r" src="images/tallonR.png" class="mirror"><img id="bTallon2r" src="images/blank.png" class="overlay maneuver"></td>
 </tr>
 <tr>
 <td class="button move">1</td>
@@ -1644,6 +2423,11 @@ function animateTurn (flightplan, phase) {
 <td class="button move" id="mStraight1"><img id="aStraight1" src="images/straightG.png"><img id="bStraight1" src="images/blank.png" class="overlay maneuver"></td>
 <td class="button move" id="mBank1r"><img id="aBank1r" src="images/bankG.png" class="mirror"><img id="bBank1r" src="images/blank.png" class="overlay maneuver"></td>
 <td class="button move" id="mTurn1r"><img id="aTurn1r" src="images/turnW.png" class="mirror"><img id="bTurn1r" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mKoiogran1"><img id="aKoiogran1" src="images/koiogranR.png"><img id="bKoiogran1" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mSegnors1l"><img id="aSegnors1l" src="images/segnorsR.png"><img id="bSegnors1l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mSegnors1r"><img id="aSegnors1r" src="images/segnorsR.png" class="mirror"><img id="bSegnors1r" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTallon1l"><img id="aTallon1l" src="images/tallonR.png"><img id="bTallon1l" src="images/blank.png" class="overlay maneuver"></td>
+<td class="button move" id="mTallon1r"><img id="aTallon1r" src="images/tallonR.png" class="mirror"><img id="bTallon1r" src="images/blank.png" class="overlay maneuver"></td>
 </tr>
 <tr>
 <td class="button move" style="border: none;" colspan=2></td>
@@ -1652,9 +2436,7 @@ function animateTurn (flightplan, phase) {
 </table>
 </td>
 </tr>
-<tr>
-<td height=10></td>
-</tr>
+<tr><td height=1></td></tr>
 <tr>
 <td style="vertical-align:top" height=104>
 <table cellpadding=0>
@@ -1703,28 +2485,42 @@ function animateTurn (flightplan, phase) {
 </table>
 </td>
 </tr>
-<tr>
-<td height=20></td>
-</tr>
+<tr><td height=1></td></tr>
 <tr>
 <td>
 <table cellpadding=0 height=126>
 <tr>
-<td class="select option"><img id="select_empire" src="images/empire.png" title="Galactic Empire" class="select faction" style="opacity: 1" onClick="select ('empire');"><img id="select_alliance" src="images/alliance.png" title="Rebel Alliance" class="select faction" onClick="select('alliance');"></td>
+<td class="select option"><img id="select_empire" src="images/empire.png" title="Galactic Empire" class="select faction" style="opacity: 1" onClick="select ('empire');"><img id="select_alliance" src="images/alliance.png" title="Rebel Alliance" class="select faction" onClick="select('alliance');"><img id="select_scum" src="images/scum.png" title="Scum and Villainy" class="select faction" onClick="select('scum');"></td>
 <td width=5></td>
 <td id="select_firespray" class="option select empire model"><img src="images/firespray.png" title="Firespray-31" onClick="select(firespray);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_lambda" class="option select empire model"><img src="images/lambda.png" title="Lambda-Class Shuttle" onClick="select(lambda);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_tieadvanced" class="option select empire model"><img src="images/tieadvanced.png" title="TIE Advanced" onClick="select(tieadvanced);" style="position: relative; left: 0px; bottom: -3px;"></td>
 <td id="select_tiebomber" class="option select empire model"><img src="images/tiebomber.png" title="TIE Bomber" onClick="select(tiebomber);" style="position: relative; left: 0px; bottom: -1px;"></td>
 <td id="select_tiefighter" class="option select empire model"><img src="images/tiefighter.png" title="TIE Fighter" onClick="select(tiefighter);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_tieinterceptor" class="option select empire model"><img src="images/tieinterceptor.png" title="TIE Interceptor" onClick="select(tieinterceptor);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_tiephantom" class="option select empire model"><img src="images/echo.png" width=40 title="TIE Phantom" onClick="select(tiephantom);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_echo" class="option select empire phantom pilot"><a class="pilot" onClick="select(tiephantom, echo);" style="position: relative; left: 0px; bottom: 15px;">Echo</a></td>
+<td id="select_tiepunisher" class="option select empire model"><img src="images/tiepunisher.png" title="TIE Punisher" onClick="select(tiepunisher);" style="position: relative; left: 0px; bottom: -3px;"></td>
+<td id="select_tiefofighter" class="option select empire model"><img src="images/tiefofighter.png" title="TIE/fo Fighter" onClick="select(tiefofighter);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_yt1300" class="option select alliance model"><img src="images/yt1300.png" title="YT-1300" onClick="select(yt1300);" style="position: relative; left: 0px; bottom: -1px;"></td>
-<td id="select_awing" class="option select alliance model"><img src="images/awing.png" title="A-wing" onClick="select(awing);" style="position: relative; left: 0px; bottom: 5px;"></td>
-<td id="select_bwing" class="option select alliance model"><img src="images/bwing.png" title="B-wing" onClick="select(bwing);" style="position: relative; left: 0px; bottom: 5px;"></td>
-<td id="select_xwing" class="option select alliance model"><img src="images/xwing.png" title="X-wing" onClick="select(xwing);" style="position: relative; left: 0px; bottom: 5px;"></td>
-<td id="select_ywing" class="option select alliance model"><img src="images/ywing.png" title="Y-wing" onClick="select(ywing);" style="position: relative; left: 0px; bottom: -6px;"></td>
+<td id="select_yt2400" class="option select alliance model"><img src="images/yt2400.png" title="YT-2400" onClick="select(yt2400);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_awing" class="option select alliance model"><img src="images/awing.png" title="A-Wing" onClick="select(awing);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_bwing" class="option select alliance model"><img src="images/bwing.png" title="B-Wing" onClick="select(bwing);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_ewing" class="option select alliance model"><img src="images/ewing.png" title="E-Wing" onClick="select(ewing);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_kwing" class="option select alliance model"><img src="images/kwing.png" title="K-Wing" onClick="select(kwing);" style="position: relative; left: 0px; bottom: -5px;"></td>
+<td id="select_xwing" class="option select alliance model"><img src="images/xwing.png" title="X-Wing" onClick="select(xwing);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_ywing" class="option select alliance model"><img src="images/ywing.png" title="Y-Wing" onClick="select(ywing);" style="position: relative; left: 0px; bottom: -6px;"></td>
 <td id="select_z95" class="option select alliance model"><img src="images/z95.png" title="Z-95 Headhunter" onClick="select(z95);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_hwk" class="option select alliance model"><img src="images/hwk.png" title="HWK-290" onClick="select(hwk);" style="position: relative; left: 0px; bottom: 2px;"></td>
+<td id="select_t70xwing" class="option select alliance model"><img src="images/t70xwing.png" title="T-70 X-Wing" onClick="select(t70xwing);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_aggressor" class="option select scum model"><img src="images/aggressor.png" title="Aggressor" onClick="select(aggressor);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_Sfirespray" class="option select scum model"><img src="images/firespray.png" title="Firespray-31" onClick="select(Sfirespray);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_Shwk" class="option select scum model"><img src="images/hwk.png" title="HWK-290" onClick="select(Shwk);" style="position: relative; left: 0px; bottom: 2px;"></td>
+<td id="select_kihraxz" class="option select scum model"><img src="images/kihraxz.png" title="Kihraxz" onClick="select(kihraxz);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_scyk" class="option select scum model"><img src="images/scyk.png" title="M3-A Interceptor" onClick="select(scyk);" style="position: relative; left: 0px; bottom: -6px;"></td>
+<td id="select_starviper" class="option select scum model"><img src="images/starviper.png" title="StarViper" onClick="select(starviper);" style="position: relative; left: 0px; bottom: 2px;"></td>
+<td id="select_Sywing" class="option select scum model"><img src="images/ywing-s.png" title="Y-Wing" onClick="select(Sywing);" style="position: relative; left: 0px; bottom: -5px;"></td>
+<td id="select_Sz95" class="option select scum model"><img src="images/z95-s.png" title="Z-95 Headhunter" onClick="select(Sz95);" style="position: relative; left: 0px; bottom: 5px;"></td>
 </tr>
 </table>
 </td>
