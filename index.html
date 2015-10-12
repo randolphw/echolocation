@@ -981,10 +981,11 @@ var ship = new Object();
 var decloak;
 var dial;
 
-var timer = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+var timer = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 var queued = false;
 var barrel_roll_timer = [0, 0];
 var boost_timer = [0, 0];
+var slam_timer = [0, 0];
 var bbPTL_timer = [0, 0];
 var stepOverride = false;
 
@@ -1019,9 +1020,8 @@ function select (model, pilot) {
 		document.getElementsByClassName("select")[i].style.color = "#116699";
 	};
 	if (model == "empire" || model == "alliance" || model == "scum") {
-
-var enemies = ["alliance", "empire", "scum"];
-enemies.splice(enemies.indexOf(model), 1);
+		var enemies = ["alliance", "empire", "scum"];
+		enemies.splice(enemies.indexOf(model), 1);
 		var faction = document.getElementsByClassName(model);
 		var eFactions = [document.getElementsByClassName(enemies[0]), document.getElementsByClassName(enemies[1])];
 		var target = document.getElementById("select_" + model);
@@ -1086,7 +1086,7 @@ enemies.splice(enemies.indexOf(model), 1);
 			document.getElementById("lock_sensors").innerHTML = (model.slots.indexOf("system") == -1) ? "S" : "";
 			elite = (model.slots.indexOf("elite") == -1) ? false : true;
 			document.getElementById("lock_bbPTL").innerHTML = (elite) ?  "" : "E";
-	};
+		};
 		decloakTable(ship.decloak.length);
 		maneuverTable(ship.dial);
 		ship.img = model.img;
@@ -1096,8 +1096,10 @@ enemies.splice(enemies.indexOf(model), 1);
 		ship.offset = (isFinite(model.offset)) ? model.offset : 0;
 		ship.width = model.width;
 		ship.height = model.height;
+		ship.actions = model.actions;
 		document.getElementById("lock_roll").innerHTML = (model.actions.indexOf("roll") == -1 && !elite) ? "E" : "";
 		document.getElementById("lock_boost").innerHTML = (model.actions.indexOf("boost") == -1) ? "M" : "";
+		document.getElementById("button_slam").style.opacity = (model.actions.indexOf("slam") == -1) ? 1 : 0.5;
 		decloak = undefined;
 		dial = undefined;
 		setDecloak("all");
@@ -1308,6 +1310,7 @@ function loop () {
 		};
 		barrel_roll_timer = [0, 0];
 		boost_timer = [0, 0];
+		slam_timer = [0, 0];
 		bbPTL_timer = [0, 0];
 	};
 };
@@ -1394,13 +1397,46 @@ function boost () {
 	};
 };
 
+function slam () {
+	stepOverride = true;
+	var sensors = (document.getElementById("button_sensors").style.opacity > 0) ? false : true;
+	var bbPTL = (document.getElementById("button_bbPTL").style.opacity > 0) ? false : true;
+	var target = document.getElementById("button_slam");
+	var state = target.style.opacity;
+	if (ship.actions.indexOf("slam") == -1) {
+		target.style.opacity = 1;
+	} else {
+		timer_reset(true);
+		if (state == 0) {
+			target.style.opacity = 0.5;
+			slam_timer = [timer[10], timer[11]];
+			timer[10] = 0;
+			timer[11] = 0;
+		} else {
+			if (sensors) {
+				document.getElementById("button_sensors").style.opacity = 0.5;
+			};
+			if (bbPTL) {
+				document.getElementById("button_bbPTL").style.opacity = 0.5;
+			};
+			target.style.opacity = 0;
+			timer[10] = slam_timer[0];
+			timer[11] = slam_timer[1];
+		};
+	};
+};
+
 function bbPTL () {
 	stepOverride = true;
 	var barrel_roll = (document.getElementById("button_barrel").style.opacity > 0) ? false : true;
 	var boost = (document.getElementById("button_boost").style.opacity > 0) ? false : true;
+	var slam = (document.getElementById("button_slam").style.opacity > 0) ? false : true;
 	var target = document.getElementById("button_bbPTL");
 	var state = target.style.opacity;
 	if (state > 0 && barrel_roll && boost) {
+		if (slam) {
+			document.getElementById("button_slam").style.opacity = 0.5;
+		};
 		target.style.opacity = 0;
 		timer[8] = bbPTL_timer[0];
 		timer[9] = bbPTL_timer[1];
@@ -1418,9 +1454,13 @@ function advSensors () {
 	stepOverride = true;
 	var barrel_roll = (document.getElementById("button_barrel").style.opacity > 0) ? false : true;
 	var boost = (document.getElementById("button_boost").style.opacity > 0) ? false : true;
+	var slam = (document.getElementById("button_slam").style.opacity > 0) ? false : true;
 	var target = document.getElementById("button_sensors");
 	var state = target.style.opacity;
 	if (state == 0.5 && (barrel_roll || boost)) {
+		if (slam) {
+			document.getElementById("button_slam").style.opacity = 0.5;
+		};
 		target.style.opacity = 0;
 		timer_reset(true);
 	} else {
@@ -1574,9 +1614,10 @@ function step () {
 	var cloaking = (decloak.length > 0) ? true : false;
 	var barrel_rolls = (document.getElementById("button_barrel").style.opacity > 0) ? false : true;
 	var boosts = (document.getElementById("button_boost").style.opacity > 0) ? false : true;
+	var slam = (document.getElementById("button_slam").style.opacity > 0) ? false : true;
 	var bbPTL = (document.getElementById("button_bbPTL").style.opacity > 0) ? false : true;
 	var sensors = (document.getElementById("button_sensors").style.opacity > 0) ? false : true;
-	if (stepOverride || (looping && !queued) || (cloaking && timer[1] < 100) || timer[3] < 100 || (barrel_rolls && timer[5] < 100) || (boosts && timer[7] < 100) || (bbPTL && timer[9] < 100)) {
+	if (stepOverride || (looping && !queued) || (cloaking && timer[1] < 100) || timer[3] < 100 || (barrel_rolls && timer[5] < 100) || (boosts && timer[7] < 100) || (bbPTL && timer[9] < 100) || (slam && timer[11] < 100)) {
 		stepOverride = false;
 		reset();
 // decloak separation timer
@@ -1619,6 +1660,14 @@ function step () {
 		if (bbPTL && barrel_rolls && boosts && timer[8] >= 100 && timer[9] < 100) {
 			timer[9] += 2
 		};
+// SLAM separation timer
+		if (slam && timer[3] >= 100 && timer[10] < 100) {
+			timer[10] += 5
+		};
+// SLAM movement timer
+		if (slam && timer[10] >= 100 && timer[11] < 100) {
+			timer[11] += 2
+		};
 		if (decloak.length > 0) {
 			for (var i = 0; i < decloak.length; i++) {
 				animate(decloak[i], 0);
@@ -1637,7 +1686,7 @@ function step () {
 				};
 			};
 		};
-		if (looping && timer[3] >= 100 && !queued && (!barrel_rolls || timer[5] >= 100) && (!boosts || timer[7] >= 100) && (!bbPTL || timer[9] >= 100)) {
+		if (looping && timer[3] >= 100 && !queued && (!barrel_rolls || timer[5] >= 100) && (!boosts || timer[7] >= 100) && (!bbPTL || timer[9] >= 100) && (!slam || timer[11] >= 100)) {
 			setTimeout(function(){timer_reset();}, 3000);
 			queued = true;
 		};
@@ -1673,13 +1722,15 @@ function timer_reset (timerOverride) {
 	var looping = (document.getElementById("option_loop").style.opacity > 0) ? false : true;
 	var barrel_rolls = (document.getElementById("button_barrel").style.opacity > 0) ? false : true;
 	var boosts = (document.getElementById("button_boost").style.opacity > 0) ? false : true;
+	var slam = (document.getElementById("button_slam").style.opacity > 0) ? false : true;
 	var bbPTL = (document.getElementById("button_bbPTL").style.opacity > 0) ? false : true;
-	if (timerOverride || ((looping && timer[3] >= 100) && (!barrel_rolls || timer[5] >= 100) && (!boosts || timer[7] >= 100) && (!bbPTL || timer[9] >= 100))) {	
+	if (timerOverride || ((looping && timer[3] >= 100) && (!barrel_rolls || timer[5] >= 100) && (!boosts || timer[7] >= 100) && (!bbPTL || timer[9] >= 100) && (!slam || timer[11] >= 100))) {	
 		for (var i = 0; i < timer.length; i++) {
 			timer[i] = 0;
 		};
 		barrel_roll_timer = [0, 0];
 		boost_timer = [0, 0];
+		slam_timer = [0, 0];
 		bbPTL_timer = [0, 0];
 	};
 };
@@ -1782,30 +1833,41 @@ function animate (flightplan, phase) {
 };
 
 function animateBarrelRolls (color, phase) {
-		if (!fRoll[0]) {
-			animateRoll(["roll", color, 1, -1, 1], phase);
-		};
-		if (!fRoll[2]) {
-			animateRoll(["roll", color, 1, -1, -1], phase);
-		};
-		if (!fRoll[1]) {
-			animateRoll(["roll", color, 1, 1, 1], phase);
-		};
-		if (!fRoll[3]) {
-			animateRoll(["roll", color, 1, 1, -1], phase);
-		};
+	if (!fRoll[0]) {
+		animateRoll(["roll", color, 1, -1, 1], phase);
+	};
+	if (!fRoll[2]) {
+		animateRoll(["roll", color, 1, -1, -1], phase);
+	};
+	if (!fRoll[1]) {
+		animateRoll(["roll", color, 1, 1, 1], phase);
+	};
+	if (!fRoll[3]) {
+		animateRoll(["roll", color, 1, 1, -1], phase);
+	};
 };
 
 function animateBoosts (color, phase) {
-		if (!fBoost[0]) {
-			animateBank(["bank", color, 1, -1], phase);
+	if (!fBoost[0]) {
+		animateBank(["bank", color, 1, -1], phase);
+	};
+	if (!fBoost[1]) {
+		animateStraight(["straight", color, 1], phase);
+	};
+	if (!fBoost[2]) {
+		animateBank(["bank", color, 1, 1], phase);
+	};
+};
+
+function animateSlams (distance, phase) {
+	var slam = (document.getElementById("button_slam").style.opacity > 0) ? false : true;
+	if (slam) {
+		for (var i = 0; i < ship.dial.length; i++) {
+			if (ship.dial[i][2] == distance) {
+				animate(ship.dial[i], phase);
+			};
 		};
-		if (!fBoost[1]) {
-			animateStraight(["straight", color, 1], phase);
-		};
-		if (!fBoost[2]) {
-			animateBank(["bank", color, 1, 1], phase);
-		};
+	};
 };
 
 function animateBank (flightplan, phase) {
@@ -1876,6 +1938,16 @@ function animateBank (flightplan, phase) {
 		animateRoll(["roll", "red", 1, -1, -1], 8);
 		animateRoll(["roll", "red", 1, 1, 1], 8);
 		animateRoll(["roll", "red", 1, 1, -1], 8);
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].restore();
+		};
+	};
+	if (!sensors && phase == 2 && timer[3] >= 100) {
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].save();
+			oBank(j, distance, direction);
+		};
+		animateSlams(distance, 10);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -2068,6 +2140,7 @@ function animateKoiogran (flightplan, phase) {
 		};
 		animateBarrelRolls("purple", 4);
 		animateBoosts("purple", 6);
+		animateSlams(distance, 10);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -2116,6 +2189,7 @@ function animateSegnors (flightplan, phase) {
 		};
 		animateBarrelRolls("purple", 4);
 		animateBoosts("purple", 6);
+		animateSlams(distance, 10);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -2191,6 +2265,16 @@ function animateStraight (flightplan, phase) {
 			ctx[j].restore();
 		};
 	};
+	if (!sensors && phase == 2 && timer[3] >= 100) {
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].save();
+			oStraight(j, distance);
+		};
+		animateSlams(distance, 10);
+		for (var j = 1; j < ctx.length; j++) {
+			ctx[j].restore();
+		};
+	};
 };
 
 function animateTallon (flightplan, phase) {
@@ -2237,6 +2321,7 @@ function animateTallon (flightplan, phase) {
 		};
 		animateBarrelRolls("purple", 4);
 		animateBoosts("purple", 6);
+		animateSlams(distance, 10);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 			ctx[j].save();
@@ -2246,6 +2331,7 @@ function animateTallon (flightplan, phase) {
 		};
 		animateBarrelRolls("purple", 4);
 		animateBoosts("purple", 6);
+		animateSlams(distance, 10);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -2289,6 +2375,7 @@ function animateTurn (flightplan, phase) {
 		};
 		animateBarrelRolls("purple", 4);
 		animateBoosts("purple", 6);
+		animateSlams(distance, 10);
 		for (var j = 1; j < ctx.length; j++) {
 			ctx[j].restore();
 		};
@@ -2451,6 +2538,11 @@ function animateTurn (flightplan, phase) {
 <a id="lock_boost" class="lock"></a>
 <img id="button_boost" src="images/blank.png" title="Boost" class="overlay" width=44 height=30 onClick="boost();" onMouseOver="switchFilter('boost');" style="opacity: 0.5">
 </td>
+<td class="button actions">
+<img src="images/slamG.png">
+<a id="lock_boost" class="lock"></a>
+<img id="button_slam" src="images/blank.png" title="SLAM" class="overlay" width=44 height=30 onClick="slam();" onMouseOver="switchFilter('none');" style="opacity: 1">
+</td>
 <tr>
 <td class="button" colspan=2 rowspan=2>
 <table cellpadding=0 align=center>
@@ -2473,13 +2565,13 @@ function animateTurn (flightplan, phase) {
 <td class="button actions">
 <img src="images/bbPTL.png">
 <a id="lock_bbPTL" class="lock"></a>
-<img id="button_bbPTL" src="images/blank.png" title="Push the Limit: Boost + Barrel Roll" class="overlay" width=44 height=30 onClick="bbPTL();" style="opacity: 1">
+<img id="button_bbPTL" src="images/blank.png" title="Push the Limit: Boost + Barrel Roll" class="overlay" width=44 height=30 onClick="bbPTL();" onMouseOver="switchFilter('none');" style="opacity: 1">
 </td>
 </tr>
 <tr>
 <td class="button actions"><img src="images/systemW.png">
 <a id="lock_sensors" class="lock"></a>
-<img id="button_sensors" src="images/blank.png" title="Advanced Sensors" class="overlay" width=44 height=30 onClick="advSensors();" style="opacity: 1">
+<img id="button_sensors" src="images/blank.png" title="Advanced Sensors" class="overlay" width=44 height=30 onClick="advSensors();" onMouseOver="switchFilter('none');" style="opacity: 1">
 </td>
 </tr>
 </table>
