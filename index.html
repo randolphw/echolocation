@@ -1553,6 +1553,16 @@ function fire () {
 	};
 };
 
+function transparent () {
+	var state = document.getElementById("option_transparent").style.opacity;
+	stepOverride = true;
+	if (state > 0) {
+		document.getElementById("option_transparent").style.opacity = 0;
+	} else {
+		document.getElementById("option_transparent").style.opacity = 0.5;
+	};
+};
+
 function drawFiringArcs (x, y) {
 	var arcrange = document.getElementById("fire_range").innerHTML;
 	if (arcrange == "") {
@@ -1737,8 +1747,21 @@ function timer_reset (timerOverride) {
 
 function drawShip (z, x, y, alpha) {
 	var arcrange = document.getElementById("fire_range").innerHTML;
+	var clearbase = document.getElementById("option_transparent").style.opacity;
 	ctx[z].globalAlpha = alpha;
-	ctx[z].drawImage(ship.img, x - ship.base / 2 - ship.offset, y - ship.protrusions, ship.width, ship.height);
+	if (clearbase == 0) {
+		ctx[z].strokeStyle = "white";
+		ctx[z].beginPath();
+		ctx[z].rect(x - ship.base / 2, y, ship.base, ship.base);
+		ctx[z].stroke();
+		ctx[z].beginPath();
+		ctx[z].moveTo(x - ship.base / 5, y + ship.base / 5);
+		ctx[z].lineTo(x, y + ship.base / 10);
+		ctx[z].lineTo(x + ship.base / 5, y + ship.base / 5);
+		ctx[z].stroke();
+	} else {
+		ctx[z].drawImage(ship.img, x - ship.base / 2 - ship.offset, y - ship.protrusions, ship.width, ship.height);
+	};
 	if (wharrgarbl == 1) {
 		blarg(x, y, alpha);
 	} else {
@@ -2402,9 +2425,12 @@ function animateTurn (flightplan, phase) {
 <tr>
 <td class="option"><img src="images/attackR.png" class="overlay" style="z-index: -1">
 <a id="fire_range"></a>
-<img id="option_fire" src="images/blank.png" title="Firing Arcs" class="overlay option" onClick="fire();" style="opacity: 0.5">
+<img id="option_fire" src="images/blank.png" title="Firing Arcs" class="overlay option" onClick="fire();" style="opacity: 0.5;">
 </td>
-<td class="option"><img id="option_blarg" src="images/blank.png" title="?" class="overlay option" onClick="wharrgarbl = wharrgarbl * -1; stepOverride = true;" style="opacity: 0">
+<td class="option"><img src="images/clearbase.png" class="overlay">
+<img id="option_transparent" src="images/blank.png" title="Transparent Bases" class="overlay option" onClick="transparent();" style="opacity: 0.5;">
+</td>
+<td class="option"><img id="option_blarg" src="images/blank.png" title="?" class="overlay option" onClick="wharrgarbl = wharrgarbl * -1; stepOverride = true;" style="opacity: 0;">
 </td>
 </tr>
 </table>
