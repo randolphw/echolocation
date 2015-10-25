@@ -22,7 +22,7 @@ img.maneuver {width: 20px; height: 20px;}
 a {position: relative;}
 a.lock {position: absolute; top: 0px; left: 0px; font-size: 10px;}
 
-.option {width: 50px; height: 50px; text-align: center; font-family: Aurebesh; font-size: 26px;}
+.option {width: 50px; height: 50px; text-align: center; font-family: Aurebesh; font-size: 13px;}
 </style>
 <script type="text/javascript">
 <!--
@@ -52,7 +52,7 @@ var echo = {
 	]
 };
 echo.img = new Image();
-echo.img.src = "images/echo.png";
+echo.img.src = "images/tiephantom.png";
 echo.img.onload = function() {initialize();};
 
 var tiephantom = {
@@ -98,7 +98,7 @@ var tieadvanced = {
 	base: smallbase,
 	protrusions: 1,
 	width: 40,
-	height: 50,
+	height: 49,
 	actions: ["roll"],
 	slots: [],
 	decloak: [],
@@ -155,13 +155,47 @@ var tiebomber = {
 tiebomber.img = new Image();
 tiebomber.img.src = "images/tiebomber.png";
 
+var tiedefender = {
+	faction: "empire",
+	id: "tiedefender",
+	base: smallbase,
+	protrusions: 5,
+	offset: 8,
+	width: 56,
+	height: 47,
+	actions: ["roll"],
+	slots: [],
+	decloak: [],
+	dial: [
+		["turn", "red", 1, -1],
+		["bank", "white", 1, -1],
+		["bank", "white", 1, 1],
+		["turn", "red", 1, 1],
+		["turn", "red", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "red", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["straight", "green", 4],
+		["koiogran", "white", 4],
+		["straight", "green", 5]
+	]
+};
+tiedefender.img = new Image();
+tiedefender.img.src = "images/tiedefender.png";
+
 var tiefighter = {
 	faction: "empire",
 	id: "tiefighter",
 	base: smallbase,
 	protrusions: 1,
-	offset: 2,
-	width: 44,
+	offset: 1,
+	width: 42,
 	height: 42,
 	actions: ["roll"],
 	slots: [],
@@ -192,9 +226,9 @@ var tieinterceptor = {
 	faction: "empire",
 	id: "tieinterceptor",
 	base: smallbase,
-	protrusions: 13,
+	protrusions: 14,
 	width: 40,
-	height: 54,
+	height: 55,
 	actions: ["roll", "boost"],
 	slots: [],
 	decloak: [],
@@ -284,12 +318,44 @@ var tiefofighter = {
 tiefofighter.img = new Image();
 tiefofighter.img.src = "images/tiefofighter.png";
 
+var decimator = {
+	faction: "empire",
+	id: "decimator",
+	base: largebase,
+	protrusions: 36,
+	offset: 4,
+	width: 90,
+	height: 134,
+	actions: [],
+	slots: ["crew"],
+	arc: "turret",
+	decloak: [],
+	dial: [
+		["bank", "white", 1, -1],
+		["straight", "white", 1],
+		["bank", "white", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "green", 2, -1],
+		["straight", "green", 2],
+		["bank", "green", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["straight", "white", 4]
+	]
+};
+decimator.img = new Image();
+decimator.img.src = "images/decimator.png";
+
 var firespray = {
 	faction: "empire",
 	id: "firespray",
 	base: largebase,
 	protrusions: 1,
-	offset: 4,
+	offset: 5,
 	width: 90,
 	height: 82,
 	actions: [],
@@ -475,10 +541,9 @@ var xwing = {
 	faction: "alliance",
 	id: "xwing",
 	base: smallbase,
-	protrusions: 11,
-	offset: 1,
-	width: 42,
-	height: 52,
+	protrusions: 8,
+	width: 40,
+	height: 49,
 	actions: [],
 	slots: ["astromech"],
 	decloak: [],
@@ -509,7 +574,7 @@ var ywing = {
 	base: smallbase,
 	protrusions: 8,
 	width: 40,
-	height: 60,
+	height: 58,
 	actions: [],
 	slots: ["astromech"],
 	arc: "turret",
@@ -539,10 +604,9 @@ var z95 = {
 	faction: "alliance",
 	id: "z95",
 	base: smallbase,
-	protrusions: 6,
-	offset: 1,
-	width: 43,
-	height: 47,
+	protrusions: 8,
+	width: 40,
+	height: 49,
 	actions: [],
 	slots: [],
 	decloak: [],
@@ -636,8 +700,8 @@ var yt1300 = {
 	id: "yt1300",
 	base: largebase,
 	protrusions: 32,
-	offset: 4,
-	width: 90,
+	offset: 3,
+	width: 88,
 	height: 119,
 	actions: [],
 	slots: ["crew"],
@@ -808,8 +872,8 @@ var starviper = {
 	id: "starviper",
 	base: smallbase,
 	protrusions: 1,
-	offset: 9,
-	width: 57,
+	offset: 8,
+	width: 55,
 	height: 45,
 	actions: ["roll", "boost"],
 	slots: ["system", "illicit"],
@@ -949,7 +1013,7 @@ var Sfirespray = {
 	img: firespray.img,
 	base: largebase,
 	protrusions: 1,
-	offset: 4,
+	offset: 5,
 	width: 90,
 	height: 82,
 	actions: [],
@@ -975,6 +1039,38 @@ var Sfirespray = {
 		["koiogran", "red", 4]
 	]
 };
+
+var yv666 = {
+	faction: "scum",
+	id: "yv666",
+	base: largebase,
+	protrusions: 66,
+	offset: 30,
+	width: 136,
+	height: 201,
+	actions: [],
+	slots: ["crew", "illicit"],
+	arc: "180",
+	decloak: [],
+	dial: [
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "red", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "red", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["straight", "white", 4]
+	]
+};
+yv666.img = new Image();
+yv666.img.src = "images/yv666.png";
 
 var ship = new Object();
 
@@ -1570,13 +1666,11 @@ function drawFiringArcs (x, y) {
 	};
 	var color = (ship.faction == "empire") ? "#70C045" : ((ship.faction == "alliance") ? "#EC2424" : "#DCA824");
 	var offset = (ship.base == smallbase) ? 16 : 35;
-	var forward = 0;
 	ctx[2].save();
 	ctx[2].lineWidth = 1;
 	ctx[2].fillStyle = color;
 	ctx[2].strokeStyle = color;
 	if (ship.arc == "turret") {
-		forward = 10;
 		ctx[2].globalAlpha = 0.1;
 		ctx[2].beginPath();
 		ctx[2].moveTo(x - ship.base / 2, y - 100 * arcrange);
@@ -1591,14 +1685,43 @@ function drawFiringArcs (x, y) {
 		ctx[2].fill();
 		ctx[2].globalAlpha = 0.9;
 		ctx[2].stroke();
-		ctx[2].clip();
+	};
+	if (ship.arc == "180") {
+		ctx[2].globalAlpha = 0.1;
+		ctx[2].beginPath();
+		ctx[2].moveTo(x - ship.base / 2, y);
+		ctx[2].lineTo(x - ship.base / 2, y + ship.base / 2);
+		ctx[2].lineTo(x - ship.base / 2 - 100 * arcrange, y + ship.base / 2);
+		ctx[2].lineTo(x - ship.base / 2 - 100 * arcrange, y);
+		ctx[2].arc(x - ship.base / 2, y, 100 * arcrange, pi, 1.5 * pi, false);
+		ctx[2].lineTo(x + ship.base / 2, y - 100 * arcrange);
+		ctx[2].arc(x + ship.base / 2, y, 100 * arcrange, 1.5 * pi, 0, false);
+		ctx[2].lineTo(x + ship.base / 2 + 100 * arcrange, y + ship.base / 2);
+		ctx[2].lineTo(x + ship.base / 2, y + ship.base / 2);
+		ctx[2].lineTo(x + ship.base / 2, y);
+		ctx[2].fill();
+		ctx[2].beginPath();
+		ctx[2].moveTo(x - ship.base / 2, y + ship.base / 2);
+		ctx[2].lineTo(x - ship.base / 2 - 100 * arcrange, y + ship.base / 2);
+		ctx[2].lineTo(x - ship.base / 2 - 100 * arcrange, y);
+		ctx[2].arc(x - ship.base / 2, y, 100 * arcrange, pi, (1.5 - 2/9) * pi, false);
+		ctx[2].globalAlpha = 0.9;
+		ctx[2].setLineDash([4]);
+		ctx[2].stroke();
+		ctx[2].beginPath();
+		ctx[2].moveTo(x + ship.base / 2, y + ship.base / 2);
+		ctx[2].lineTo(x + ship.base / 2 + 100 * arcrange, y + ship.base / 2);
+		ctx[2].lineTo(x + ship.base / 2 + 100 * arcrange, y);
+		ctx[2].arc(x + ship.base / 2, y, 100 * arcrange, 0, (1.5 + 2/9) * pi, true);
+		ctx[2].stroke();
+		ctx[2].setLineDash([]);
 	};
 	ctx[2].globalAlpha = 0.1;
 	ctx[2].beginPath();
 	ctx[2].moveTo(x - offset, y);
-	ctx[2].arc(x - offset, y, 100 * arcrange + forward, (1.5 - 2/9) * pi, 1.5 * pi, false);
-	ctx[2].lineTo(x + offset, y - 100 * arcrange - forward);
-	ctx[2].arc(x + offset, y, 100 * arcrange + forward, 1.5 * pi, (1.5 + 2/9) * pi, false);
+	ctx[2].arc(x - ship.base / 2, y, 100 * arcrange, (1.5 - 2/9) * pi, 1.5 * pi, false);
+	ctx[2].lineTo(x + offset, y - 100 * arcrange);
+	ctx[2].arc(x + ship.base / 2, y, 100 * arcrange, 1.5 * pi, (1.5 + 2/9) * pi, false);
 	ctx[2].lineTo(x + offset, y);
 	ctx[2].fill();
 	ctx[2].globalAlpha = 0.9;
@@ -1607,9 +1730,9 @@ function drawFiringArcs (x, y) {
 		ctx[2].globalAlpha = 0.1;
 		ctx[2].beginPath();
 		ctx[2].moveTo(x - offset, y + ship.base);
-		ctx[2].arc(x - offset, y + ship.base, 100 * arcrange, (0.5 + 2/9) * pi, 0.5 * pi, true);
+		ctx[2].arc(x - ship.base / 2, y + ship.base, 100 * arcrange, (0.5 + 2/9) * pi, 0.5 * pi, true);
 		ctx[2].lineTo(x + offset, y + ship.base + 100 * arcrange);
-		ctx[2].arc(x + offset, y + ship.base, 100 * arcrange, 0.5 * pi, (0.5 - 2/9) * pi, true);
+		ctx[2].arc(x + ship.base / 2, y + ship.base, 100 * arcrange, 0.5 * pi, (0.5 - 2/9) * pi, true);
 		ctx[2].lineTo(x + offset, y + ship.base);
 		ctx[2].fill();
 		ctx[2].globalAlpha = 0.9;
@@ -2610,27 +2733,30 @@ function animateTurn (flightplan, phase) {
 <tr>
 <td class="select option"><img id="select_empire" src="images/empire.png" title="Galactic Empire" class="select faction" style="opacity: 1" onClick="select ('empire');"><img id="select_alliance" src="images/alliance.png" title="Rebel Alliance" class="select faction" onClick="select('alliance');"><img id="select_scum" src="images/scum.png" title="Scum and Villainy" class="select faction" onClick="select('scum');"></td>
 <td width=5></td>
-<td id="select_firespray" class="option select empire model"><img src="images/firespray.png" title="Firespray-31" onClick="select(firespray);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_decimator" class="option select empire model"><img src="images/decimator.png" title="VT-49 Decimator" onClick="select(decimator);" style="position: relative; left: 0px; bottom: -12px;"></td>
 <td id="select_lambda" class="option select empire model"><img src="images/lambda.png" title="Lambda-Class Shuttle" onClick="select(lambda);" style="position: relative; left: 0px; bottom: 5px;"></td>
-<td id="select_tieadvanced" class="option select empire model"><img src="images/tieadvanced.png" title="TIE Advanced" onClick="select(tieadvanced);" style="position: relative; left: 0px; bottom: -3px;"></td>
+<td id="select_firespray" class="option select empire model"><img src="images/firespray.png" title="Firespray-31" onClick="select(firespray);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_tieadvanced" class="option select empire model"><img src="images/tieadvanced.png" title="TIE Advanced" onClick="select(tieadvanced);" style="position: relative; left: 0px; bottom: -2px;"></td>
 <td id="select_tiebomber" class="option select empire model"><img src="images/tiebomber.png" title="TIE Bomber" onClick="select(tiebomber);" style="position: relative; left: 0px; bottom: -1px;"></td>
+<td id="select_tiedefender" class="option select empire model"><img src="images/tiedefender.png" title="TIE Defender" onClick="select(tiedefender);" style="position: relative; left: 0px; bottom: 4px;"></td>
 <td id="select_tiefighter" class="option select empire model"><img src="images/tiefighter.png" title="TIE Fighter" onClick="select(tiefighter);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_tieinterceptor" class="option select empire model"><img src="images/tieinterceptor.png" title="TIE Interceptor" onClick="select(tieinterceptor);" style="position: relative; left: 0px; bottom: 5px;"></td>
-<td id="select_tiephantom" class="option select empire model"><img src="images/echo.png" width=40 title="TIE Phantom" onClick="select(tiephantom);" style="position: relative; left: 0px; bottom: 5px;"></td>
-<td id="select_echo" class="option select empire phantom pilot"><a class="pilot" onClick="select(tiephantom, echo);" style="position: relative; left: 0px; bottom: 15px;">Echo</a></td>
+<td id="select_tiephantom" class="option select empire model"><img src="images/tiephantom.png" width=40 title="TIE Phantom" onClick="select(tiephantom);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_echo" class="option select empire phantom pilot"><a class="pilot" onClick="select(tiephantom, echo);" style="position: relative; left: 0px; bottom: 34px;">&middot;Echo</a></td>
 <td id="select_tiepunisher" class="option select empire model"><img src="images/tiepunisher.png" title="TIE Punisher" onClick="select(tiepunisher);" style="position: relative; left: 0px; bottom: -3px;"></td>
 <td id="select_tiefofighter" class="option select empire model"><img src="images/tiefofighter.png" title="TIE/fo Fighter" onClick="select(tiefofighter);" style="position: relative; left: 0px; bottom: 5px;"></td>
-<td id="select_yt1300" class="option select alliance model"><img src="images/yt1300.png" title="YT-1300" onClick="select(yt1300);" style="position: relative; left: 0px; bottom: -1px;"></td>
+<td id="select_yt1300" class="option select alliance model"><img src="images/yt1300.png" title="YT-1300" onClick="select(yt1300);" style="position: relative; left: 0px; bottom: 0px;"></td>
 <td id="select_yt2400" class="option select alliance model"><img src="images/yt2400.png" title="YT-2400" onClick="select(yt2400);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_awing" class="option select alliance model"><img src="images/awing.png" title="A-Wing" onClick="select(awing);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_bwing" class="option select alliance model"><img src="images/bwing.png" title="B-Wing" onClick="select(bwing);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_ewing" class="option select alliance model"><img src="images/ewing.png" title="E-Wing" onClick="select(ewing);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_kwing" class="option select alliance model"><img src="images/kwing.png" title="K-Wing" onClick="select(kwing);" style="position: relative; left: 0px; bottom: -5px;"></td>
 <td id="select_xwing" class="option select alliance model"><img src="images/xwing.png" title="X-Wing" onClick="select(xwing);" style="position: relative; left: 0px; bottom: 5px;"></td>
-<td id="select_ywing" class="option select alliance model"><img src="images/ywing.png" title="Y-Wing" onClick="select(ywing);" style="position: relative; left: 0px; bottom: -6px;"></td>
+<td id="select_ywing" class="option select alliance model"><img src="images/ywing.png" title="Y-Wing" onClick="select(ywing);" style="position: relative; left: 0px; bottom: -4px;"></td>
 <td id="select_z95" class="option select alliance model"><img src="images/z95.png" title="Z-95 Headhunter" onClick="select(z95);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_hwk" class="option select alliance model"><img src="images/hwk.png" title="HWK-290" onClick="select(hwk);" style="position: relative; left: 0px; bottom: 2px;"></td>
 <td id="select_t70xwing" class="option select alliance model"><img src="images/t70xwing.png" title="T-70 X-Wing" onClick="select(t70xwing);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_yv666" class="option select scum model"><img src="images/yv666-f.png" title="YV-666" onClick="select(yv666);" style="position: relative; left: 0px; bottom: 5px;"><img src="images/yv666-r.png" title="YV-666" onClick="select(yv666);" style="position: absolute; left: 0px; bottom: -49px;"></td>
 <td id="select_aggressor" class="option select scum model"><img src="images/aggressor.png" title="Aggressor" onClick="select(aggressor);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_Sfirespray" class="option select scum model"><img src="images/firespray.png" title="Firespray-31" onClick="select(Sfirespray);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_Shwk" class="option select scum model"><img src="images/hwk.png" title="HWK-290" onClick="select(Shwk);" style="position: relative; left: 0px; bottom: 2px;"></td>
