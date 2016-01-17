@@ -123,6 +123,39 @@ var tieadvanced = {
 tieadvanced.img = new Image();
 tieadvanced.img.src = "images/tieadvanced.png";
 
+var tieadvprototype = {
+	faction: "empire",
+	id: "tieadvprototype",
+	base: smallbase,
+	protrusions: 1,
+	width: 40,
+	height: 42,
+	actions: ["roll", "boost"],
+	slots: [],
+	decloak: [],
+	dial: [
+		["turn", "green", 1, -1],
+		["bank", "green", 1, -1],
+		["bank", "green", 1, 1],
+		["turn", "green", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["straight", "green", 4],
+		["koiogran", "red", 4],
+		["straight", "white", 5]
+	]
+};
+tieadvprototype.img = new Image();
+tieadvprototype.img.src = "images/tieadvprototype.png";
+
 var tiebomber = {
 	faction: "empire",
 	id: "tiebomber",
@@ -631,6 +664,40 @@ var z95 = {
 z95.img = new Image();
 z95.img.src = "images/z95.png";
 
+var attackshuttle = {
+	faction: "alliance",
+	id: "attackshuttle",
+	base: smallbase,
+	protrusions: 4,
+	width: 40,
+	height: 45,
+	actions: ["roll"],
+	slots: ["crew"],
+	arc: "turret",
+	decloak: [],
+	dial: [
+		["turn", "red", 1, -1],
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "red", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "red", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "white", 3],
+		["bank", "white", 3, 1],
+		["turn", "red", 3, 1],
+		["straight", "white", 4],
+		["koiogran", "red", 4]
+	]
+};
+attackshuttle.img = new Image();
+attackshuttle.img.src = "images/attackshuttle.png";
+
 var hwk = {
 	faction: "alliance",
 	id: "hwk",
@@ -694,6 +761,41 @@ var t70xwing = {
 };
 t70xwing.img = new Image();
 t70xwing.img.src = "images/t70xwing.png";
+
+var vcx100 = {
+	faction: "alliance",
+	id: "vcx100",
+	base: largebase,
+	protrusions: 27,
+	offset: 20,
+	width: 120,
+	height: 155,
+	actions: [],
+	slots: ["crew", "system"],
+	arc: "turret",
+	decloak: [],
+	dial: [
+		["turn", "red", 1, -1],
+		["bank", "white", 1, -1],
+		["straight", "green", 1],
+		["bank", "white", 1, 1],
+		["turn", "red", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "green", 2, -1],
+		["straight", "green", 2],
+		["bank", "green", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "red", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "white", 3],
+		["bank", "white", 3, 1],
+		["turn", "red", 3, 1],
+		["straight", "white", 4],
+		["koiogran", "red", 5]
+	]
+};
+vcx100.img = new Image();
+vcx100.img.src = "images/vcx100.png";
 
 var yt1300 = {
 	faction: "alliance",
@@ -763,6 +865,44 @@ var yt2400 = {
 };
 yt2400.img = new Image();
 yt2400.img.src = "images/yt2400.png";
+
+var g1a = {
+	faction: "scum",
+	id: "g1a",
+	base: smallbase,
+	protrusions: 12,
+	width: 40,
+	height: 59,
+	actions: ["roll"],
+	slots: ["crew", "illicit", "system"],
+	decloak: [
+		["straight", "blue", 2],
+		["roll", "blue", 2, -1, 1],
+		["roll", "blue", 2, 1, 1],
+		["roll", "blue", 2, -1, -1],
+		["roll", "blue", 2, 1, -1]
+	],
+	dial: [
+		["turn", "red", 1, -1],
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "red", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["bank", "red", 3, -1],
+		["straight", "green", 3],
+		["bank", "red", 3, 1],
+		["koiogran", "red", 3],
+		["straight", "white", 4],
+		["koiogran", "red", 4]
+	]
+};
+g1a.img = new Image();
+g1a.img.src = "images/g1a.png";
 
 var Shwk = {
 	faction: "scum",
@@ -1673,7 +1813,8 @@ function drawFiringArcs (x, y) {
 	if (ship.arc == "turret") {
 		ctx[2].globalAlpha = 0.1;
 		ctx[2].beginPath();
-		ctx[2].moveTo(x - ship.base / 2, y - 100 * arcrange);
+		ctx[2].moveTo(x - ship.base / 2, y);
+		ctx[2].arc(x - ship.base / 2, y, 100 * arcrange, pi, 1.5 * pi, false);
 		ctx[2].lineTo(x + ship.base / 2, y - 100 * arcrange);
 		ctx[2].arc(x + ship.base / 2, y, 100 * arcrange, 1.5 * pi, 0, false);
 		ctx[2].lineTo(x + ship.base / 2 + 100 * arcrange, y + ship.base);
@@ -1681,9 +1822,20 @@ function drawFiringArcs (x, y) {
 		ctx[2].lineTo(x - ship.base / 2, y + ship.base + 100 * arcrange);
 		ctx[2].arc(x - ship.base / 2, y + ship.base, 100 * arcrange, 0.5 * pi, pi, false);
 		ctx[2].lineTo(x - ship.base / 2 - 100 * arcrange, y);
-		ctx[2].arc(x - ship.base / 2, y, 100 * arcrange, pi, 1.5 * pi, false);
+		ctx[2].lineTo(x - ship.base / 2, y);
+		ctx[2].lineTo(x - ship.base / 2, y + ship.base);
+		ctx[2].lineTo(x + ship.base / 2, y + ship.base);
+		ctx[2].lineTo(x + ship.base / 2, y);
 		ctx[2].fill();
-		ctx[2].globalAlpha = 0.9;
+		ctx[2].beginPath();
+		ctx[2].arc(x + ship.base / 2, y, 100 * arcrange, (1.5 + 2/9) * pi, 0, false);
+		ctx[2].lineTo(x + ship.base / 2 + 100 * arcrange, y + ship.base);
+		ctx[2].arc(x + ship.base / 2, y + ship.base, 100 * arcrange, 0, 0.5 * pi, false);
+		ctx[2].lineTo(x - ship.base / 2, y + ship.base + 100 * arcrange);
+		ctx[2].arc(x - ship.base / 2, y + ship.base, 100 * arcrange, 0.5 * pi, pi, false);
+		ctx[2].lineTo(x - ship.base / 2 - 100 * arcrange, y);
+		ctx[2].arc(x - ship.base / 2, y, 100 * arcrange, pi, (1.5 - 2/9) * pi, false);
+		ctx[2].globalAlpha = 0.3;
 		ctx[2].stroke();
 	};
 	if (ship.arc == "180") {
@@ -2728,7 +2880,7 @@ function animateTurn (flightplan, phase) {
 </tr>
 <tr><td height=1></td></tr>
 <tr>
-<td>
+<td colspan=2>
 <table cellpadding=0 height=126>
 <tr>
 <td class="select option"><img id="select_empire" src="images/empire.png" title="Galactic Empire" class="select faction" style="opacity: 1" onClick="select ('empire');"><img id="select_alliance" src="images/alliance.png" title="Rebel Alliance" class="select faction" onClick="select('alliance');"><img id="select_scum" src="images/scum.png" title="Scum and Villainy" class="select faction" onClick="select('scum');"></td>
@@ -2737,6 +2889,7 @@ function animateTurn (flightplan, phase) {
 <td id="select_lambda" class="option select empire model"><img src="images/lambda.png" title="Lambda-Class Shuttle" onClick="select(lambda);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_firespray" class="option select empire model"><img src="images/firespray.png" title="Firespray-31" onClick="select(firespray);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_tieadvanced" class="option select empire model"><img src="images/tieadvanced.png" title="TIE Advanced" onClick="select(tieadvanced);" style="position: relative; left: 0px; bottom: -2px;"></td>
+<td id="select_tieadvprototype" class="option select empire model"><img src="images/tieadvprototype.png" title="TIE Adv. Prototype" onClick="select(tieadvprototype);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_tiebomber" class="option select empire model"><img src="images/tiebomber.png" title="TIE Bomber" onClick="select(tiebomber);" style="position: relative; left: 0px; bottom: -1px;"></td>
 <td id="select_tiedefender" class="option select empire model"><img src="images/tiedefender.png" title="TIE Defender" onClick="select(tiedefender);" style="position: relative; left: 0px; bottom: 4px;"></td>
 <td id="select_tiefighter" class="option select empire model"><img src="images/tiefighter.png" title="TIE Fighter" onClick="select(tiefighter);" style="position: relative; left: 0px; bottom: 5px;"></td>
@@ -2745,6 +2898,7 @@ function animateTurn (flightplan, phase) {
 <td id="select_echo" class="option select empire phantom pilot"><a class="pilot" onClick="select(tiephantom, echo);" style="position: relative; left: 0px; bottom: 34px;">&middot;Echo</a></td>
 <td id="select_tiepunisher" class="option select empire model"><img src="images/tiepunisher.png" title="TIE Punisher" onClick="select(tiepunisher);" style="position: relative; left: 0px; bottom: -3px;"></td>
 <td id="select_tiefofighter" class="option select empire model"><img src="images/tiefofighter.png" title="TIE/fo Fighter" onClick="select(tiefofighter);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_vcx100" class="option select alliance model"><img src="images/vcx100-f.png" title="VCX-100" onClick="select(vcx100);" style="position: relative; left: 0px; bottom: 5px;"><img src="images/vcx100-r.png" title="VCX-100" onClick="select(vcx100);" style="position: absolute; left: 0px; bottom: -42px;"></td>
 <td id="select_yt1300" class="option select alliance model"><img src="images/yt1300.png" title="YT-1300" onClick="select(yt1300);" style="position: relative; left: 0px; bottom: 0px;"></td>
 <td id="select_yt2400" class="option select alliance model"><img src="images/yt2400.png" title="YT-2400" onClick="select(yt2400);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_awing" class="option select alliance model"><img src="images/awing.png" title="A-Wing" onClick="select(awing);" style="position: relative; left: 0px; bottom: 5px;"></td>
@@ -2754,13 +2908,15 @@ function animateTurn (flightplan, phase) {
 <td id="select_xwing" class="option select alliance model"><img src="images/xwing.png" title="X-Wing" onClick="select(xwing);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_ywing" class="option select alliance model"><img src="images/ywing.png" title="Y-Wing" onClick="select(ywing);" style="position: relative; left: 0px; bottom: -4px;"></td>
 <td id="select_z95" class="option select alliance model"><img src="images/z95.png" title="Z-95 Headhunter" onClick="select(z95);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_attackshuttle" class="option select alliance model"><img src="images/attackshuttle.png" title="Attack Shuttle" onClick="select(attackshuttle);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_hwk" class="option select alliance model"><img src="images/hwk.png" title="HWK-290" onClick="select(hwk);" style="position: relative; left: 0px; bottom: 2px;"></td>
 <td id="select_t70xwing" class="option select alliance model"><img src="images/t70xwing.png" title="T-70 X-Wing" onClick="select(t70xwing);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_yv666" class="option select scum model"><img src="images/yv666-f.png" title="YV-666" onClick="select(yv666);" style="position: relative; left: 0px; bottom: 5px;"><img src="images/yv666-r.png" title="YV-666" onClick="select(yv666);" style="position: absolute; left: 0px; bottom: -49px;"></td>
 <td id="select_aggressor" class="option select scum model"><img src="images/aggressor.png" title="Aggressor" onClick="select(aggressor);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_Sfirespray" class="option select scum model"><img src="images/firespray.png" title="Firespray-31" onClick="select(Sfirespray);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_g1a" class="option select scum model"><img src="images/g1a.png" title="G-1A Starfighter" onClick="select(g1a);" style="position: relative; left: 0px; bottom: -1px;"></td>
 <td id="select_Shwk" class="option select scum model"><img src="images/hwk.png" title="HWK-290" onClick="select(Shwk);" style="position: relative; left: 0px; bottom: 2px;"></td>
-<td id="select_kihraxz" class="option select scum model"><img src="images/kihraxz.png" title="Kihraxz" onClick="select(kihraxz);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_kihraxz" class="option select scum model"><img src="images/kihraxz.png" title="Kihraxz Fighter" onClick="select(kihraxz);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_scyk" class="option select scum model"><img src="images/scyk.png" title="M3-A Interceptor" onClick="select(scyk);" style="position: relative; left: 0px; bottom: -6px;"></td>
 <td id="select_starviper" class="option select scum model"><img src="images/starviper.png" title="StarViper" onClick="select(starviper);" style="position: relative; left: 0px; bottom: 2px;"></td>
 <td id="select_Sywing" class="option select scum model"><img src="images/ywing-s.png" title="Y-Wing" onClick="select(Sywing);" style="position: relative; left: 0px; bottom: -5px;"></td>
