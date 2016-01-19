@@ -35,35 +35,14 @@ var rTurn = [0, 35, 63, 90];
 var smallbase = 40;
 var largebase = 80;
 
-var echo = {
-	id: "echo",
-	slots: ["elite", "crew", "system"],
-	decloak: [
-		["bank", "blue", 2, -1],
-		["bank", "blue", 2, 1],
-		["bankroll", "blue", 2, -1, 1, 1],
-		["bankroll", "blue", 2, -1, -1, 1],
-		["bankroll", "blue", 2, 1, 1, -1],
-		["bankroll", "blue", 2, 1, -1, -1],
-		["bankroll", "blue", 2, -1, 1, -1],
-		["bankroll", "blue", 2, -1, -1, -1],
-		["bankroll", "blue", 2, 1, 1, 1],
-		["bankroll", "blue", 2, 1, -1, 1]
-	]
-};
-echo.img = new Image();
-echo.img.src = "images/tiephantom.png";
-echo.img.onload = function() {initialize();};
-
 var tiephantom = {
 	faction: "empire",
 	id: "tiephantom",
-	img: echo.img,
 	base: smallbase,
 	protrusions: 17,
 	width: 40,
 	height: 58,
-	pilots: [echo],
+	pilots: ["echo"],
 	actions: ["roll"],
 	slots: ["crew", "system"],
 	decloak: [
@@ -91,6 +70,28 @@ var tiephantom = {
 		["koiogran", "red", 4]
 	]
 };
+tiephantom.img = new Image();
+tiephantom.img.src = "images/tiephantom.png";
+tiephantom.img.onload = function() {initialize();};
+
+var echo = {
+	id: "echo",
+	img: tiephantom.img,
+	vessel: tiephantom,
+	slots: ["elite", "crew", "system"],
+	decloak: [
+		["bank", "blue", 2, -1],
+		["bank", "blue", 2, 1],
+		["bankroll", "blue", 2, -1, 1, 1],
+		["bankroll", "blue", 2, -1, -1, 1],
+		["bankroll", "blue", 2, 1, 1, -1],
+		["bankroll", "blue", 2, 1, -1, -1],
+		["bankroll", "blue", 2, -1, 1, -1],
+		["bankroll", "blue", 2, -1, -1, -1],
+		["bankroll", "blue", 2, 1, 1, 1],
+		["bankroll", "blue", 2, 1, -1, 1]
+	]
+};
 
 var tieadvanced = {
 	faction: "empire",
@@ -99,8 +100,9 @@ var tieadvanced = {
 	protrusions: 1,
 	width: 40,
 	height: 49,
+	pilots: ["junoeclipse"],
 	actions: ["roll"],
-	slots: [],
+	slots: ["system"],
 	decloak: [],
 	dial: [
 		["bank", "green", 1, -1],
@@ -122,6 +124,35 @@ var tieadvanced = {
 };
 tieadvanced.img = new Image();
 tieadvanced.img.src = "images/tieadvanced.png";
+
+var junoeclipse = {
+	id: "junoeclipse",
+	img: tieadvanced.img,
+	vessel: tieadvanced,
+	slots: ["elite", "system"],
+	dial: [
+		["turn", "white", 1, -1],
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "white", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["koiogran", "red", 3],
+		["straight", "white", 4],
+		["koiogran", "red", 4],
+		["straight", "white", 5],
+		["koiogran", "red", 5]
+	]
+};
 
 var tieadvprototype = {
 	faction: "empire",
@@ -1212,6 +1243,49 @@ var yv666 = {
 yv666.img = new Image();
 yv666.img.src = "images/yv666.png";
 
+var shipIndex = {
+//Galactic Empire
+	"decimator": decimator,
+	"firespray": firespray,
+	"lambda": lambda,
+	"tieadvanced": tieadvanced,
+	"junoeclipse": junoeclipse,
+	"tieadvprototype": tieadvprototype,
+	"tiebomber": tiebomber,
+	"tiedefender": tiedefender,
+	"tiefighter": tiefighter,
+	"tieinterceptor": tieinterceptor,
+	"tiephantom": tiephantom,
+	"echo": echo,
+	"tiepunisher": tiepunisher,
+	"tiefofighter": tiefofighter,
+//Rebel Alliance
+	"attackshuttle": attackshuttle,
+	"awing": awing,
+	"bwing": bwing,
+	"ewing": ewing,
+	"hwk": hwk,
+	"kwing": kwing,
+	"t70xwing": t70xwing,
+	"vcx100": vcx100,
+	"xwing": xwing,
+	"yt1300": yt1300,
+	"yt2400": yt2400,
+	"ywing": ywing,
+	"z95": z95,
+//Scum and Villainy
+	"aggressor": aggressor,
+	"sfirespray": Sfirespray,
+	"g1a": g1a,
+	"shwk": Shwk,
+	"kihraxz": kihraxz,
+	"scyk": scyk,
+	"starviper": starviper,
+	"yv666": yv666,
+	"sywing": Sywing,
+	"sz95": Sz95
+};
+
 var ship = new Object();
 
 var decloak;
@@ -1248,6 +1322,231 @@ function initialize () {
 	gctx = gridlayer.getContext("2d")
 	starfield();
 	setInterval(function(){step()}, 35);
+	if (location.search.length > 1) {
+		loadState(location.search.substr(1).split("&"));
+	};
+};
+
+function loadState (stateArray) {
+	if (shipIndex[stateArray[0]].faction != "empire") {
+		select(shipIndex[stateArray[0]].faction);
+	};
+	if (stateArray[1] && (shipIndex[stateArray[0]].pilots == undefined || shipIndex[stateArray[0]].pilots.indexOf(stateArray[1]) == -1)) {
+		stateArray[1] = undefined;
+	};
+	select(shipIndex[stateArray[0]], shipIndex[stateArray[1]]);
+	if (stateArray[2]) {
+		var decloaks = stateArray[2].split(",");
+		if (stateArray[0] == "tiephantom") {
+			setDecloak("all");
+		};
+		if (stateArray[1] != "echo") {
+			for (var i = 0; i < decloaks.length; i++) {
+				setDecloak("p", decloaks[i]);
+			};
+		} else {
+			for (var i = 0; i < decloaks.length; i++) {
+				if (decloaks[i] < 2) {
+					setDecloak("e", decloaks[i]);
+				} else {
+					setDecloak("e", decloaks[i], Number(decloaks[i]) + 1);
+				};
+			};
+		};
+	};
+	if (stateArray[3]) {
+		var maneuvers = stateArray[3].split(",");
+		setDial("all");
+		for (var i = 0; i < maneuvers.length; i++) {
+			var mType = ["Turn", "Turn", "Bank", "Bank", "Straight", "Koiogran", "Segnors", "Segnors", "Tallon", "Tallon"][i];
+			var mSuffix = "";
+			if ([0, 2, 6, 8].indexOf(i) != -1) {
+				mSuffix = "l";
+			} else if ([1, 3, 7, 9].indexOf(i) != -1) {
+				mSuffix = "r";
+			};
+			if ([1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31].indexOf(Number(maneuvers[i])) != -1) {
+				setDial("b" + mType + "1" + mSuffix);
+			};
+			if ([2, 3, 6, 7, 10, 11, 14, 15, 18, 19, 22, 23, 26, 27, 30, 31].indexOf(Number(maneuvers[i])) != -1) {
+				setDial("b" + mType + "2" + mSuffix);
+			};
+			if ([4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23, 28, 29, 30, 31].indexOf(Number(maneuvers[i])) != -1) {
+				setDial("b" + mType + "3" + mSuffix);
+			};
+			if ([8, 9, 10, 11, 12, 13, 14, 15, 24, 25, 26, 27, 28, 29, 30, 31].indexOf(Number(maneuvers[i])) != -1) {
+				setDial("b" + mType + "4" + mSuffix);
+			};
+			if ([16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31].indexOf(Number(maneuvers[i])) != -1) {
+				setDial("b" + mType + "5" + mSuffix);
+			};
+		};
+	};
+	if (stateArray[4]) {
+		if ([1, 3, 5, 7, 11, 17, 19, 27].indexOf(Number(stateArray[4])) != -1) {
+			barrel_roll();
+		};
+		if ([2, 3, 6, 7, 11, 18, 19, 27].indexOf(Number(stateArray[4])) != -1) {
+			boost();
+		};
+		if ([4, 5, 6, 7].indexOf(Number(stateArray[4])) != -1) {
+			slam();
+		};
+		if ([11, 27].indexOf(Number(stateArray[4])) != -1) {
+			bbPTL();
+		};
+		if ([17, 18, 19, 27].indexOf(Number(stateArray[4])) != -1) {
+			advSensors();
+		};
+	};
+	if (stateArray[5]) {
+		for (var i = 0; i < Number(stateArray[5]); i++) {
+			gridfield();
+		};
+	};
+	if (stateArray[6]) {
+		starfield();
+	};
+	if (stateArray[7]) {
+		loop();
+	};
+	if (stateArray[8]) {
+		for (var i = 0; i < Number(stateArray[8]); i++) {
+			fire();
+		};
+	};
+	if (stateArray[9]) {
+		transparent();
+	};
+};
+
+function saveState () {
+	var url = location.href.split("?")[0];
+	var strShip = ship.id + "&";
+	if (shipIndex[ship.id].vessel) {
+		strShip = shipIndex[ship.id].vessel.id + "&" + ship.id;
+	};
+	var arrDecloak = [];
+	if (decloak != undefined) {
+		for (var i = 0; i < decloak.length; i++) {
+			switch (decloak[i][0]) {
+				case "straight":
+					arrDecloak.push(0);
+					break;
+				case "roll":
+					if (decloak[i][3] == -1 && decloak[i][4] == 1) {
+						arrDecloak.push(1);
+					};
+					if (decloak[i][3] == 1 && decloak[i][4] == 1) {
+						arrDecloak.push(2);
+					};
+					if (decloak[i][3] == -1 && decloak[i][4] == -1) {
+						arrDecloak.push(3);
+					};
+					if (decloak[i][3] == 1 && decloak[i][4] == -1) {
+						arrDecloak.push(4);
+					};
+					break;
+				case "bank":
+					if (decloak[i][3] == -1) {
+						arrDecloak.push(0);
+					};
+					if (decloak[i][3] == 1) {
+						arrDecloak.push(1);
+					};
+					break;
+				case "bankroll":
+					if (decloak[i][3] == -1 && decloak[i][4] == 1 && decloak[i][5] == 1) {
+						arrDecloak.push(2);
+					};
+					if (decloak[i][3] == 1 && decloak[i][4] == 1 && decloak[i][5] == -1) {
+						arrDecloak.push(4);
+					};
+					if (decloak[i][3] == -1 && decloak[i][4] == 1  && decloak[i][5] == -1) {
+						arrDecloak.push(6);
+					};
+					if (decloak[i][3] == 1 && decloak[i][4] == 1  && decloak[i][5] == 1) {
+						arrDecloak.push(8);
+					};
+					break;
+			};
+		};
+	};
+	var strDecloak = arrDecloak.join();
+	var arrManeuvers = [];
+	if (dial != undefined && ship.dial.length != dial.length) {
+		arrManeuvers = [0,0,0,0,0,0,0,0,0,0];
+		for (var i = 0; i < dial.length; i++) {
+			switch (dial[i][0]) {
+				case "turn":
+					if (dial[i][3] == -1) {
+						arrManeuvers[0] += Math.pow(2, dial[i][2] - 1);
+					};
+					if (dial[i][3] == 1) {
+						arrManeuvers[1] += Math.pow(2, dial[i][2] - 1);
+					};
+					break;
+				case "bank":
+					if (dial[i][3] == -1) {
+						arrManeuvers[2] += Math.pow(2, dial[i][2] - 1);
+					};
+					if (dial[i][3] == 1) {
+						arrManeuvers[3] += Math.pow(2, dial[i][2] - 1);
+					};
+					break;
+				case "straight":
+					arrManeuvers[4] += Math.pow(2, dial[i][2] - 1);
+					break;
+				case "koiogran":
+					arrManeuvers[5] += Math.pow(2, dial[i][2] - 1);
+					break;
+				case "segnors":
+					if (dial[i][3] == -1) {
+						arrManeuvers[6] += Math.pow(2, dial[i][2] - 1);
+					};
+					if (dial[i][3] == 1) {
+						arrManeuvers[7] += Math.pow(2, dial[i][2] - 1);
+					};
+					break;
+				case "tallon":
+					if (dial[i][3] == -1) {
+						arrManeuvers[8] += Math.pow(2, dial[i][2] - 1);
+					};
+					if (dial[i][3] == 1) {
+						arrManeuvers[9] += Math.pow(2, dial[i][2] - 1);
+					};
+					break;
+			};
+		};
+	};
+	while(arrManeuvers[arrManeuvers.length - 1] === 0 && arrManeuvers.length > 1) {
+		arrManeuvers.pop();
+	};
+	var strManeuvers = arrManeuvers.join();
+	var intActions = 0;
+	if (document.getElementById("button_barrel").style.opacity == 0) {
+		intActions += 1;
+	};
+	if (document.getElementById("button_boost").style.opacity == 0) {
+		intActions += 2;
+	};
+	if (document.getElementById("button_slam").style.opacity == 0) {
+		intActions += 4;
+	};
+	if (document.getElementById("button_bbPTL").style.opacity == 0) {
+		intActions += 8;
+	};
+	if (document.getElementById("button_sensors").style.opacity == 0) {
+		intActions += 16;
+	};
+	var strGrid = document.getElementById("grid_level").innerHTML;
+	var strStars = (document.getElementById("option_starfield").style.opacity == 0) ? "" : 0;
+	var strLoop = (document.getElementById("option_loop").style.opacity == 0) ? 1 : "";
+	var strFire = document.getElementById("fire_range").innerHTML;
+	var strTransparent = (document.getElementById("option_transparent").style.opacity == 0) ? 1 : "";
+	url += "?" + strShip + "&" + strDecloak + "&" + strManeuvers + "&" + intActions + "&" + strGrid + "&" + strStars + "&" + strLoop + "&" + strFire + "&" + strTransparent;
+	url = url.replace(/&+$/g, "");
+	document.getElementById("permalink").href = url;
 };
 
 function select (model, pilot) {
@@ -1275,7 +1574,7 @@ function select (model, pilot) {
 				};
 			};
 			for (var i = 0; i < faction.length; i++) {
-				if (faction[i].className.indexOf("pilot") == -1 || ship.pilots.indexOf(eval(faction[i].id.substr(7))) != -1) {
+				if (faction[i].className.indexOf("pilot") == -1 || ship.pilots.indexOf(faction[i].id.substr(7)) != -1) {
 					faction[i].hidden = false;
 				};
 				if (faction[i].className.indexOf("pilot") != -1 && ship.id == faction[i].id.substr(7)) {
@@ -1302,22 +1601,32 @@ function select (model, pilot) {
 			};
 		};
 		for (var i = 0; i < faction.length; i++) {
-			if (faction[i].className.search("pilot") == -1 || ship.pilots.indexOf(eval(faction[i].id.substr(7))) != -1) {
+
+			if (faction[i].className.search("pilot") == -1 || ship.pilots.indexOf(faction[i].id.substr(7)) != -1) {
 				faction[i].hidden = false;
 			} else {
 				faction[i].hidden = true;
 			};
 		};
-		ship.dial = model.dial;
 		var elite = false;
 		if (pilot != undefined) {
 			ship.id = pilot.id;
 			document.getElementById("select_" + pilot.id).style.color = "#11EEFF";
-			ship.decloak = pilot.decloak;
+			if (pilot.dial) {
+				ship.dial = pilot.dial;
+			} else {
+				ship.dial = model.dial;
+			};
+			if (pilot.decloak) {
+				ship.decloak = pilot.decloak;
+			} else {
+				ship.decloak = model.decloak;
+			};
 			document.getElementById("lock_sensors").innerHTML = (pilot.slots.indexOf("system") == -1) ? "&#x1F512;" : "";
 			elite = (pilot.slots.indexOf("elite") == -1) ? false : true;
 			document.getElementById("lock_bbPTL").innerHTML = (elite) ? "" : "E";
 		} else {
+			ship.dial = model.dial;
 			ship.decloak = model.decloak;
 			document.getElementById("lock_sensors").innerHTML = (model.slots.indexOf("system") == -1) ? "S" : "";
 			elite = (model.slots.indexOf("elite") == -1) ? false : true;
@@ -1496,6 +1805,7 @@ function setDecloak (pattern, index, index2) {
 			};
 		};
 	};
+	saveState();
 };
 
 function setDial (buttonID) {
@@ -1532,6 +1842,7 @@ function setDial (buttonID) {
 			dial.splice(on, 1);
 		};
 	};
+	saveState();
 };
 
 function loop () {
@@ -1549,6 +1860,7 @@ function loop () {
 		slam_timer = [0, 0];
 		bbPTL_timer = [0, 0];
 	};
+	saveState();
 };
 
 function switchFilter (type) {
@@ -1600,6 +1912,7 @@ function barrel_roll () {
 		document.getElementById("button_rollFilter2").style.opacity = 0;
 		document.getElementById("button_rollFilter3").style.opacity = 0;
 	};
+	saveState();
 };
 
 function boost () {
@@ -1631,6 +1944,7 @@ function boost () {
 		document.getElementById("button_boostFilter1").style.opacity = 0;
 		document.getElementById("button_boostFilter2").style.opacity = 0;
 	};
+	saveState();
 };
 
 function slam () {
@@ -1660,6 +1974,7 @@ function slam () {
 			timer[11] = slam_timer[1];
 		};
 	};
+	saveState();
 };
 
 function bbPTL () {
@@ -1684,6 +1999,7 @@ function bbPTL () {
 		timer[8] = 0;
 		timer[9] = 0;
 	};
+	saveState();
 };
 
 function advSensors () {
@@ -1705,6 +2021,7 @@ function advSensors () {
 			timer_reset(true);
 		};
 	};
+	saveState();
 };
 
 function starfield () {
@@ -1728,6 +2045,7 @@ function starfield () {
 		ctx[0].clearRect(0, 0, 800, 600);
 		document.getElementById("option_starfield").style.opacity = 0.5;
 	};
+	saveState();
 };
 
 function gridfield () {
@@ -1771,6 +2089,7 @@ function gridfield () {
 		document.getElementById("grid_level").innerHTML = "";
 		document.getElementById("option_grid").style.opacity = 0.5;
 	};
+	saveState();
 };
 
 function fire () {
@@ -1787,6 +2106,7 @@ function fire () {
 		document.getElementById("option_fire").style.opacity = 0;
 		document.getElementById("fire_range").innerHTML = arcrange;
 	};
+	saveState();
 };
 
 function transparent () {
@@ -1797,6 +2117,7 @@ function transparent () {
 	} else {
 		document.getElementById("option_transparent").style.opacity = 0.5;
 	};
+	saveState();
 };
 
 function drawFiringArcs (x, y) {
@@ -2685,7 +3006,7 @@ function animateTurn (flightplan, phase) {
 <body bgcolor=black>
 <table cellpadding=0 cellspacing=0>
 <tr>
-<td width=862 rowspan=8></td>
+<td width=862 rowspan=8 style="vertical-align: top;"><a id="permalink" style="position: relative; left: 10px;">link</a></td>
 <td style="vertical-align:top" height=106>
 <table cellpadding=0 width=158>
 <tr>
@@ -2889,13 +3210,14 @@ function animateTurn (flightplan, phase) {
 <td id="select_lambda" class="option select empire model"><img src="images/lambda.png" title="Lambda-Class Shuttle" onClick="select(lambda);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_firespray" class="option select empire model"><img src="images/firespray.png" title="Firespray-31" onClick="select(firespray);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_tieadvanced" class="option select empire model"><img src="images/tieadvanced.png" title="TIE Advanced" onClick="select(tieadvanced);" style="position: relative; left: 0px; bottom: -2px;"></td>
+<td id="select_junoeclipse" class="option select empire pilot"><a class="pilot" onClick="select(tieadvanced, junoeclipse);" style="position: relative; left: 0px; bottom: 22px;">&middot;Juno Eclipse</a></td>
 <td id="select_tieadvprototype" class="option select empire model"><img src="images/tieadvprototype.png" title="TIE Adv. Prototype" onClick="select(tieadvprototype);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_tiebomber" class="option select empire model"><img src="images/tiebomber.png" title="TIE Bomber" onClick="select(tiebomber);" style="position: relative; left: 0px; bottom: -1px;"></td>
 <td id="select_tiedefender" class="option select empire model"><img src="images/tiedefender.png" title="TIE Defender" onClick="select(tiedefender);" style="position: relative; left: 0px; bottom: 4px;"></td>
 <td id="select_tiefighter" class="option select empire model"><img src="images/tiefighter.png" title="TIE Fighter" onClick="select(tiefighter);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_tieinterceptor" class="option select empire model"><img src="images/tieinterceptor.png" title="TIE Interceptor" onClick="select(tieinterceptor);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_tiephantom" class="option select empire model"><img src="images/tiephantom.png" width=40 title="TIE Phantom" onClick="select(tiephantom);" style="position: relative; left: 0px; bottom: 5px;"></td>
-<td id="select_echo" class="option select empire phantom pilot"><a class="pilot" onClick="select(tiephantom, echo);" style="position: relative; left: 0px; bottom: 34px;">&middot;Echo</a></td>
+<td id="select_echo" class="option select empire pilot"><a class="pilot" onClick="select(tiephantom, echo);" style="position: relative; left: 0px; bottom: 34px;">&middot;Echo</a></td>
 <td id="select_tiepunisher" class="option select empire model"><img src="images/tiepunisher.png" title="TIE Punisher" onClick="select(tiepunisher);" style="position: relative; left: 0px; bottom: -3px;"></td>
 <td id="select_tiefofighter" class="option select empire model"><img src="images/tiefofighter.png" title="TIE/fo Fighter" onClick="select(tiefofighter);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_vcx100" class="option select alliance model"><img src="images/vcx100-f.png" title="VCX-100" onClick="select(vcx100);" style="position: relative; left: 0px; bottom: 5px;"><img src="images/vcx100-r.png" title="VCX-100" onClick="select(vcx100);" style="position: absolute; left: 0px; bottom: -42px;"></td>
