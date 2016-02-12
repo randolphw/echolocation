@@ -1211,6 +1211,41 @@ var Sfirespray = {
 	]
 };
 
+var jumpmaster5000 = {
+	faction: "scum",
+	id: "jumpmaster5000",
+	base: largebase,
+	protrusions: 1,
+	offset: 5,
+	width: 85,
+	height: 82,
+	actions: ["roll"],
+	slots: ["crew", "salvaged astromech", "illicit"],
+	arc: "turret",
+	decloak: [],
+	dial: [
+		["turn", "green", 1, -1],
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "white", 1, 1],
+		["turn", "white", 1, 1],
+		["turn", "green", 2, -1],
+		["bank", "green", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["segnors", "white", 2, -1],
+		["segnors", "red", 2, 1],
+		["bank", "white", 3, -1],
+		["straight", "white", 3],
+		["bank", "white", 3, 1],
+		["straight", "white", 4],
+		["koiogran", "red", 4]
+	]
+};
+jumpmaster5000.img = new Image();
+jumpmaster5000.img.src = "images/jumpmaster5000.png";
+
 var yv666 = {
 	faction: "scum",
 	id: "yv666",
@@ -1275,15 +1310,16 @@ var shipIndex = {
 	"z95": z95,
 //Scum and Villainy
 	"aggressor": aggressor,
-	"sfirespray": Sfirespray,
+	"Sfirespray": Sfirespray,
 	"g1a": g1a,
-	"shwk": Shwk,
+	"Shwk": Shwk,
+	"jumpmaster5000": jumpmaster5000,
 	"kihraxz": kihraxz,
 	"scyk": scyk,
 	"starviper": starviper,
 	"yv666": yv666,
-	"sywing": Sywing,
-	"sz95": Sz95
+	"Sywing": Sywing,
+	"Sz95": Sz95
 };
 
 var ship = new Object();
@@ -1675,15 +1711,23 @@ function decloakTable (paths) {
 function maneuverTable (dial) {
 	var range = [];
 	for (var i = 1; i < 6; i++) {
-		range[i] = [0, 0, 0, 0, 0, 0];
+		range[i] = [[0, 0], [0, 0], 0, 0, [0, 0], [0, 0]];
 		for (var j = 0; j < dial.length; j++) {
 			if (dial[j][2] == i) {
 				switch (dial[j][0]) {
 					case "turn":
-						range[i][0] = dial[j][1];
+						if (dial[j][3] == -1) {
+							range[i][0][0] = dial[j][1];
+						} else if (dial[j][3] == 1) {
+							range[i][0][1] = dial[j][1];
+						};
 						break;
 					case "bank":
-						range[i][1] = dial[j][1];
+						if (dial[j][3] == -1) {
+							range[i][1][0] = dial[j][1];
+						} else if (dial[j][3] == 1) {
+							range[i][1][1] = dial[j][1];
+						};
 						break;
 					case "straight":
 						range[i][2] = dial[j][1];
@@ -1692,30 +1736,38 @@ function maneuverTable (dial) {
 						range[i][3] = dial[j][1];
 						break;
 					case "segnors":
-						range[i][4] = dial[j][1];
+						if (dial[j][3] == -1) {
+							range[i][4][0] = dial[j][1];
+						} else if (dial[j][3] == 1) {
+							range[i][4][1] = dial[j][1];
+						};
 						break;
 					case "tallon":
-						range[i][5] = dial[j][1];
+						if (dial[j][3] == -1) {
+							range[i][5][0] = dial[j][1];
+						} else if (dial[j][3] == 1) {
+							range[i][5][1] = dial[j][1];
+						};
 						break;
 				}; 
 			};
 		};
-		document.getElementById("mTurn" + i + "l").style.opacity = (range[i][0] == 0) ? 0 : 1;
-		document.getElementById("mTurn" + i + "r").style.opacity = (range[i][0] == 0) ? 0 : 1;
-		if (range[i][0] != 0) {
-			document.getElementById("aTurn" + i + "l").src = "images/turn" + range[i][0].substr(0, 1).toUpperCase() + ".png";
-			document.getElementById("aTurn" + i + "r").src = "images/turn" + range[i][0].substr(0, 1).toUpperCase() + ".png";
+		document.getElementById("mTurn" + i + "l").style.opacity = (range[i][0][0] == 0) ? 0 : 1;
+		document.getElementById("mTurn" + i + "r").style.opacity = (range[i][0][0] == 0) ? 0 : 1;
+		if (range[i][0][0] != 0) {
+			document.getElementById("aTurn" + i + "l").src = "images/turn" + range[i][0][0].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("aTurn" + i + "r").src = "images/turn" + range[i][0][1].substr(0, 1).toUpperCase() + ".png";
 			document.getElementById("bTurn" + i + "l").onclick = function(){setDial(this.id)};
 			document.getElementById("bTurn" + i + "r").onclick = function(){setDial(this.id)};
 		} else {
 			document.getElementById("bTurn" + i + "l").onclick = null;
 			document.getElementById("bTurn" + i + "r").onclick = null;
 		};
-		document.getElementById("mBank" + i + "l").style.opacity = (range[i][1] == 0) ? 0 : 1;
-		document.getElementById("mBank" + i + "r").style.opacity = (range[i][1] == 0) ? 0 : 1;
-		if (range[i][1] != 0) {
-			document.getElementById("aBank" + i + "l").src = "images/bank" + range[i][1].substr(0, 1).toUpperCase() + ".png";
-			document.getElementById("aBank" + i + "r").src = "images/bank" + range[i][1].substr(0, 1).toUpperCase() + ".png";
+		document.getElementById("mBank" + i + "l").style.opacity = (range[i][1][0] == 0) ? 0 : 1;
+		document.getElementById("mBank" + i + "r").style.opacity = (range[i][1][0] == 0) ? 0 : 1;
+		if (range[i][1][0] != 0) {
+			document.getElementById("aBank" + i + "l").src = "images/bank" + range[i][1][0].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("aBank" + i + "r").src = "images/bank" + range[i][1][1].substr(0, 1).toUpperCase() + ".png";
 			document.getElementById("bBank" + i + "l").onclick = function(){setDial(this.id)};
 			document.getElementById("bBank" + i + "r").onclick = function(){setDial(this.id)};
 		} else {
@@ -1736,11 +1788,11 @@ function maneuverTable (dial) {
 		} else {
 			document.getElementById("bKoiogran" + i).onclick = null;
 		};
-		if (range[i][4] != 0) {
+		if (range[i][4][0] != 0) {
 			document.getElementById("mSegnors" + i + "l").hidden = false;
 			document.getElementById("mSegnors" + i + "r").hidden = false;
-			document.getElementById("aSegnors" + i + "l").src = "images/segnors" + range[i][4].substr(0, 1).toUpperCase() + ".png";
-			document.getElementById("aSegnors" + i + "r").src = "images/segnors" + range[i][4].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("aSegnors" + i + "l").src = "images/segnors" + range[i][4][0].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("aSegnors" + i + "r").src = "images/segnors" + range[i][4][1].substr(0, 1).toUpperCase() + ".png";
 			document.getElementById("bSegnors" + i + "l").onclick = function(){setDial(this.id)};
 			document.getElementById("bSegnors" + i + "r").onclick = function(){setDial(this.id)};
 		} else {
@@ -1749,11 +1801,11 @@ function maneuverTable (dial) {
 			document.getElementById("bSegnors" + i + "l").onclick = null;
 			document.getElementById("bSegnors" + i + "r").onclick = null;
 		};
-		if (range[i][5] != 0) {
+		if (range[i][5][0] != 0) {
 			document.getElementById("mTallon" + i + "l").hidden = false;
 			document.getElementById("mTallon" + i + "r").hidden = false;
-			document.getElementById("aTallon" + i + "l").src = "images/tallon" + range[i][5].substr(0, 1).toUpperCase() + ".png";
-			document.getElementById("aTallon" + i + "r").src = "images/tallon" + range[i][5].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("aTallon" + i + "l").src = "images/tallon" + range[i][5][0].substr(0, 1).toUpperCase() + ".png";
+			document.getElementById("aTallon" + i + "r").src = "images/tallon" + range[i][5][1].substr(0, 1).toUpperCase() + ".png";
 			document.getElementById("bTallon" + i + "l").onclick = function(){setDial(this.id)};
 			document.getElementById("bTallon" + i + "r").onclick = function(){setDial(this.id)};
 		} else {
@@ -3236,6 +3288,7 @@ function animateTurn (flightplan, phase) {
 <td id="select_yv666" class="option select scum model"><img src="images/yv666-f.png" title="YV-666" onClick="select(yv666);" style="position: relative; left: 0px; bottom: 5px;"><img src="images/yv666-r.png" title="YV-666" onClick="select(yv666);" style="position: absolute; left: 0px; bottom: -49px;"></td>
 <td id="select_aggressor" class="option select scum model"><img src="images/aggressor.png" title="Aggressor" onClick="select(aggressor);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_Sfirespray" class="option select scum model"><img src="images/firespray.png" title="Firespray-31" onClick="select(Sfirespray);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_jumpmaster5000" class="option select scum model"><img src="images/jumpmaster5000.png" title="JumpMaster 5000" onClick="select(jumpmaster5000);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_g1a" class="option select scum model"><img src="images/g1a.png" title="G-1A Starfighter" onClick="select(g1a);" style="position: relative; left: 0px; bottom: -1px;"></td>
 <td id="select_Shwk" class="option select scum model"><img src="images/hwk.png" title="HWK-290" onClick="select(Shwk);" style="position: relative; left: 0px; bottom: 2px;"></td>
 <td id="select_kihraxz" class="option select scum model"><img src="images/kihraxz.png" title="Kihraxz Fighter" onClick="select(kihraxz);" style="position: relative; left: 0px; bottom: 5px;"></td>
