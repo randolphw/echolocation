@@ -227,6 +227,7 @@ var tiedefender = {
 	offset: 8,
 	width: 56,
 	height: 47,
+	pilots: ["countessryad"],
 	actions: ["roll"],
 	slots: [],
 	decloak: [],
@@ -252,6 +253,35 @@ var tiedefender = {
 };
 tiedefender.img = new Image();
 tiedefender.img.src = "images/tiedefender.png";
+
+var countessryad = {
+	id: "countessryad",
+	img: tiedefender.img,
+	vessel: tiedefender,
+	slots: ["elite"],
+	dial: [
+		["turn", "red", 1, -1],
+		["bank", "white", 1, -1],
+		["bank", "white", 1, 1],
+		["turn", "red", 1, 1],
+		["turn", "red", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "red", 2, 1],
+		["koiogran", "green", 2],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["koiogran", "green", 3],
+		["straight", "green", 4],
+		["koiogran", "green", 4],
+		["straight", "green", 5],
+		["koiogran", "green", 5]
+	]
+};
 
 var tiefighter = {
 	faction: "empire",
@@ -381,6 +411,41 @@ var tiefofighter = {
 };
 tiefofighter.img = new Image();
 tiefofighter.img.src = "images/tiefofighter.png";
+
+var tiesffighter = {
+	faction: "empire",
+	id: "tiesffighter",
+	base: smallbase,
+	protrusions: 1,
+	width: 40,
+	height: 42,
+	actions: ["roll"],
+	slots: ["system"],
+	arc: "rear",
+	decloak: [],
+	dial: [
+		["turn", "red", 1, -1],
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "red", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "red", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["turn", "red", 3, 1],
+		["segnors", "red", 3, -1],
+		["segnors", "red", 3, 1],
+		["straight", "white", 4]
+	]
+};
+tiesffighter.img = new Image();
+tiesffighter.img.src = "images/tiesffighter.png";
 
 var decimator = {
 	faction: "empire",
@@ -855,6 +920,8 @@ var yt1300 = {
 		["straight", "white", 3],
 		["bank", "white", 3, 1],
 		["koiogran", "red", 3],
+		["segnors", "red", 3, -1],
+		["segnors", "red", 3, 1],
 		["straight", "white", 4],
 		["koiogran", "red", 4]
 	]
@@ -1288,12 +1355,14 @@ var shipIndex = {
 	"tieadvprototype": tieadvprototype,
 	"tiebomber": tiebomber,
 	"tiedefender": tiedefender,
+	"countessryad": countessryad,
 	"tiefighter": tiefighter,
 	"tieinterceptor": tieinterceptor,
 	"tiephantom": tiephantom,
 	"echo": echo,
 	"tiepunisher": tiepunisher,
 	"tiefofighter": tiefofighter,
+	"tiesffighter": tiesffighter,
 //Rebel Alliance
 	"attackshuttle": attackshuttle,
 	"awing": awing,
@@ -3266,12 +3335,14 @@ function animateTurn (flightplan, phase) {
 <td id="select_tieadvprototype" class="option select empire model"><img src="images/tieadvprototype.png" title="TIE Adv. Prototype" onClick="select(tieadvprototype);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_tiebomber" class="option select empire model"><img src="images/tiebomber.png" title="TIE Bomber" onClick="select(tiebomber);" style="position: relative; left: 0px; bottom: -1px;"></td>
 <td id="select_tiedefender" class="option select empire model"><img src="images/tiedefender.png" title="TIE Defender" onClick="select(tiedefender);" style="position: relative; left: 0px; bottom: 4px;"></td>
+<td id="select_countessryad" class="option select empire pilot"><a class="pilot" onClick="select(tiedefender, countessryad);" style="position: relative; left: 0px; bottom: 23px;">&middot;Countess Ryad</a></td>
 <td id="select_tiefighter" class="option select empire model"><img src="images/tiefighter.png" title="TIE Fighter" onClick="select(tiefighter);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_tieinterceptor" class="option select empire model"><img src="images/tieinterceptor.png" title="TIE Interceptor" onClick="select(tieinterceptor);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_tiephantom" class="option select empire model"><img src="images/tiephantom.png" width=40 title="TIE Phantom" onClick="select(tiephantom);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_echo" class="option select empire pilot"><a class="pilot" onClick="select(tiephantom, echo);" style="position: relative; left: 0px; bottom: 34px;">&middot;Echo</a></td>
 <td id="select_tiepunisher" class="option select empire model"><img src="images/tiepunisher.png" title="TIE Punisher" onClick="select(tiepunisher);" style="position: relative; left: 0px; bottom: -3px;"></td>
 <td id="select_tiefofighter" class="option select empire model"><img src="images/tiefofighter.png" title="TIE/fo Fighter" onClick="select(tiefofighter);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_tiesffighter" class="option select empire model"><img src="images/tiesffighter.png" title="TIE/sf fighter" onClick="select(tiesffighter);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_vcx100" class="option select alliance model"><img src="images/vcx100-f.png" title="VCX-100" onClick="select(vcx100);" style="position: relative; left: 0px; bottom: 5px;"><img src="images/vcx100-r.png" title="VCX-100" onClick="select(vcx100);" style="position: absolute; left: 0px; bottom: -42px;"></td>
 <td id="select_yt1300" class="option select alliance model"><img src="images/yt1300.png" title="YT-1300" onClick="select(yt1300);" style="position: relative; left: 0px; bottom: 0px;"></td>
 <td id="select_yt2400" class="option select alliance model"><img src="images/yt2400.png" title="YT-2400" onClick="select(yt2400);" style="position: relative; left: 0px; bottom: 5px;"></td>
