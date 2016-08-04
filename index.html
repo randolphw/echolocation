@@ -541,6 +541,39 @@ var lambda = {
 lambda.img = new Image();
 lambda.img.src = "images/lambda.png";
 
+var arc170 = {
+	faction: "alliance",
+	id: "arc170",
+	base: smallbase,
+	protrusions: 9,
+	offset: 20,
+	width: 80,
+	height: 50,
+	actions: [],
+	slots: ["crew", "astromech"],
+	arc: "rear",
+	decloak: [],
+	dial: [
+		["bank", "green", 1, -1],
+		["straight", "green", 1],
+		["bank", "green", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "green", 2, -1],
+		["straight", "green", 2],
+		["bank", "green", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "red", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "white", 3],
+		["bank", "white", 3, 1],
+		["turn", "red", 3, 1],
+		["straight", "red", 4],
+		["koiogran", "red", 4]
+	]
+};
+arc170.img = new Image();
+arc170.img.src = "images/arc170.png";
+
 var awing = {
 	faction: "alliance",
 	id: "awing",
@@ -1074,6 +1107,39 @@ var kihraxz = {
 kihraxz.img = new Image();
 kihraxz.img.src = "images/kihraxz.png";
 
+var protectoratestarfighter = {
+	faction: "scum",
+	id: "protectoratestarfighter",
+	base: smallbase,
+	protrusions: 9,
+	width: 40,
+	height: 50,
+	actions: ["roll", "boost"],
+	slots: [],
+	decloak: [],
+	dial: [
+		["turn", "white", 1, -1],
+		["turn", "white", 1, 1],
+		["turn", "green", 2, -1],
+		["bank", "green", 2, -1],
+		["straight", "green", 2],
+		["bank", "green", 2, 1],
+		["turn", "green", 2, 1],
+		["tallon", "red", 2, -1],
+		["tallon", "red", 2, 1],
+		["turn", "white", 3, -1],
+		["bank", "white", 3, -1],
+		["straight", "green", 3],
+		["bank", "white", 3, 1],
+		["turn", "white", 3, 1],
+		["straight", "white", 4],
+		["koiogran", "red", 4],
+		["straight", "white", 5]
+	]
+};
+protectoratestarfighter.img = new Image();
+protectoratestarfighter.img.src = "images/protectoratestarfighter.png";
+
 var scyk = {
 	faction: "scum",
 	id: "scyk",
@@ -1313,6 +1379,40 @@ var jumpmaster5000 = {
 jumpmaster5000.img = new Image();
 jumpmaster5000.img.src = "images/jumpmaster5000.png";
 
+var lancer = {
+	faction: "scum",
+	id: "lancer",
+	base: largebase,
+	protrusions: 22,
+	offset: 21,
+	width: 122,
+	height: 122,
+	actions: [],
+	slots: ["crew", "illicit"],
+	arc: "turret",
+	decloak: [],
+	dial: [
+		["bank", "white", 1, -1],
+		["straight", "white", 1],
+		["bank", "white", 1, 1],
+		["turn", "white", 2, -1],
+		["bank", "white", 2, -1],
+		["straight", "green", 2],
+		["bank", "white", 2, 1],
+		["turn", "white", 2, 1],
+		["turn", "green", 3, -1],
+		["bank", "green", 3, -1],
+		["straight", "green", 3],
+		["bank", "green", 3, 1],
+		["turn", "green", 3, 1],
+		["straight", "green", 4],
+		["straight", "white", 5],
+		["koiogran", "red", 5]
+	]
+};
+lancer.img = new Image();
+lancer.img.src = "images/lancer.png";
+
 var yv666 = {
 	faction: "scum",
 	id: "yv666",
@@ -1365,6 +1465,7 @@ var shipIndex = {
 	"tiesffighter": tiesffighter,
 //Rebel Alliance
 	"attackshuttle": attackshuttle,
+	"arc170": arc170,
 	"awing": awing,
 	"bwing": bwing,
 	"ewing": ewing,
@@ -1384,6 +1485,8 @@ var shipIndex = {
 	"Shwk": Shwk,
 	"jumpmaster5000": jumpmaster5000,
 	"kihraxz": kihraxz,
+	"lancer": lancer,
+	"protectoratestarfighter": protectoratestarfighter,
 	"scyk": scyk,
 	"starviper": starviper,
 	"yv666": yv666,
@@ -3346,6 +3449,7 @@ function animateTurn (flightplan, phase) {
 <td id="select_vcx100" class="option select alliance model"><img src="images/vcx100-f.png" title="VCX-100" onClick="select(vcx100);" style="position: relative; left: 0px; bottom: 5px;"><img src="images/vcx100-r.png" title="VCX-100" onClick="select(vcx100);" style="position: absolute; left: 0px; bottom: -42px;"></td>
 <td id="select_yt1300" class="option select alliance model"><img src="images/yt1300.png" title="YT-1300" onClick="select(yt1300);" style="position: relative; left: 0px; bottom: 0px;"></td>
 <td id="select_yt2400" class="option select alliance model"><img src="images/yt2400.png" title="YT-2400" onClick="select(yt2400);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_arc170" class="option select alliance model"><img src="images/arc170.png" title="ARC-170" onClick="select(arc170);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_awing" class="option select alliance model"><img src="images/awing.png" title="A-Wing" onClick="select(awing);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_bwing" class="option select alliance model"><img src="images/bwing.png" title="B-Wing" onClick="select(bwing);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_ewing" class="option select alliance model"><img src="images/ewing.png" title="E-Wing" onClick="select(ewing);" style="position: relative; left: 0px; bottom: 5px;"></td>
@@ -3360,9 +3464,11 @@ function animateTurn (flightplan, phase) {
 <td id="select_aggressor" class="option select scum model"><img src="images/aggressor.png" title="Aggressor" onClick="select(aggressor);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_Sfirespray" class="option select scum model"><img src="images/firespray.png" title="Firespray-31" onClick="select(Sfirespray);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_jumpmaster5000" class="option select scum model"><img src="images/jumpmaster5000.png" title="JumpMaster 5000" onClick="select(jumpmaster5000);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_lancer" class="option select scum model"><img src="images/lancer.png" title="Lancer-class Pursuit Craft" onClick="select(lancer);" style="position: relative; left: 0px; bottom: -14px;"></td>
 <td id="select_g1a" class="option select scum model"><img src="images/g1a.png" title="G-1A Starfighter" onClick="select(g1a);" style="position: relative; left: 0px; bottom: -1px;"></td>
 <td id="select_Shwk" class="option select scum model"><img src="images/hwk.png" title="HWK-290" onClick="select(Shwk);" style="position: relative; left: 0px; bottom: 2px;"></td>
 <td id="select_kihraxz" class="option select scum model"><img src="images/kihraxz.png" title="Kihraxz Fighter" onClick="select(kihraxz);" style="position: relative; left: 0px; bottom: 5px;"></td>
+<td id="select_protectoratestarfighter" class="option select scum model"><img src="images/protectoratestarfighter.png" title="Protectorate Starfighter" onClick="select(protectoratestarfighter);" style="position: relative; left: 0px; bottom: 5px;"></td>
 <td id="select_scyk" class="option select scum model"><img src="images/scyk.png" title="M3-A Interceptor" onClick="select(scyk);" style="position: relative; left: 0px; bottom: -6px;"></td>
 <td id="select_starviper" class="option select scum model"><img src="images/starviper.png" title="StarViper" onClick="select(starviper);" style="position: relative; left: 0px; bottom: 2px;"></td>
 <td id="select_Sywing" class="option select scum model"><img src="images/ywing-s.png" title="Y-Wing" onClick="select(Sywing);" style="position: relative; left: 0px; bottom: -5px;"></td>
